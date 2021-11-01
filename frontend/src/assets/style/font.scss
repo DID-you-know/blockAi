@@ -1,0 +1,50 @@
+@import "./color.scss";
+
+
+// 폰트
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.font-nanum {
+  font-family: "NanumSquare", sans-serif;
+  font-weight: 800;
+}
+
+
+// 텍스트 색
+.text-primary {
+  color: $primary;
+}
+
+.text-secondary {
+  color: $secondary;
+}
+
+.text-tertiary {
+  color: $tertiary
+}
+
+
+// 텍스트 사이즈
+.fs-1 {
+  font-size: 1rem;
+}
+
+.fs-2 {
+  font-size: 2rem;
+}
+
+.fs-3 {
+  font-size: 3rem;
+}
+
+.fs-4 {
+  font-size: 4rem;
+}
+
+
+// 텍스트 굵기
+.fw-bold {
+  font-weight: bold;
+}
