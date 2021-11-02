@@ -2,12 +2,12 @@
   <nav class="navbar">
     <div class="container">
       <div @click="$router.go()">
-        <img class="logo" src="@/assets/image/logo.jpg" alt="">
+        <img class="logo" src="@/assets/image/logo.jpg" alt="logo">
       </div>
     </div>
     <div class="container">
       <a class="navbar-item fs-1">로그인</a>
-      <a class="navbar-item fs-1">회원가입</a>
+      <a href="/signup" class="navbar-item fs-1">회원가입</a>
     </div>
   </nav>
 </template>
@@ -29,15 +29,6 @@
     width: 100%;
     z-index: 1;
     transform: translateZ(0);
-
-    .logo {
-      width: auto;
-      height: 53px;
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
 
     .container {
       display: flex;
