@@ -45,7 +45,7 @@ import Navbar from '@/components/Navbar'
     height: 100vh;
 
     .intro {
-      flex: 3;
+      flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -61,7 +61,7 @@ import Navbar from '@/components/Navbar'
     }
 
     .image-container {
-      flex: 4;
+      flex: 1;
       width: 100%;
       position: relative;
 

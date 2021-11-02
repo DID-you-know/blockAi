@@ -1,70 +1,40 @@
 <template>
   <div>
-    <header><img class="logo" src="@/assets/image/logo.jpg" alt="logo"></header>
-    <main>
-      <header class="fs-5 nanum">회원가입</header>
-      <div class="fs-1">
-        <section><img src="@/assets/image/signup-personal.svg" alt="">개인회원</section>
-        <section><img src="@/assets/image/signup-company.svg" alt="">기업회원</section>
-      </div>
-      <footer>이미 회원이신가요? 로그인해주세요</footer>
-    </main>
+    <Navbar hideContent/>
+    <UserType v-if="step === 1"/>
+    <UserInfo v-if="step === 2"/>
   </div>
 </template>
 
 <script>
+  import Navbar from '@/components/Navbar'
+  import UserType from '@/components/UserType'
+  import UserInfo from '@/components/UserInfo'
+  import { useStore } from 'vuex'
+  import { computed } from 'vue'
+
+
+
   export default {
     name: 'Signup',
+    components: {
+      Navbar,
+      UserType,
+      UserInfo
+    },
+    setup() {
+      const store = useStore()
+      const step = computed(() => store.state.signup.step)
+      const userType = computed(() => store.state.signup.userType)
+
+      return {
+        step,
+        userType
+      }
+    }
   }
 </script>
 
 <style lang="scss" scoped>
-  @import "@/assets/style/color.scss";
-
-
-  .logo {
-    position: fixed;
-    top: 1rem;
-    left: 2rem;
-  }
-
-  main {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-    gap: 2rem;
-    width: 100vw;
-    height: 100vh;
-
-    header {
-      position: relative;
-
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 0;
-        width: 100%;
-        height: 0.2rem;
-        background-color: $tertiary;
-      }
-    }
   
-    div {
-      display: flex;
-      gap: 5rem;
-
-      section {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-        align-items: center;
-
-        img {
-          height: 350px;
-        }
-      }
-    }
-  }
 </style>

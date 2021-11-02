@@ -1,20 +1,57 @@
 <template>
   <nav class="navbar">
     <div class="container">
-      <div @click="$router.go()">
+      <div @click="pushHome">
         <img class="logo" src="@/assets/image/logo.jpg" alt="logo">
       </div>
     </div>
-    <div class="container">
-      <a class="navbar-item fs-1">로그인</a>
-      <a href="/signup" class="navbar-item fs-1">회원가입</a>
+    <div class="container" :class="{ 'hide-content': $props.hideContent }">
+      <span class="navbar-item fs-1">로그인</span>
+      <span @click="pushSignup" class="navbar-item fs-1">회원가입</span>
     </div>
   </nav>
 </template>
 
 <script>
+  import { useRouter } from 'vue-router'
+
+
   export default {
     name: 'Navbar',
+    props: {
+      hideContent: {
+        type: Boolean,
+        default: false
+      }
+    },
+    setup() {
+      const router = useRouter()
+
+      const pushHome = () => {
+        if (window.location.pathname === '/') {
+          router.go()
+        }
+        else {
+          router.push({
+            name: 'home'
+          })
+        }
+      }
+
+      const pushSignup = () => {
+        router.push({
+          name: 'signup',
+          query: {
+            step: 'userType'
+          }
+        })
+      }
+
+      return {
+        pushHome,
+        pushSignup
+      }
+    }
   }
 </script>
 
@@ -60,6 +97,10 @@
           transform: scale(1);
         }
       }
+    }
+
+    .hide-content{
+      display: none;
     }
   }
 </style>
