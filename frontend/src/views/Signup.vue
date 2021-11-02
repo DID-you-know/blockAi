@@ -1,7 +1,9 @@
 <template>
   <div>
-    <Navbar hideContent/>
-    <UserType v-if="step === 1"/>
+    <template v-if="step === 1">
+      <Navbar hideContent/>
+      <UserType/>
+    </template>
     <UserInfo v-if="step === 2"/>
   </div>
 </template>

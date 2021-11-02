@@ -41,9 +41,6 @@
       const pushSignup = () => {
         router.push({
           name: 'signup',
-          query: {
-            step: 'userType'
-          }
         })
       }
 

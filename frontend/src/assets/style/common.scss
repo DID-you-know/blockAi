@@ -1,8 +1,32 @@
+@import "./color.scss";
+
+
 .logo {
   width: auto;
   height: 53px;
 
   &:hover {
     cursor: pointer;
+  }
+}
+
+label {
+  cursor: default;
+}
+
+input[type=text] {
+  width: 100%;
+  padding: 12px 15px;
+  background-color: $light;
+  border-radius: 10px;
+  border: none;
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px $tertiary;
+  }
+
+  &:hover:not(:focus) {
+    background-color: $light-hover;
   }
 }
