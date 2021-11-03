@@ -4,9 +4,10 @@
 // 폰트
 body {
   font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 400;
 }
 
-.font-nanum {
+.nanum {
   font-family: "NanumSquare", sans-serif;
   font-weight: 800;
 }
@@ -44,7 +45,12 @@ body {
 }
 
 
+
 // 텍스트 굵기
 .fw-bold {
-  font-weight: bold;
+  font-weight: 500;
+}
+
+.fw-light {
+  font-weight: 300;
 }
