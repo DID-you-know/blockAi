@@ -34,6 +34,7 @@
 - 이한울
 - 임영찬
 
+![임영찬](https://user-images.githubusercontent.com/43156636/140012993-ad47fc3a-20b3-4615-9cd4-74018f4b80b2.jpg)
 ## 추가 정보
 - [팀 노션](https://www.notion.so/86346ce94a8e4074a34f901ed97f9c0d)
 
