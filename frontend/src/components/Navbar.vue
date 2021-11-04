@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="container" :class="{ 'hide-content': $props.hideContent }">
-      <span class="navbar-item fs-1">로그인</span>
+      <span @click="pushLogin" class="navbar-item fs-1">로그인</span>
       <span @click="pushSignup" class="navbar-item fs-1">회원가입</span>
     </div>
   </nav>
@@ -40,13 +40,20 @@
 
       const pushSignup = () => {
         router.push({
-          name: 'signup',
+          name: 'signup'
+        })
+      }
+
+      const pushLogin = () => {
+        router.push({
+          name: 'login'
         })
       }
 
       return {
         pushHome,
-        pushSignup
+        pushSignup,
+        pushLogin
       }
     }
   }

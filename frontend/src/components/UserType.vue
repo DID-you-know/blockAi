@@ -2,8 +2,8 @@
   <main>
     <header class="fs-4 nanum">회원가입</header>
     <div class="fs-1">
-      <section><img @click="clickPersonal" src="@/assets/image/signup-personal.svg" alt="">개인회원</section>
-      <section><img @click="clickCompany" src="@/assets/image/signup-company.svg" alt="">기업회원</section>
+      <section><img @click="clickPersonal" src="@/assets/image/signup/signup-personal.svg" alt="">개인회원</section>
+      <section><img @click="clickCompany" src="@/assets/image/signup/signup-company.svg" alt="">기업회원</section>
     </div>
     <footer>이미 회원이신가요? 로그인해주세요</footer>
   </main>
