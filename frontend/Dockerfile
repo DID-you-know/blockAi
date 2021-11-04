@@ -22,11 +22,14 @@ FROM nginx:stable-alpine as production-stage
 # app 디렉토리 생성
 RUN mkdir /app
 
+# nginx의 default.conf를 삭제
+RUN rm /etc/nginx/conf.d/default.conf
+
 # HOST PC의 nginx.conf를 우측의 경로로 복사
-#COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./nginx.conf /etc/nginx/conf.d
 
 # 빌드한 바이너리를 실행할 이미지로 전달
-COPY --from=build-stage ./app/dist /usr/share/nginx/html
+COPY --from=build-stage ./app/dist /app
 
 # 도커 컨테이너 외부에 노출할 포트 지정
 EXPOSE 80
