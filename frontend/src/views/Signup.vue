@@ -1,5 +1,5 @@
 <template>
-  <div class="signup">
+  <div class="signup body">
     <section>
       <div class="form">
         <h1 class="fs-3 fw-bold">회원가입</h1>
@@ -252,14 +252,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 100vh;
     padding: 5rem;
     gap: 1rem;
-    overflow: hidden;
 
     h1 {
       cursor: default;
+      padding-bottom: 2rem;
     }
 
     section {

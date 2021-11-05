@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/Home'
 import Signup from '@/views/Signup'
 import Login from '@/views/Login'
+import Status from '@/views/Status'
 
 
 const routes = [
@@ -22,6 +23,12 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login
+  },
+  // 발급현황
+  {
+    path: '/status',
+    name: 'status',
+    component: Status
   }
 ]
 
