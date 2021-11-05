@@ -1,52 +1,28 @@
 <template>
   <nav class="navbar">
     <div class="container">
-      <div @click="pushHome">
-        <img class="logo" src="@/assets/image/logo.jpg" alt="logo">
-      </div>
+      <Logo/>
     </div>
     <div class="container" :class="{ 'hide-content': $props.hideContent }">
-      <span class="navbar-item fs-1">로그인</span>
-      <span @click="pushSignup" class="navbar-item fs-1">회원가입</span>
+      <router-link :to="{ name: 'login' }" class="navbar-item fs-1">로그인</router-link>
+      <router-link :to="{ name: 'signup' }" class="navbar-item fs-1">회원가입</router-link>
     </div>
   </nav>
 </template>
 
 <script>
-  import { useRouter } from 'vue-router'
+  import Logo from '@/components/Logo'
 
 
   export default {
     name: 'Navbar',
+    components: {
+      Logo
+    },
     props: {
       hideContent: {
         type: Boolean,
         default: false
-      }
-    },
-    setup() {
-      const router = useRouter()
-
-      const pushHome = () => {
-        if (window.location.pathname === '/') {
-          router.go()
-        }
-        else {
-          router.push({
-            name: 'home'
-          })
-        }
-      }
-
-      const pushSignup = () => {
-        router.push({
-          name: 'signup',
-        })
-      }
-
-      return {
-        pushHome,
-        pushSignup
       }
     }
   }

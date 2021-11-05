@@ -6,7 +6,7 @@
   export default {
     name: 'FormButton',
     props: {
-      value: String
+      value: String,
     }
   }
 </script>
