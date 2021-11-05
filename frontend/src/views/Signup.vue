@@ -1,5 +1,5 @@
 <template>
-  <div class="userinfo">
+  <div class="signup">
     <section>
       <div class="form">
         <h1 class="fs-3 fw-bold">회원가입</h1>
@@ -16,7 +16,7 @@
           <div class="form-items">
             <Input label="인증번호" v-model="code" @input="setCode"/>
             <div class="form-item">
-              <FormButton value="인증번호 받기"/>
+              <FormButton value="문자인증"/>
             </div>
           </div>
         </div>
@@ -248,7 +248,7 @@
 </script>
 
 <style lang="scss" scoped>
-  .userinfo {
+  .signup {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -265,9 +265,12 @@
     section {
       flex: 1;
       position: relative;
+      display: flex;
+      justify-content: center;
 
       .form {
         height: 100%;
+        width: 650px;
         background-color: white;
         padding: 3rem;
         border-radius: 2rem;
@@ -276,7 +279,6 @@
         flex-direction: column;
         justify-content: space-between;
         gap: 3rem;
-        height: 100%;
 
         .form-items {
           display: flex;
