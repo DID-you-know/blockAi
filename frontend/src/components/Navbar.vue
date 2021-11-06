@@ -1,20 +1,30 @@
 <template>
   <nav class="navbar">
     <div class="container">
-      <div @click="$router.go()">
-        <img class="logo" src="@/assets/image/logo.jpg" alt="">
-      </div>
+      <Logo/>
     </div>
-    <div class="container">
-      <a class="navbar-item fs-1">로그인</a>
-      <a class="navbar-item fs-1">회원가입</a>
+    <div class="container" :class="{ 'hide-content': $props.hideContent }">
+      <router-link :to="{ name: 'login' }" class="navbar-item fs-1">로그인</router-link>
+      <router-link :to="{ name: 'signup' }" class="navbar-item fs-1">회원가입</router-link>
     </div>
   </nav>
 </template>
 
 <script>
+  import Logo from '@/components/Logo'
+
+
   export default {
     name: 'Navbar',
+    components: {
+      Logo
+    },
+    props: {
+      hideContent: {
+        type: Boolean,
+        default: false
+      }
+    }
   }
 </script>
 
@@ -29,15 +39,6 @@
     width: 100%;
     z-index: 1;
     transform: translateZ(0);
-
-    .logo {
-      width: auto;
-      height: 53px;
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
 
     .container {
       display: flex;
@@ -69,6 +70,10 @@
           transform: scale(1);
         }
       }
+    }
+
+    .hide-content{
+      display: none;
     }
   }
 </style>
