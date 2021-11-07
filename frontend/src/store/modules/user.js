@@ -1,5 +1,5 @@
 const state = {
-  isIssued: true
+  isIssued: false
 }
 
 const actions = {

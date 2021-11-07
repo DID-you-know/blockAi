@@ -58,7 +58,7 @@
           </div>
         </div>
       </div>
-      <WhiteButton value="신원증명발급"/>
+      <WhiteButton class="issue-button" value="신원증명발급" @click="pushIssue"/>
     </div>
   </div>
 </template>
@@ -66,6 +66,7 @@
 <script>
   import { ref, computed } from 'vue'
   import { useStore } from 'vuex'
+  import { useRouter } from 'vue-router'
   import WhiteButton from '@/components/WhiteButton'
 
 
@@ -83,10 +84,14 @@
       const store = useStore()
       const isIssued = computed(() => store.state.user.isIssued)
 
+      const router = useRouter()
+      const pushIssue = () => router.push({ name: 'issue' })
+
       return {
         isFront,
         turnCard,
-        isIssued
+        isIssued,
+        pushIssue
       }
     }
   }
@@ -105,6 +110,7 @@
   .card-container {
     perspective: 1000px;
     display: inline-block;
+    position: relative;
 
     .card {
       border-radius: 1rem;
@@ -180,6 +186,13 @@
 
     .back-turn {
       transform: rotateY(0deg);
+    }
+
+    .issue-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
     }
   }
 </style>
