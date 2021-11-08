@@ -1,4 +1,4 @@
-package com.a506.blockai.Service;
+package com.a506.blockai.api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
