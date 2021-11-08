@@ -21,7 +21,7 @@
         <WhiteButton v-if="audioStep === 2" value="정지" @click="stopRecord"/>
         <template v-if="audioStep === 3">
           <audio controls preload="none">
-            <source :src="audioSource" type="audio/mpeg">
+            <source :src="audioSource" type="audio/wav">
           </audio>
           <div class="button-box">
             <WhiteButton value="재녹음" @click="reRecord"/>
@@ -119,8 +119,16 @@
               chunks.value.push(e.data)
             }
             mediaRecorder.value.onstop = () => {
-              audioBlob.value = new Blob(chunks.value, { type: 'audio/mpeg' })
+              audioBlob.value = new Blob(chunks.value, { type: 'audio/wav' })
               chunks.value = []
+
+              // base64 encode
+              var reader = new FileReader();
+              reader.readAsDataURL(audioBlob.value);
+              reader.onloadend = function () {
+                audioBlob.value = reader.result;
+              }
+              
               audioSource.value = window.URL.createObjectURL(audioBlob.value)
             }
           }
@@ -147,6 +155,8 @@
         step.value += 1
         audioStep.value = 1
       }
+
+
 
       onMounted(() => {
         if (step.value === 1) {
