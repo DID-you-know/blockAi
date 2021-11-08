@@ -1,6 +1,6 @@
 /* 2021-07-27 스켈레톤 코드 작성	by.HeeJung,Lee */
 
-package com.a506.blockai.common.response;
+package com.a506.blockai.common.dto.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

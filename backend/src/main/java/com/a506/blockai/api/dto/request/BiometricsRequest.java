@@ -1,4 +1,4 @@
-package com.a506.blockai.dto.request;
+package com.a506.blockai.api.dto.request;
 
 import lombok.AccessLevel;
 import lombok.Getter;

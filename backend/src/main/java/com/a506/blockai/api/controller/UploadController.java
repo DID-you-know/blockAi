@@ -1,10 +1,8 @@
 package com.a506.blockai.api.controller;
 
-import com.a506.blockai.common.response.BaseResponseBody;
 import com.a506.blockai.common.util.S3Upload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
