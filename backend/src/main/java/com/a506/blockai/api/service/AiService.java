@@ -1,4 +1,4 @@
-package com.a506.blockai.service;
+package com.a506.blockai.api.service;
 
 public interface AiService {
     String createProfile();

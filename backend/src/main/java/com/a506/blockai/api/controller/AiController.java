@@ -1,6 +1,6 @@
-package com.a506.blockai.controller;
+package com.a506.blockai.api.controller;
 
-import com.a506.blockai.service.AiService;
+import com.a506.blockai.api.service.AiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

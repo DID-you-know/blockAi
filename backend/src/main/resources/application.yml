@@ -13,3 +13,12 @@ cloud:
       auto: false
     region:
       static: ap-northeast-2
+    credentials:
+      instance-profile: true
+      access-key: AKIARRTWNAL74NM4XSMZ
+      secret-key: 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
+
+    s3:
+      bucket: blockai-bucket
+
+
