@@ -4,6 +4,7 @@
       <Logo/>
     </div>
     <div class="container" :class="{ 'hide-content': $props.hideContent }">
+      <router-link :to="{ name: 'status' }" class="navbar-item fs-1">신원증명발급</router-link>
       <router-link :to="{ name: 'login' }" class="navbar-item fs-1">로그인</router-link>
       <router-link :to="{ name: 'signup' }" class="navbar-item fs-1">회원가입</router-link>
     </div>

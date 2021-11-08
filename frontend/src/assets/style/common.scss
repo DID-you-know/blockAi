@@ -23,3 +23,9 @@ input[type=password] {
     background-color: $light-hover;
   }
 }
+
+.body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}

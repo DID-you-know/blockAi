@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login body">
     <section>
       <div class="form">
         <div>
@@ -76,11 +76,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 100vh;
     padding: 5rem;
     gap: 1rem;
-    overflow: hidden;
 
     h1 {
       cursor: default;

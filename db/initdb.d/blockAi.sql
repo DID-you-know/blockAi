@@ -20,8 +20,9 @@ CREATE TABLE `Certification` (
 
 CREATE TABLE `DID` (
 	`id`	int	NOT NULL auto_increment PRIMARY KEY,
+	`user_id`	int	NOT NULL,
 	`did_address`	varchar(50)	NOT NULL,
 	`issued_date`	timestamp	NOT NULL,
-  KEY `FK_User_TO_DID` (`id`),
-  CONSTRAINT `FK_User_TO_DID` FOREIGN KEY (`id`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+  KEY `FK_User_TO_DID` (`user_id`),
+  CONSTRAINT `FK_User_TO_DID` FOREIGN KEY (`user_id`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 );
