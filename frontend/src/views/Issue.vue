@@ -225,6 +225,7 @@
       }
 
       // 생체데이터 저장
+      const faceURL = ref(null)
       const faceImageUpload = async () => {
         // S3 설정
         AWS.config.update({
@@ -257,6 +258,7 @@
         const promise = upload.promise()
         promise.then((data) => {
           console.log('success', data)
+          faceURL.value = data.Location
         }, (err) => {
           console.log('error', err)
         })
