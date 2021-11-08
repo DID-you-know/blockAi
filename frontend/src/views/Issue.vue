@@ -3,13 +3,20 @@
     <Progressbar :step="step" class="progressbar"/>
     <template v-if="step === 1">
       <div class="message fs-2">
-        얼굴이 인식될 수 있게 얼굴을 화면에 맞춰주세요.<br>
-        얼굴인식이 완료되면 다음단계로 넘어갑니다.
+        {{ faceMessage }}
       </div>
-      <div v-if="!cameraOn" class="icon-box">
+
+      <div v-if="faceStep === 1 && !cameraOn" class="icon-box">
         <img width="400" height="400" src="@/assets/image/icon/faceIdIcon.png" alt="faceIdIcon">
       </div>
-      <video v-show="cameraOn" ref="video" autoplay></video>
+      <video v-show="faceStep === 1 && cameraOn" ref="video" autoplay></video>
+      <WhiteButton v-if="faceStep === 1 && cameraOn" value="얼굴 촬영" @click="captureFace"/>
+
+      <canvas v-show="faceStep === 2" ref="canvas" width="640" height="480"></canvas>
+      <div v-if="faceStep === 2" class="button-box">
+        <WhiteButton value="재촬영" @click="reCapture"/>
+        <WhiteButton value="촬영 완료" @click="finishCapture"/>
+      </div>
     </template>
     <template v-if="step === 2">
       <div class="message fs-2">
@@ -17,10 +24,10 @@
       </div>
       <div class="icon-box">
         <img width="400" height="400" src="@/assets/image/icon/voiceIcon.png" alt="voiceIcon">
-        <WhiteButton v-if="audioStep === 1" value="녹음 시작" @click="recordVoice"/>
-        <WhiteButton v-if="audioStep === 2" value="정지" @click="stopRecord"/>
-        <template v-if="audioStep === 3">
-          <audio controls preload="none">
+        <WhiteButton v-if="voiceStep === 1" value="녹음 시작" @click="recordVoice"/>
+        <WhiteButton v-if="voiceStep === 2" value="정지" @click="stopRecord"/>
+        <template v-if="voiceStep === 3">
+          <audio controls preload="auto">
             <source :src="audioSource" type="audio/mpeg">
           </audio>
           <div class="button-box">
@@ -50,8 +57,11 @@
 <script>
   import Progressbar from '@/components/Progressbar'
   import WhiteButton from '@/components/WhiteButton'
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, onUpdated } from 'vue'
   import { useRouter } from 'vue-router'
+  import * as blazeface from '@tensorflow-models/blazeface'
+  import '@tensorflow/tfjs-backend-webgl'
+  import '@tensorflow/tfjs'
 
 
   export default {
@@ -62,14 +72,48 @@
     },
     setup() {
       const router = useRouter()
-      const step = ref(2)
+      const step = ref(1)
       const nextStep = () => {
         step.value += 1
       }
       
       // 얼굴 등록
+      const faceStep = ref(1)
+      const faceMessage = ref('얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.')
+      const model = ref(null)
+      const predictions = ref(null)
+      const canvas = ref(null)
+      // const userFace = ref(null)
+      const getModel = async () => {
+        model.value = Object.freeze(await blazeface.load())
+      }
+      const captureFace = async () => {
+        const ctx = canvas.value.getContext('2d')
+        ctx.drawImage(video.value, 0, 0, 640, 480)
+
+        predictions.value = await model.value.estimateFaces(canvas.value, false)
+
+        ctx.beginPath()
+        ctx.lineWidth = '4'
+        ctx.strokeStyle = 'rgb(0, 255, 0)'
+        ctx.rect(
+          predictions.value[0].topLeft[0],
+          predictions.value[0].topLeft[1],
+          predictions.value[0].bottomRight[0] - predictions.value[0].topLeft[0],
+          predictions.value[0].bottomRight[1] - predictions.value[0].topLeft[1]
+        )
+        ctx.stroke()
+
+        faceStep.value = 2
+        faceMessage.value = '얼굴이 잘 인식되었는지 확인한 후 촬영 완료 버튼 혹은 재촬영 버튼을 눌러주세요.'
+      }
       const cameraOn = ref(false)
       const video = ref(null)
+      const stopCamera = () => {
+        const tracks = video.value.srcObject.getTracks()
+        tracks.forEach(track => track.stop())
+        cameraOn.value = false
+      }
       const getCamera = async () => {
         const constraints = {
           audio: false,
@@ -87,56 +131,59 @@
           console.log(err)
         }
       }
-      const stopCamera = () => {
-        const tracks = video.value.srcObject.getTracks()
-        tracks.forEach(track => track.stop())
+      const reCapture = () => {
+        faceStep.value = 1
+        faceMessage.value = '얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.'
       }
-      const finishCaptureFace = () => {
+      const finishCapture = () => {
         stopCamera()
         nextStep()
+        reCapture()
       }
 
       // 음성 등록
-      const audioStep = ref(1)
+      const voiceStep = ref(1)
       const voiceMessage = ref('그림 아래에 있는 녹음 시작 버튼을 눌러 음성을 녹음해주세요.')
       const mediaRecorder = ref(null)
       const audioStream = ref(null)
       const chunks = ref([])
       const audioBlob = ref(null)
-      const recordVoice = async () => {
+      const getMIC = async () => {
         const constraints = {
           audio: true,
           video: false
         }
         try {
           audioStream.value = await navigator.mediaDevices.getUserMedia(constraints)
-          mediaRecorder.value = new MediaRecorder(audioStream.value)
-          mediaRecorder.value.start()
-          if (mediaRecorder.value.state === 'recording') {
-            voiceMessage.value = '~~~라고 따라 말해주세요.'
-            audioStep.value += 1
-            mediaRecorder.value.ondataavailable = (e) => {
-              chunks.value.push(e.data)
-            }
-            mediaRecorder.value.onstop = () => {
-              audioBlob.value = new Blob(chunks.value, { type: 'audio/mpeg' })
-              chunks.value = []
-              audioSource.value = window.URL.createObjectURL(audioBlob.value)
-            }
-          }
         } catch(err) {
           console.log(err)
+        }
+      }
+      const recordVoice = async () => {
+        mediaRecorder.value = new MediaRecorder(audioStream.value)
+        mediaRecorder.value.start()
+        if (mediaRecorder.value.state === 'recording') {
+          voiceMessage.value = '~~~라고 따라 말해주세요.'
+          voiceStep.value += 1
+          mediaRecorder.value.ondataavailable = (e) => {
+            chunks.value.push(e.data)
+          }
+          mediaRecorder.value.onstop = () => {
+            audioBlob.value = new Blob(chunks.value, { type: 'audio/mpeg' })
+            chunks.value = []
+            audioSource.value = window.URL.createObjectURL(audioBlob.value)
+          }
         }
       }
       const audioSource = ref(null)
       const stopRecord = () => {
         mediaRecorder.value.stop()
         voiceMessage.value = '음성이 잘 녹음되었는지 확인한 뒤 녹음 완료 혹은 재녹음 버튼을 눌러주세요.'
-        audioStep.value += 1
+        voiceStep.value += 1
       }
       const reRecord = async () => {
         mediaRecorder.value.start()
-        audioStep.value = 2
+        voiceStep.value = 2
       }
       const stopMIC = () => {
         const tracks = audioStream.value.getTracks()
@@ -145,25 +192,41 @@
       const finishRecord = () => {
         stopMIC()
         step.value += 1
-        audioStep.value = 1
+        voiceStep.value = 1
       }
 
       onMounted(() => {
-        if (step.value === 1) {
+        if (step.value === 1 && cameraOn.value === false) {
+          getModel()
           getCamera()
+        }
+      })
+
+      onUpdated(() => {
+        if (step.value === 2 && audioStream.value === null) {
+          getMIC()
+        }
+        if (step.value === 3) {
+          console.log('save')
         }
       })
 
       return {
         router,
         step,
-        finishCaptureFace,
+        faceStep,
+        faceMessage,
         getCamera,
+        reCapture,
+        finishCapture,
         video,
+        model,
+        canvas,
         cameraOn,
+        captureFace,
         voiceMessage,
         recordVoice,
-        audioStep,
+        voiceStep,
         stopRecord,
         audioSource,
         audioBlob,
@@ -176,6 +239,7 @@
 
 <style lang="scss" scoped>
   @import "@/assets/style/color.scss";
+
 
   .issue {
     background: rgb(109,143,201);
@@ -207,10 +271,11 @@
       align-items: center;
       gap: 1rem;
 
-      .button-box {
-        display: flex;
-        gap: 2rem;
-      }
+    }
+    
+    .button-box {
+      display: flex;
+      gap: 2rem;
     }
 
     .loading-box {
