@@ -19,20 +19,26 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	// spring
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// web3j
+	implementation 'org.web3j:core:4.8.7'
+
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	runtimeOnly 'mysql:mysql-connector-java'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 
 	/* aws rekognition dependency */
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-rekognition
 	implementation group: 'com.amazonaws', name: 'aws-java-sdk-rekognition', version: '1.12.99'
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws'
+//	implementation 'org.springframework.cloud:spring-cloud-starter-aws'
 
 	/* SWAGGER */
 	implementation group: 'io.swagger', name: 'swagger-annotations', version: '1.6.2'
@@ -40,6 +46,16 @@ dependencies {
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
 	compile group: 'org.json', name: 'json', version: '20160810'
+
+	// test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// aws s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// database
+	runtimeOnly 'mysql:mysql-connector-java'
+	runtimeOnly 'com.h2database:h2'
 }
 
 dependencyManagement {

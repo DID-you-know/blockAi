@@ -4,9 +4,9 @@
 
 <script>
   export default {
-    name: 'Button',
+    name: 'FormButton',
     props: {
-      value: String
+      value: String,
     }
   }
 </script>
@@ -17,9 +17,10 @@
   button {
     background-color: $primary;
     color: $white;
-    padding: 1rem 1.3rem;
-    border-radius: 3rem;
-    box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 20px;
 
     &:hover {
       background-color: $primary-hover;

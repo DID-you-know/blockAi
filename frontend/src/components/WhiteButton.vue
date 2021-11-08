@@ -4,7 +4,7 @@
 
 <script>
   export default {
-    name: 'Button',
+    name: 'WhiteButton',
     props: {
       value: String
     }
@@ -15,14 +15,13 @@
   @import "@/assets/style/color.scss";
 
   button {
-    background-color: $primary;
-    color: $white;
+    background-color: $white;
+    color: $primary;
     padding: 1rem 1.3rem;
-    border-radius: 3rem;
-    box-shadow: 2px 2px 6px 2px rgba(0, 0, 0, 0.2);
+    border-radius: 1rem;
 
     &:hover {
-      background-color: $primary-hover;
+      background-color: $white;
     }
   }
 </style>

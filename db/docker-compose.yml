@@ -1,0 +1,19 @@
+version: '3.6'
+
+services:
+  db:
+    image: mysql
+    container_name: mysql
+    restart: always
+    ports:
+     - 3306:3306
+    env_file: .env
+    environment:
+      TZ: Asia/Seoul
+    command:
+      - --character-set-client-handshake=FALSE
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d
+      - /var/lib/mysql:/var/lib/mysql

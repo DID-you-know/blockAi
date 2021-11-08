@@ -1,4 +1,4 @@
-package com.a506.blockai.configuration;
+package com.a506.blockai.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 //@ConfigurationProperties("aws")
