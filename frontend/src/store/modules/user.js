@@ -1,6 +1,5 @@
 const state = {
-  step: 1,
-  userType: ''
+  isIssued: false
 }
 
 const actions = {
@@ -8,12 +7,7 @@ const actions = {
 }
 
 const mutations = {
-  INCREASE_STEP(state) {
-    state.step += 1
-  },
-  SET_USERTYPE(state, payload) {
-    state.userType = payload
-  }
+  
 }
 
 const getters = {
