@@ -51,6 +51,7 @@
       </div>
       <WhiteButton value="신분증명 조회하기" @click="router.push({ name: 'home' })"/>
     </template>
+    <canvas ref="faceCanvas" hidden></canvas>
   </div>
 </template>
 
@@ -62,6 +63,7 @@
   import * as blazeface from '@tensorflow-models/blazeface'
   import '@tensorflow/tfjs-backend-webgl'
   import '@tensorflow/tfjs'
+  import AWS from 'aws-sdk'
 
 
   export default {
@@ -83,7 +85,7 @@
       const model = ref(null)
       const predictions = ref(null)
       const canvas = ref(null)
-      // const userFace = ref(null)
+      const faceCanvas = ref(null)
       const getModel = async () => {
         model.value = Object.freeze(await blazeface.load())
       }
@@ -93,14 +95,33 @@
 
         predictions.value = await model.value.estimateFaces(canvas.value, false)
 
+        const width = predictions.value[0].bottomRight[0] - predictions.value[0].topLeft[0]
+        const height = predictions.value[0].bottomRight[1] - predictions.value[0].topLeft[1]
+
+        faceCanvas.value.width = width
+        faceCanvas.value.height = height
+
+        const ctx2 = faceCanvas.value.getContext('2d')
+        ctx2.drawImage(
+          canvas.value, 
+          predictions.value[0].topLeft[0], 
+          predictions.value[0].topLeft[1], 
+          width, 
+          height,
+          0,
+          0,
+          width, 
+          height
+        )
+
         ctx.beginPath()
         ctx.lineWidth = '4'
         ctx.strokeStyle = 'rgb(0, 255, 0)'
         ctx.rect(
           predictions.value[0].topLeft[0],
           predictions.value[0].topLeft[1],
-          predictions.value[0].bottomRight[0] - predictions.value[0].topLeft[0],
-          predictions.value[0].bottomRight[1] - predictions.value[0].topLeft[1]
+          width,
+          height
         )
         ctx.stroke()
 
@@ -171,6 +192,14 @@
           mediaRecorder.value.onstop = () => {
             audioBlob.value = new Blob(chunks.value, { type: 'audio/wav' })
             chunks.value = []
+
+            // base64 encode
+            var reader = new FileReader();
+            reader.readAsDataURL(audioBlob.value);
+            reader.onloadend = function () {
+              audioBlob.value = reader.result;
+            }
+              
             audioSource.value = window.URL.createObjectURL(audioBlob.value)
           }
         }
@@ -195,6 +224,43 @@
         voiceStep.value = 1
       }
 
+      // 생체데이터 저장
+      const faceImageUpload = async () => {
+        // S3 설정
+        AWS.config.update({
+          accessKeyId: process.env.VUE_APP_AWS_ACCESS_KEY,
+          secretKey: process.env.VUE_APP_AWS_SECRET_ACCESS_KEY,
+          region: process.env.VUE_APP_BUCKETREGION,
+          credentials: new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: process.env.VUE_APP_IDENTITYPOOLID
+          })
+        })
+        const s3 = new AWS.S3({
+          apiVersion: "2006-03-01",
+          params: { Bucket: process.env.VUE_APP_ALBUMBUCKETNAME }
+        })
+
+        // canvas to blob
+        const base64 = faceCanvas.value.toDataURL('image/jpeg', 1.0)
+        const base64Response = await fetch(base64)
+        const blob = await base64Response.blob()
+
+        console.log(s3)
+        // 이미지 업로드
+        const upload = new AWS.S3.ManagedUpload({
+          params: {
+            Bucket: process.env.VUE_APP_ALBUMBUCKETNAME,
+            Key: '얼굴사진테스트.jpg',
+            Body: blob
+          }
+        })
+        const promise = upload.promise()
+        promise.then((data) => {
+          console.log('success', data)
+        }, (err) => {
+          console.log('error', err)
+        })
+      }
 
 
       onMounted(() => {
@@ -209,13 +275,14 @@
           getMIC()
         }
         if (step.value === 3) {
-          console.log('save')
+          faceImageUpload()
         }
       })
 
       return {
         router,
         step,
+        faceCanvas,
         faceStep,
         faceMessage,
         getCamera,
@@ -233,7 +300,7 @@
         audioSource,
         audioBlob,
         reRecord,
-        finishRecord
+        finishRecord,
       }
     }
   }
