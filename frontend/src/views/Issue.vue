@@ -63,7 +63,8 @@
   import * as blazeface from '@tensorflow-models/blazeface'
   import '@tensorflow/tfjs-backend-webgl'
   import '@tensorflow/tfjs'
-  import AWS from 'aws-sdk'
+  import usersApi from '@/api/users'
+  // import AWS from 'aws-sdk'
 
 
   export default {
@@ -86,8 +87,12 @@
       const predictions = ref(null)
       const canvas = ref(null)
       const faceCanvas = ref(null)
+      const faceBase64 = ref(null)
       const getModel = async () => {
         model.value = Object.freeze(await blazeface.load())
+        const ctx = canvas.value.getContext('2d')
+        ctx.drawImage(video.value, 0, 0, 640, 480)
+        predictions.value = await model.value.estimateFaces(canvas.value, false)
       }
       const captureFace = async () => {
         const ctx = canvas.value.getContext('2d')
@@ -113,6 +118,7 @@
           width, 
           height
         )
+        faceBase64.value = faceCanvas.value.toDataURL('image/jpeg', 1.0)
 
         ctx.beginPath()
         ctx.lineWidth = '4'
@@ -161,6 +167,13 @@
         nextStep()
         reCapture()
       }
+
+      onMounted(() => {
+        if (step.value === 1 && cameraOn.value === false) {
+          getModel()
+          getCamera()
+        }
+      })
 
       // 음성 등록
       const voiceStep = ref(1)
@@ -225,59 +238,87 @@
       }
 
       // 생체데이터 저장
-      const faceURL = ref(null)
-      const faceImageUpload = async () => {
-        // S3 설정
-        AWS.config.update({
-          accessKeyId: process.env.VUE_APP_AWS_ACCESS_KEY,
-          secretKey: process.env.VUE_APP_AWS_SECRET_ACCESS_KEY,
-          region: process.env.VUE_APP_BUCKETREGION,
-          credentials: new AWS.CognitoIdentityCredentials({
-            IdentityPoolId: process.env.VUE_APP_IDENTITYPOOLID
-          })
-        })
-        const s3 = new AWS.S3({
-          apiVersion: "2006-03-01",
-          params: { Bucket: process.env.VUE_APP_ALBUMBUCKETNAME }
-        })
+      // const facePath = ref(null)
+      // const faceImageUpload = async () => {
+      //   // S3 설정
+      //   AWS.config.update({
+      //     accessKeyId: process.env.VUE_APP_AWS_ACCESS_KEY,
+      //     secretKey: process.env.VUE_APP_AWS_SECRET_ACCESS_KEY,
+      //     region: process.env.VUE_APP_BUCKETREGION,
+      //     credentials: new AWS.CognitoIdentityCredentials({
+      //       IdentityPoolId: process.env.VUE_APP_IDENTITYPOOLID
+      //     })
+      //   })
+      //   const s3 = new AWS.S3({
+      //     apiVersion: "2006-03-01",
+      //     params: { Bucket: process.env.VUE_APP_ALBUMBUCKETNAME }
+      //   })
 
-        // canvas to blob
-        const base64 = faceCanvas.value.toDataURL('image/jpeg', 1.0)
-        const base64Response = await fetch(base64)
-        const blob = await base64Response.blob()
+      //   // canvas to blob
+      //   const base64 = faceCanvas.value.toDataURL('image/jpeg', 1.0)
+      //   const base64Response = await fetch(base64)
+      //   const blob = await base64Response.blob()
 
-        console.log(s3)
-        // 이미지 업로드
-        const upload = new AWS.S3.ManagedUpload({
-          params: {
-            Bucket: process.env.VUE_APP_ALBUMBUCKETNAME,
-            Key: '얼굴사진테스트.jpg',
-            Body: blob
-          }
-        })
-        const promise = upload.promise()
-        promise.then((data) => {
-          console.log('success', data)
-          faceURL.value = data.Location
-        }, (err) => {
-          console.log('error', err)
-        })
+      //   console.log(s3)
+      //   // 이미지 업로드
+      //   const upload = new AWS.S3.ManagedUpload({
+      //     params: {
+      //       Bucket: process.env.VUE_APP_ALBUMBUCKETNAME,
+      //       Key: '얼굴사진테스트.jpg',
+      //       Body: blob
+      //     }
+      //   })
+      //   const promise = upload.promise()
+      //   promise.then((data) => {
+      //     console.log('success', data)
+      //     facePath.value = data.Location
+      //   }, (err) => {
+      //     console.log('error', err)
+      //   })
+      // }
+
+      const faceIssue = async (userId, faceData) => {
+        try {
+          const response = await usersApi.faceIssue(userId, faceData)
+          console.log(response.data)
+          facePath.value = response.data.facePath
+        } catch (error) {
+          console.log(error)
+        }
       }
 
-
-      onMounted(() => {
-        if (step.value === 1 && cameraOn.value === false) {
-          getModel()
-          getCamera()
+      const voiceId = ref(null)
+      const voiceIssue = async (userId, voiceData) => {
+        try {
+          const response = await usersApi.voiceIssue(userId, voiceData)
+          console.log(response.data)
+          voiceId.value = response.data.voiceId
+        } catch (error) {
+          console.log(error)
         }
-      })
+      }
+
+      const didIssue = async (userId, didData) => {
+        try {
+          const response = await usersApi.didIssue(userId, didData)
+          console.log(response.data)
+        } catch (error) {
+          console.log(error)
+        }
+      }
 
       onUpdated(() => {
         if (step.value === 2 && audioStream.value === null) {
           getMIC()
         }
         if (step.value === 3) {
-          faceImageUpload()
+          // faceImageUpload()
+          faceIssue(1, { voice: faceBase64.value })
+          voiceIssue(1, { voice: audioBlob.value })
+          didIssue(1, { facePath: facePath.value, voiceId: voiceId.value })
+          // faceIssue(userId, { voice: faceBase64.value })
+          // voiceIssue(userId, { voice: audioBlob.value })
+          // didIssue(userId, { facePath: facePath.value, voiceId: voiceId.value })
         }
       })
 
