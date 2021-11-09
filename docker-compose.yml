@@ -40,4 +40,4 @@ services:
       - db
 
 networks:
-  blockai
+  blockai:
