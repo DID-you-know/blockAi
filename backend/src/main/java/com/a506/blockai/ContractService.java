@@ -5,12 +5,14 @@ import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.protocol.Web3j;
 import org.web3j.protocol.admin.Admin;
 import org.web3j.protocol.admin.methods.response.PersonalUnlockAccount;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Convert;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -29,11 +31,20 @@ public class ContractService {
     // hardcording because of testing
     private String pwd = "0xaca10c42b1fe8262a88f696e5c389a895f1091e8bec36a3f41a8fbd47d3f1f1b";
 
-    private Admin web3j = null;
+    private Web3j web3j = null;
 
     public ContractService() {
-        web3j = Admin.build(new HttpService("https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"));
+        web3j = Web3j.build(new HttpService("https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"));
     }
+
+    public String test() throws IOException {
+        Web3ClientVersion web3ClientVersion = null;
+        web3ClientVersion = web3j.web3ClientVersion().send();
+        String clientVersion = web3ClientVersion.getWeb3ClientVersion();
+        System.out.println(clientVersion);
+        return clientVersion;
+    }
+
 
     public List<Type> ethCall(Function function) throws IOException {
         //1. transaction 제작
@@ -62,18 +73,20 @@ public class ContractService {
         EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
                 from, DefaultBlockParameterName.LATEST).sendAsync().get();
 
-        EthGetBalance ethGetBalance = web3j.ethGetBalance(from, DefaultBlockParameterName.LATEST)
-                .sendAsync()
-                .get();
-        BigInteger wei = ethGetBalance.getBalance();
+        // 계정 이더 잔액 조회
+//        EthGetBalance ethGetBalance = web3j.ethGetBalance(from, DefaultBlockParameterName.LATEST)
+//                .sendAsync()
+//                .get();
+//        BigInteger wei = ethGetBalance.getBalance();
+//        System.out.println(Convert.fromWei(wei.toString() , Convert.Unit.ETHER).toString());
 
         // 2. Account Lock 해제
-        PersonalUnlockAccount personalUnlockAccount = web3j.personalUnlockAccount(from, pwd).send();
+      //  PersonalUnlockAccount personalUnlockAccount = web3j.personalUnlockAccount(from, pwd).send();
 
-        if (personalUnlockAccount.accountUnlocked()) { // unlock 일때
+      //  if (personalUnlockAccount.accountUnlocked()) { // unlock 일때
 
             BigInteger nonce = ethGetTransactionCount.getTransactionCount();
-
+        System.out.println(nonce);
             // 3. Transaction 값 제작
             Transaction transaction = Transaction.createFunctionCallTransaction(from, nonce, Transaction.DEFAULT_GAS,
                     BigInteger.valueOf(1000000L), contract, FunctionEncoder.encode(function));
@@ -98,9 +111,9 @@ public class ContractService {
                 String hash = transactionResponse.getTransactionHash();
                 return hash;
             }
-        } else {
-            throw new PersonalLockException("check ethereum personal Lock");
-        }
+//        } else {
+//            throw new PersonalLockException("check ethereum personal Lock");
+//        }
     }
 
     public TransactionReceipt getReceipt(String transactionHash) throws IOException {

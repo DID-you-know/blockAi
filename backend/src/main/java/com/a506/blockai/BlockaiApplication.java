@@ -29,6 +29,8 @@ public class BlockaiApplication {
 //		String address = contractService.sha256(LocalDateTime.now().toString() + id).substring(0,42);
 //		System.out.println(address);
 //
+//		System.out.println(contractService.test());
+//
 //		List<Type> inputParameters = new ArrayList<>();
 //		inputParameters.add(new Utf8String("faceData"));
 //		inputParameters.add(new Utf8String("voiceData"));
@@ -40,7 +42,9 @@ public class BlockaiApplication {
 //		// 2. sendTransaction
 //		String txHash = contractService.ethSendTransaction(function);
 //		System.out.println(txHash);
-//		// 3. getReceipt
+
+
+		// 3. getReceipt
 //		TransactionReceipt receipt = contractService.getReceipt(txHash);
 //		System.out.println("receipt = " + receipt);
 	}
