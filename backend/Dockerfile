@@ -3,6 +3,17 @@ FROM openjdk:11
 # HOST PC와 공유할 폴더 설정
 VOLUME /tmp
 
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
+RUN chmod +x ./gradlew
+RUN ./gradlew build
+
+
+FROM openjdk:11-jre-slim
+
 # 도커 내에서 사용될 변수의 값 설정
 ARG JAR_FILE=build/libs/blockai-0.0.1-SNAPSHOT.jar
 
