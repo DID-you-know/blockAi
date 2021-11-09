@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img @click="pushHome" class="logo" src="@/assets/image/logo.jpg" alt="logo">
+    <img @click="pushHome" class="logo" src="@/assets/image/logo.png" alt="logo">
   </div>
 </template>
 

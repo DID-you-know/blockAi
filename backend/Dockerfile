@@ -3,8 +3,16 @@ FROM openjdk:11
 # HOST PC와 공유할 폴더 설정
 VOLUME /tmp
 
-# 도커 컨테이너 외부에 노출할 포트 지정
-EXPOSE 8080
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
+RUN chmod +x ./gradlew
+RUN ./gradlew build
+
+
+FROM openjdk:11-jre-slim
 
 # 도커 내에서 사용될 변수의 값 설정
 ARG JAR_FILE=build/libs/blockai-0.0.1-SNAPSHOT.jar
@@ -14,9 +22,3 @@ COPY ${JAR_FILE} app.jar
 
 # CMD와 유사하나, 디폴트로 수행될 명령은 ENTRYPOINT를 사용해 지정
 ENTRYPOINT ["java", "-jar", "/app.jar"]
-
-#ARG DEBIAN_FRONTEND=noninteractive
-
-# 도커 timezone 변경
-ENV TZ=Asia/Seoul
-RUN apt-get install -y tzdata
