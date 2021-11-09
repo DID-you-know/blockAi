@@ -277,6 +277,7 @@
       //   })
       // }
 
+      const facePath = ref(null)
       const faceIssue = async (userId, faceData) => {
         try {
           const response = await usersApi.faceIssue(userId, faceData)
@@ -298,27 +299,36 @@
         }
       }
 
+      const didIssueSuccess = ref(false)
       const didIssue = async (userId, didData) => {
         try {
           const response = await usersApi.didIssue(userId, didData)
           console.log(response.data)
+          didIssueSuccess.value = true
         } catch (error) {
           console.log(error)
+          didIssueSuccess.value = false
+          console.log('didIssue')
         }
       }
 
-      onUpdated(() => {
+      onUpdated(async () => {
         if (step.value === 2 && audioStream.value === null) {
           getMIC()
         }
         if (step.value === 3) {
           // faceImageUpload()
-          faceIssue(1, { voice: faceBase64.value })
-          voiceIssue(1, { voice: audioBlob.value })
-          didIssue(1, { facePath: facePath.value, voiceId: voiceId.value })
+          await faceIssue(1, { voice: faceBase64.value })
+          await voiceIssue(1, { voice: audioBlob.value })
+          await didIssue(1, { facePath: facePath.value, voiceId: voiceId.value })
           // faceIssue(userId, { voice: faceBase64.value })
           // voiceIssue(userId, { voice: audioBlob.value })
           // didIssue(userId, { facePath: facePath.value, voiceId: voiceId.value })
+          if (didIssueSuccess.value) {
+            step.value += 1
+          } else {
+            console.log('발급에 실패했습니다.')
+          }
         }
       })
 
