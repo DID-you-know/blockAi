@@ -38,6 +38,6 @@ services:
     restart: unless-stopped
     depends_on:
       - db
-	
+
 networks:
   blockai
