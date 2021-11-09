@@ -21,4 +21,8 @@ cloud:
     s3:
       bucket: blockai-bucket
 
-
+ethereum:
+  from: "0x3861ce91ED1b8dE311F025923F711EA07a8501c1"
+  contract: "0x94aA46Fc81D4f59f01048319417d074803f067d4"
+  networkUrl: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
+  privateKey: "0xaca10c42b1fe8262a88f696e5c389a895f1091e8bec36a3f41a8fbd47d3f1f1b"
