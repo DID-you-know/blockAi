@@ -12,11 +12,11 @@ cloud:
     stack:
       auto: false
     region:
-      static: ap-northeast-2
+      static: ${AWS_REGION}
     credentials:
       instance-profile: true
-      access-key: AKIARRTWNAL74NM4XSMZ
-      secret-key: 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
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
 
     s3:
       bucket: blockai-bucket
