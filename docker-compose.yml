@@ -16,8 +16,8 @@ services:
       - ./db/initdb.d:/docker-entrypoint-initdb.d
       - /var/lib/mysql:/var/lib/mysql
 
-  frontend:
-    container_name: blockai_front
+  front:
+    container_name: blockai-front
     build:
       dockerfile: Dockerfile
       context: ./frontend
@@ -27,10 +27,10 @@ services:
       - blockai
     restart: unless-stopped
     depends_on:
-      - backend
+      - back
 
-  backend:
-    container_name: blockai_back
+  back:
+    container_name: blockai-back
     build:
       dockerfile: Dockerfile
       context: ./backend
