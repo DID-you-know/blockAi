@@ -17,12 +17,13 @@ services:
       - /var/lib/mysql:/var/lib/mysql
 
   front:
-    container_name: blockai-front
+    container_name: blockai_front
     build:
       dockerfile: Dockerfile
       context: ./frontend
     ports:
      - 3000:80
+    env_file: .env
     networks:
       - blockai
     restart: unless-stopped
@@ -30,12 +31,12 @@ services:
       - back
 
   back:
-    container_name: blockai-back
+    container_name: blockai_back
     build:
       dockerfile: Dockerfile
       context: ./backend
     ports:
-     - 8080:8080
+     - 8080:80
     env_file: .env
     networks:
       - blockai
