@@ -13,7 +13,7 @@ cloud:
     stack:
       auto: false
     region:
-      static: ${AWS_REGION}
+      static: ap-northeast-2
     credentials:
       instance-profile: true
     s3:
