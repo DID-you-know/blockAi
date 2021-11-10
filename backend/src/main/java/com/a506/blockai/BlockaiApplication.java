@@ -1,5 +1,6 @@
 package com.a506.blockai;
 
+import com.a506.blockai.api.service.EthereumService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.web3j.abi.datatypes.Address;
@@ -11,10 +12,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @SpringBootApplication
@@ -39,7 +37,7 @@ public class BlockaiApplication {
 //		inputParameters.add(new Address("0x3861ce91ED1b8dE311F025923F711EA07a8501c1"));
 //
 //		// 1. 호출하고자 하는 function 세팅[functionName, parameters]
-//		Function function = new Function("addCertificate", inputParameters, Collections.emptyList());
+//		Function function = new Function("addDID", inputParameters, Collections.emptyList());
 //
 //		// 2. sendTransaction
 //		String txHash = contractService.ethSendRawTransaction(function);
@@ -48,7 +46,6 @@ public class BlockaiApplication {
 //
 //		TransactionReceipt receipt = contractService.getReceipt(txHash);
 //		System.out.println("receipt = " + receipt);
-
 
 		// RSA키 생성 test
 //		RSAService rsaService = new RSAService();

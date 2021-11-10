@@ -76,7 +76,7 @@ public class ContractService {
         EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).send();
 
         if(ethSendTransaction.hasError()) {
-            System.out.println(ethSendTransaction.getError().getMessage());
+            System.out.println("Transcation error : " + ethSendTransaction.getError().getMessage());
         }
         String hash = ethSendTransaction.getTransactionHash();
         return hash;
@@ -93,6 +93,7 @@ public class ContractService {
         //3. 결과값 decode
         List<Type> decode = FunctionReturnDecoder.decode(ethCall.getResult(),
                 function.getOutputParameters());
+
 
 //        System.out.println("ethCall.getResult() = " + ethCall.getResult());
 //        System.out.println("getValue = " + decode.get(0).getValue());
