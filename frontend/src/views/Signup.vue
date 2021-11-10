@@ -3,7 +3,7 @@
     <section>
       <div class="form">
         <h1 class="fs-3 fw-bold">회원가입</h1>
-        <Input label="아이디" :error="emailError" :paste="false" v-model="email" @input="setEmail"/>
+        <Input label="이메일" :error="emailError" :paste="false" v-model="email" @input="setEmail"/>
         <Input label="비밀번호" :error="passwordError" :paste="false" type="password" v-model="password" @input="setPassword"/>
         <div class="form-items">
           <Input label="이름" :error="nameError" :paste="false" v-model="name" @input="setName"/>
@@ -82,7 +82,7 @@
         } else if (checkWhitespace(email.value)) {
           emailError.value = '이메일은 빈 칸을 포함할 수 없습니다.'
         } else if (!pattern.test(email.value)) {
-          emailError.value = '이메일은 영문, 숫자 조합으로 4~20자 입니다.'
+          emailError.value = '잘못된 이메일 형식입니다.'
         } else {
           emailError.value = ''
         }
