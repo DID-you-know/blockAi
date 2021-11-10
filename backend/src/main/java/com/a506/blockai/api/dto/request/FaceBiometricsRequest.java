@@ -6,13 +6,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
-public class BiometricsRequest {
+public class FaceBiometricsRequest {
 
     private String face;
-    private String voice;
 
-    public BiometricsRequest(String face, String voice) {
+    public FaceBiometricsRequest(String face) {
         this.face = face;
-        this.voice = voice;
     }
 }
