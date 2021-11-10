@@ -1,9 +1,10 @@
 import _axios from './interceptor'
+import axios from 'axios'
 
 
 export default {
   sendSMS(phoneNumber, randomCode) {
-    return _axios({
+    return axios({
       url: '/users/sms',
       method: 'post',
       data: {
@@ -13,10 +14,17 @@ export default {
     })
   },
   signup(userInfo) {
-    return _axios({
+    return axios({
       url: '/users',
       method: 'post',
       data: userInfo
+    })
+  },
+  login(credentials) {
+    return axios({
+      url: '/users/login',
+      method: 'post',
+      data: credentials
     })
   },
   faceIssue(userId, faceData) {

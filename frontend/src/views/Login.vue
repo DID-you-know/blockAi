@@ -6,7 +6,7 @@
           <Logo/>
           <h1 class="fs-3 fw-bold">로그인</h1>
         </div>
-        <Input label="아이디" v-model="username" @input="setUsername"/>
+        <Input label="이메일" v-model="email" @input="setEmail"/>
         <Input label="비밀번호" type="password" v-model="password" @input="setPassword"/>
         <FormButton value="로그인" @click="submit"/>
       </div>
@@ -31,6 +31,7 @@
   import FormButton from '@/components/FormButton'
   import Logo from '@/components/Logo'
   import { ref } from 'vue'
+  import { useStore } from 'vuex'
 
 
   export default {
@@ -41,11 +42,13 @@
       Logo
     },
     setup() {
-      // 아이디
-      const username = ref('')
-      const setUsername = (event) => {
+      const store = useStore()
+
+      // 이메일
+      const email = ref('')
+      const setEmail = (event) => {
         event.target.value = event.target.value.trim()
-        username.value = event.target.value
+        email.value = event.target.value
       }
 
       // 비밀번호
@@ -55,14 +58,19 @@
         password.value = event.target.value
       }
 
-      // 로그인 버튼
+      // 로그인 api 호출
       const submit = () => {
         console.log('submit')
+        const credentials = {
+          email: email.value,
+          password: password.value
+        }
+        store.dispatch('users/getAccessToken', credentials)
       }
 
       return {
-        username,
-        setUsername,
+        email,
+        setEmail,
         password,
         setPassword,
         submit
