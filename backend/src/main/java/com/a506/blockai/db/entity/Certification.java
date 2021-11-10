@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-import java.sql.Time;
+import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -21,7 +21,7 @@ import static javax.persistence.FetchType.LAZY;
 @DynamicInsert
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class Certification   {
+public class Certification {
     @Id
     private int id;
 
@@ -30,9 +30,6 @@ public class Certification   {
     @JoinColumn(name = "user_id")     // 연관관계의 주인은 mappedBy X, JoinColumn 사용
     private User user;
 
-    @NotNull
-    private String didAddress;
-
-    @NotNull
-    private Time issuedDate;
+    private String certificatedPlace;
+    private LocalDateTime certificatedDate;
 }

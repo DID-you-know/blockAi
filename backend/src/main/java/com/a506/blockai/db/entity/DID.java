@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-import java.sql.Time;
+import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -32,8 +32,11 @@ public class DID {
     private User user;
 
     @NotNull
-    private String from;
+    private String didAddress;
+
+    private boolean didFlag;
 
     @NotNull
-    private Time certifiedDate;
+    private LocalDateTime issuedDate;
+
 }
