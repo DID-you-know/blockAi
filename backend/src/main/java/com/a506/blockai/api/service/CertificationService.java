@@ -6,6 +6,9 @@ import com.a506.blockai.db.entity.Certification;
 import com.a506.blockai.db.entity.DID;
 import com.a506.blockai.db.repository.CertificationRepository;
 import com.a506.blockai.db.repository.DIDRepository;
+import com.a506.blockai.exception.DidExpiredException;
+import com.a506.blockai.exception.DidNotFoundException;
+import com.a506.blockai.exception.DidNotYetIssuedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.datatypes.Address;
@@ -30,11 +33,11 @@ public class CertificationService {
 
     public void certifyBiometrics(int userId, BiometricsCertificateRequest biometricsCertificateRequest) throws IOException {
         DID did = didRepository.findById(userId)
-                .orElseThrow();
+                .orElseThrow(DidNotFoundException::new);
 
         // DID 발급 여부 확인
         if (!did.isDidFlag()) {
-            throw new IOException();
+            throw new DidNotYetIssuedException();
         }
 
         String didAddress = did.getDidAddress();
@@ -45,7 +48,7 @@ public class CertificationService {
 
         // DID 만료 여부 확인
         if (expiryTime.isBefore(LocalDateTime.now())) {
-            throw new IOException();
+            throw new DidExpiredException();
         }
 
         // 얼굴 유사도
