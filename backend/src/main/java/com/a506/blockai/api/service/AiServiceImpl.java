@@ -21,11 +21,14 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class AiServiceImpl implements AiService{
 
-    private final String accessKey = "c6b2b6cec641496d978361d0ba5343e9";
-    final private String endPoint = "https://westus.api.cognitive.microsoft.com";
+    private final String accessKey ;
+    final private String endPoint = "https://westus.api.cognitive.microsoft.com/";
 
     @Override
     public String createProfile() {
+
+        System.out.println("key"+accessKey);
+
         String profileId = "";
 
         //http통신
@@ -39,7 +42,7 @@ public class AiServiceImpl implements AiService{
         //request body
         String requestBody = "{\"locale\" : \"en-us\"}";
         //나머지 url
-        String resUrl = endPoint+"/speaker/identification/v2.0/text-independent/profiles";
+        String resUrl = endPoint+"/speaker/verification/v2.0/text-independent/profiles";
 
         try{
             url = new URL(resUrl);
@@ -111,7 +114,7 @@ public class AiServiceImpl implements AiService{
         String responseCode="";
 
         //나머지 url
-        String resUrl = endPoint+"/speaker/identification/v2.0/text-independent/profiles/"+voiceId+"/enrollments";
+        String resUrl = endPoint+"speaker/verification/v2.0/text-independent/profiles/"+voiceId+"/enrollments";
 
         try{
             url = new URL(resUrl);
@@ -191,10 +194,10 @@ public class AiServiceImpl implements AiService{
         String returnData = "";
 
         //나머지 url
-        String resUrl = endPoint+"/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds=";
+        String resUrl = endPoint+"speaker/verification/v2.0/text-independent/profiles/"+voiceId+"/verify";
 
         try{
-            url = new URL(resUrl+voiceId);
+            url = new URL(resUrl);
             conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("POST");
