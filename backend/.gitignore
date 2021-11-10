@@ -11,6 +11,9 @@ application-aws.yml
 # ethereum key
 application-ethereum.yml
 
+# azure key
+application-azure.yml
+
 ### STS ###
 .apt_generated
 .classpath
