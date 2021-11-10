@@ -4,9 +4,7 @@ server:
 spring:
   profiles:
     active: local
-    include: aws, ethereum
-
----
+    include: aws, ethereum, azure
 
 cloud:
   aws:
