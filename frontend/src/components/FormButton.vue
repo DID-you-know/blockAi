@@ -1,5 +1,5 @@
 <template>
-  <button class="fs-1">{{ value }}</button>
+  <button class="fs-1" :disabled="disabled">{{ value }}</button>
 </template>
 
 <script>
@@ -7,7 +7,11 @@
     name: 'FormButton',
     props: {
       value: String,
-    }
+      disabled: {
+        type: Boolean,
+        default: false
+      }
+    },
   }
 </script>
 
@@ -22,8 +26,13 @@
     border-radius: 10px;
     font-size: 20px;
 
-    &:hover {
+    &:hover:enabled {
       background-color: $primary-hover;
+    }
+
+    &:disabled {
+      background-color: $secondary;
+      cursor: default;
     }
   }
 </style>
