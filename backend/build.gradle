@@ -16,6 +16,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://repo.spring.io/libs-milestone'}
 }
 
 dependencies {
@@ -36,8 +37,17 @@ dependencies {
 
 
 	/* aws rekognition dependency */
+	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
+	implementation group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.12.105'
+	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
+	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.105'
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-rekognition
 	implementation group: 'com.amazonaws', name: 'aws-java-sdk-rekognition', version: '1.12.99'
+	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-aws-context
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-aws-context', version: '2.2.4.RELEASE'
+	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-core
+	implementation group: 'com.amazonaws', name: 'aws-java-sdk-core', version: '1.12.57'
+
 //	implementation 'org.springframework.cloud:spring-cloud-starter-aws'
 
 	/* SWAGGER */
@@ -45,13 +55,14 @@ dependencies {
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
-	compile group: 'org.json', name: 'json', version: '20160810'
+//	compile group: 'org.json', name: 'json', version: '20160810'
 
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// aws s3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 
 	// database
 	runtimeOnly 'mysql:mysql-connector-java'

@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: local
+    active: dev
 
 ---
 
@@ -15,10 +15,13 @@ cloud:
       static: ap-northeast-2
     credentials:
       instance-profile: true
-      access-key: AKIARRTWNAL74NM4XSMZ
-      secret-key: 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
-
     s3:
       bucket: blockai-bucket
 
 
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
