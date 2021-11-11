@@ -20,7 +20,7 @@ public class BlockaiApplication {
 
 	public static void main(String[] args) throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 
-		 SpringApplication.run(BlockaiApplication.class, args);
+//		 SpringApplication.run(BlockaiApplication.class, args);
 
 		// DID 발급 테스트
 //		ContractService contractService = new ContractService();
@@ -32,9 +32,9 @@ public class BlockaiApplication {
 //		System.out.println(contractService.test());
 //
 //		List<Type> inputParameters = new ArrayList<>();
-//		inputParameters.add(new Utf8String("faceData"));
-//		inputParameters.add(new Utf8String("voiceData"));
-//		inputParameters.add(new Address("0x3861ce91ED1b8dE311F025923F711EA07a8501c1"));
+//		inputParameters.add(new Utf8String("faceData3"));
+//		inputParameters.add(new Utf8String("voiceData3"));
+//		inputParameters.add(new Address("0x4c9Ba90B899E3fc63A7609079abCFE89e3Be5719"));
 //
 //		// 1. 호출하고자 하는 function 세팅[functionName, parameters]
 //		Function function = new Function("addDID", inputParameters, Collections.emptyList());
