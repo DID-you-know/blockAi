@@ -17,23 +17,4 @@ import java.io.IOException;
 @RestController
 public class AwsRekognitionRestController {
 
-//    private AwsRekognitionService awsRekognitionService;
-//
-//    public AwsRekognitionRestController(AwsRekognitionService awsRekognitionService) {
-//        this.awsRekognitionService = awsRekognitionService;
-//    }
-//
-//    @PostMapping("/images/moderation-labels")
-//    public Object detectModerationLabels(@RequestParam MultipartFile image) throws IOException {
-//        return ResponseEntity.ok(awsRekognitionService.detectModerationLabels(image));
-//    }
-
-    @Autowired
-    private DetectFace detectFace;
-
-    @PostMapping("/rekognition")
-    public void detect(@RequestBody @ApiParam(value="encoding된 이미지 문자열") String base64) throws Exception {
-        detectFace .detect(base64);
-    }
-
 }

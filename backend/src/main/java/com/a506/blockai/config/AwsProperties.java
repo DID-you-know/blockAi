@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @Getter
 @ConstructorBinding
 @RequiredArgsConstructor
-@ConfigurationProperties("cloud.aws.credentials")
+@ConfigurationProperties("aws")
 public final class AwsProperties {
 
     private final String accessKey;
