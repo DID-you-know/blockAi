@@ -44,7 +44,11 @@ public class User {
     private LocalDateTime created_at;
 
     @NotNull
-    private String security_key;
+
+    private String public_key;
+
+    @NotNull
+    private String private_key;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Certification> certification = new ArrayList<>();
