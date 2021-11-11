@@ -1,6 +1,6 @@
 <template>
   <div class="body issue">
-    <Progressbar :step="step" class="progressbar"/>
+    <Progressbar :step="step" :content="['얼굴 등록', '음성 등록', '블록체인 생성', '등록 완료']" class="progressbar"/>
     <template v-if="step === 1">
       <div class="message fs-2">
         {{ faceMessage }}

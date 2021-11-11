@@ -4,10 +4,10 @@
     <div class="circle second"></div>
     <div class="circle third"></div>
     <div class="circle fourth"></div>
-    <div v-if="step === 1" class="pill first">얼굴 등록</div>
-    <div v-if="step === 2" class="pill second">음성 등록</div>
-    <div v-if="step === 3" class="pill third">블록체인 생성</div>
-    <div v-if="step === 4" class="pill fourth">발급 완료</div>
+    <div v-if="step === 1" class="pill first">{{ content[0] }}</div>
+    <div v-if="step === 2" class="pill second">{{ content[1] }}</div>
+    <div v-if="step === 3" class="pill third">{{ content[2] }}</div>
+    <div v-if="step === 4" class="pill fourth">{{ content[3] }}</div>
     <div class="bar"></div>
   </div>
 </template>
@@ -16,7 +16,8 @@
   export default {
     name: 'Progressbar',
     props: {
-      step: Number
+      step: Number,
+      content: Array
     }
   }
 </script>

@@ -3,6 +3,7 @@ import users from '@/api/users'
 
 const state = {
   accessToken: null,
+  isLogin: false,
   userId: null,
   name: null,
   isIssued: false,
@@ -20,6 +21,16 @@ const actions = {
       console.log(error)
     }
   },
+  async getUserId({ commit }, phoneNumber) {
+    try {
+      const response = await users.getUserId(phoneNumber)
+      console.log(response.data)
+      const userId = response.data.userId
+      commit('SET_USER_ID', userId)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   // async getUserInfo({ commit }) {
 
   // }
@@ -28,6 +39,9 @@ const actions = {
 const mutations = {
   SET_ACCESS_TOKEN(state, accessToken) {
     state.accessToken = accessToken
+  },
+  SET_USER_ID(state, userId) {
+    state.userId = userId
   }
 }
 

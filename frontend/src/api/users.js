@@ -27,6 +27,12 @@ export default {
       data: credentials
     })
   },
+  getUserId(phoneNumber) {
+    return axios({
+      url: `/users/phone/${phoneNumber}`,
+      method: 'get'
+    })
+  },
   faceIssue(userId, faceData) {
     return _axios({
       url: `/users/${userId}/face/issue`,
