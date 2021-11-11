@@ -9,6 +9,7 @@ import com.a506.blockai.db.repository.DIDRepository;
 import com.a506.blockai.exception.DidExpiredException;
 import com.a506.blockai.exception.DidNotFoundException;
 import com.a506.blockai.exception.DidNotYetIssuedException;
+import com.a506.blockai.exception.UnauthorizedAccessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.TypeReference;
@@ -65,10 +66,11 @@ public class CertificationService {
         VoiceBiometricsRequest voiceBiometricsRequest = new VoiceBiometricsRequest(biometricsCertificateRequest.getVoice());
         float voiceScore = aiService.identify(voiceCertificateFromBlockchain, voiceBiometricsRequest);
 
-        if (isSamePerson(faceScore, voiceScore)) {
-            Certification certification = null;
-            certificationRepository.save(certification);
+        if (!isSamePerson(faceScore, voiceScore)) {
+            throw new UnauthorizedAccessException();
         }
+        Certification certification = null;
+        certificationRepository.save(certification);
     }
 
     private boolean isSamePerson(float faceScore, float voiceScore) {
