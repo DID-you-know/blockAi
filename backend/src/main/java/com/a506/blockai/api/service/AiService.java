@@ -1,6 +1,7 @@
 package com.a506.blockai.api.service;
 
 import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
+import org.springframework.stereotype.Service;
 
 public interface AiService {
     String createProfile();
