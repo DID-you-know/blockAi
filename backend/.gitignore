@@ -8,6 +8,9 @@ build/
 # AWS accesskey
 application-aws.yml
 
+# dev
+application-dev.yml
+
 # ethereum key
 application-ethereum.yml
 
