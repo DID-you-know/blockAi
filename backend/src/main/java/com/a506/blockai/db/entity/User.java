@@ -9,6 +9,8 @@ import org.hibernate.annotations.DynamicInsert;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)     // PK 생성규칙 설정. AutoIncrement 설정
     private int id;
 
     @NotNull
@@ -35,18 +38,20 @@ public class User {
     private Date birth;
 
     private String phone;
+    private int role;
 
     @NotNull
     private LocalDateTime created_at;
 
     @NotNull
+
     private String public_key;
 
     @NotNull
     private String private_key;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Certification certification;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Certification> certification = new ArrayList<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private DID did;
