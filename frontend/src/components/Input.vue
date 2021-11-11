@@ -1,7 +1,7 @@
 <template>
   <div class="form-item">
     <label class="label fw-light">{{ label }}</label>
-    <input :type="type" :onpaste="() => paste"/>
+    <input :type="type" :onpaste="() => paste" :disabled="disabled" :maxlength="maxlength" :placeholder="placeholder"/>
     <span class="error fw-light">{{ error }}</span>
   </div>
 </template>
@@ -19,7 +19,13 @@
       paste: {
         type: Boolean,
         default: true
-      }
+      },
+      disabled: {
+        type: Boolean,
+        dafault: false
+      },
+      maxlength: Number,
+      placeholder: String
     }
   }
 </script>

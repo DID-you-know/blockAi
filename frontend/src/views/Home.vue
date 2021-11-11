@@ -47,42 +47,41 @@ export default {
 <style lang="scss" scoped>
 @import "@/assets/style/color.scss";
 
-.home {
-  display: flex;
-  padding: 2rem 3rem 0;
-  background-image: linear-gradient($white, $white, $tertiary);
-
-  .intro {
-    flex: 1;
+  .home {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-}
-.intro {
-  flex: 3;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    padding: 2rem 3rem 0;
+    background-image: linear-gradient($white, $white, $tertiary);
+    width: auto;
+    height: 100vh;
 
-  h1 {
-    margin: 1rem;
-  }
+    .intro {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
 
-  .image-container {
-    flex: 1;
-    width: 100%;
-    position: relative;
+      h1 {
+        margin: 1rem;
+      }
 
-    img {
-      min-width: 850px;
+      p {
+        margin: 3rem;
+      }
+    }
+
+    .image-container {
+      flex: 4;
       width: 100%;
-      height: auto;
-      position: absolute;
-      bottom: 0;
+      position: relative;
+      
+      img {
+        min-width: 850px;
+        width: 100%;
+        height: auto;
+        position: absolute;
+        bottom: 0;
+      }
     }
   }
-}
 </style>

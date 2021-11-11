@@ -7,7 +7,7 @@
           신원증명서
         </div>
         <div class="card-body">
-          <div class="card-content">이미지</div>
+          <div class="card-content"><img class="stamp" src="@/assets/image/stamp.png" alt=""></div>
           <div class="card-content fw-light">
             <span class="label">이름</span>
             <span class="value">홍길동</span>
@@ -49,7 +49,7 @@
           신원증명서
         </div>
         <div class="card-body blur">
-          <div class="card-content">이미지</div>
+          <div class="card-content"><img class="stamp" src="@/assets/image/stamp.png" alt=""></div>
           <div class="card-content fw-light">
             <span class="label">이름</span>
             <span class="value">홍길동</span>
@@ -82,7 +82,7 @@
       }
 
       const store = useStore()
-      const isIssued = computed(() => store.state.user.isIssued)
+      const isIssued = computed(() => store.state.users.isIssued)
 
       const router = useRouter()
       const pushIssue = () => router.push({ name: 'issue' })
@@ -133,8 +133,10 @@
         display: flex;
         justify-content: space-around;
         height: 100%;
+        gap: 2rem;
 
         .card-content {
+          flex: 1;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -155,6 +157,7 @@
             border: 1px solid;
             color: $white;
             border-radius: 1rem;
+            text-align: center;
 
             .icon {
               width: 100px;
@@ -166,6 +169,11 @@
             color: $white;
             text-align: center;
             margin-top: 1rem;
+          }
+
+          .stamp {
+            opacity: 0.3;
+            width: 100%;
           }
         }
       }

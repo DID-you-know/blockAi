@@ -8,7 +8,6 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Time;
 import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
@@ -28,9 +27,11 @@ public class DID {
     @PrimaryKeyJoinColumn(name = "id")     // 연관관계의 주인은 mappedBy X, JoinColumn 사용
     private User user;
 
-    @NotNull
-    private String certified_by;
+    private String didAddress;
+
+    private boolean didFlag;
 
     @NotNull
-    private LocalDateTime certified_date;
+    private LocalDateTime issuedDate;
+
 }

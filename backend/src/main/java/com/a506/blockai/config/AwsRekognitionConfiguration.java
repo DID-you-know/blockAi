@@ -1,4 +1,4 @@
-package com.a506.blockai.configuration;
+package com.a506.blockai.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -29,5 +29,4 @@ public class AwsRekognitionConfiguration {
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .build();
     }
-
 }

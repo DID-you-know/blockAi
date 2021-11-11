@@ -1,4 +1,24 @@
+<<<<<<< HEAD
 //package com.a506.blockai.api.controller;
+=======
+package com.a506.blockai.api.controller;
+
+import com.a506.blockai.common.util.S3Upload;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
+@Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/image")
+@RestController
+public class UploadController {
+
+//    private final Uploader uploader;
+>>>>>>> c1e2459df29301a9a20d54b52d8ef2fc80930ba3
 //
 //import com.a506.blockai.common.response.BaseResponseBody;
 //import com.a506.blockai.common.util.S3Upload;

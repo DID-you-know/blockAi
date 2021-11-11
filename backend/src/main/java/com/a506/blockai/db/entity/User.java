@@ -9,9 +9,9 @@ import org.hibernate.annotations.DynamicInsert;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -41,7 +41,7 @@ public class User {
     private int role;
 
     @NotNull
-    private Time created_at;
+    private LocalDateTime created_at;
 
     @NotNull
     private String security_key;

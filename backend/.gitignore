@@ -5,6 +5,18 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# AWS accesskey
+application-aws.yml
+
+# dev
+application-dev.yml
+
+# ethereum key
+application-ethereum.yml
+
+# azure key
+application-azure.yml
+
 ### STS ###
 .apt_generated
 .classpath

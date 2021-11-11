@@ -3,21 +3,21 @@
     <section>
       <div class="form">
         <h1 class="fs-3 fw-bold">회원가입</h1>
-        <Input label="아이디" :error="usernameError" :paste="false" v-model="username" @input="setUsername"/>
+        <Input label="이메일" :error="emailError" :paste="false" v-model="email" @input="setEmail"/>
         <Input label="비밀번호" :error="passwordError" :paste="false" type="password" v-model="password" @input="setPassword"/>
         <div class="form-items">
           <Input label="이름" :error="nameError" :paste="false" v-model="name" @input="setName"/>
-          <Input label="생년월일" :error="birthError" v-model="birth" @input="setBirth"/>
+          <Input label="생년월일" :error="birthError" v-model="birth" @input="setBirth" placeholder="2000.01.01"/>
         </div>
         <div class="form-items">
           <div class="form-items">
-            <Input label="전화번호" :error="phoneNumberError" v-model="phoneNumber" @input="setPhoneNumber"/>
+            <Input label="전화번호" :error="phoneNumberError" v-model="phoneNumber" @input="setPhoneNumber" placeholder="010-1234-5678"/>
           </div>
           <div class="form-items">
-            <Input label="인증번호" v-model="code" @input="setCode"/>
             <div class="form-item">
-              <FormButton value="문자인증"/>
+              <FormButton value="문자인증" @click="sendSMS" :disabled="!codeButtonActive"/>
             </div>
+            <Input label="인증번호" :error="codeError" v-model="code" @input="setCode" :disabled="!codeActive" :maxlength="6"/>
           </div>
         </div>
         <FormButton value="회원가입" @click="submit"/>
@@ -41,6 +41,7 @@
   import FormButton from '@/components/FormButton'
   import Input from '@/components/Input'
   import { ref } from 'vue'
+  import users from '@/api/users'
 
 
   export default {
@@ -53,10 +54,7 @@
       // 문자 확인하는 함수
       // 있으면 true 반환, 없으면 false 반환
       const checkWhitespace = (value) => {
-        if (value.search(/\s/) != -1) {
-          return true
-        }
-        return false
+        return /\s/.test(value)
       }
       const checkSpecial = (value) => {
         const special = /[!?@#$%^&*():;+\-=~{}<>_[\]|\\"',./`₩]/
@@ -65,48 +63,34 @@
         }
         return false
       }
-      const checkKor = (value) => {
-        const kor = /[ㄱ-ㅎㅏ-ㅣ가-힣]/
-        if (value.search(kor) != -1) {
-          return true
-        }
-        return false
-      }
       const checkEng = (value) => {
         const eng = /[a-zA-z]/
-        if (value.search(eng) != -1) {
-          return true
-        }
-        return false
+        return eng.test(value)
       }
       const checkNum = (value) => {
         const num = /[0-9]/
-        if (value.search(num) != -1) {
-          return true
-        }
-        return false
+        return num.test(value)
       }
 
-      // 아이디
-      const username = ref('')
-      const usernameError = ref('')
-      const usernameValidator = () => {
-        if (!username.value) {
-          usernameError.value = '아이디 입력은 필수입니다.'
-        } else if (checkWhitespace(username.value)) {
-          usernameError.value = '아이디는 빈 칸을 포함할 수 없습니다.'
-        } else if (checkSpecial(username.value)) {
-          usernameError.value = '아이디는 특수문자를 포함할 수 없습니다.'
-        } else if (username.value.length < 4 || username.value.length > 20 || checkKor(username.value)) {
-          usernameError.value = '아이디는 영문, 숫자 조합으로 4~20자 입니다.'
+      // 이메일
+      const email = ref('')
+      const emailError = ref('')
+      const emailValidator = () => {
+        const pattern = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/
+        if (!email.value) {
+          emailError.value = '이메일 입력은 필수입니다.'
+        } else if (checkWhitespace(email.value)) {
+          emailError.value = '이메일은 빈 칸을 포함할 수 없습니다.'
+        } else if (!pattern.test(email.value)) {
+          emailError.value = '잘못된 이메일 형식입니다.'
         } else {
-          usernameError.value = ''
+          emailError.value = ''
         }
       }
-      const setUsername = (event) => {
+      const setEmail = (event) => {
         event.target.value = event.target.value.trim()
-        username.value = event.target.value
-        usernameValidator()
+        email.value = event.target.value
+        emailValidator()
       }
 
       // 비밀번호
@@ -154,7 +138,7 @@
       const birth = ref('')
       const birthError = ref('')
       const convertBirth = (birth) => {
-        birth = birth.trim().replace(/[^0-9]/g, '')
+        birth = birth.replace(/[^0-9]/g, '')
         if (birth.length <= 4) {
           return birth.slice(0, 4)
         }
@@ -165,10 +149,10 @@
       }
       const birthValidator = () => {
         const pattern = /\d{4}.\d{2}.\d{2}/
-        if (birth.value.search(pattern) != -1){
+        if (pattern.test(birth.value)){
           birthError.value = ''
         } else {
-          birthError.value = '생년월일 입력은 필수입니다.'
+          birthError.value = '생년월일 8자리를 입력해주세요.'
         }
       }
       const setBirth = (event) => {
@@ -181,7 +165,7 @@
       const phoneNumber = ref('')
       const phoneNumberError = ref('')
       const convertPhoneNumber = (phoneNumber) => {
-        phoneNumber = phoneNumber.trim().replace(/[^0-9]/g, '')
+        phoneNumber = phoneNumber.replace(/[^0-9]/g, '')
         if (phoneNumber.length <= 3) {
           return phoneNumber.slice(0, 3)
         }
@@ -190,12 +174,15 @@
         }
         return phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3, 7) + '-' + phoneNumber.slice(7, 11)
       }
+      const codeButtonActive = ref(false)
       const phoneNumberValidator = () => {
         const pattern = /\d{3}-\d{4}-\d{4}/
-        if (phoneNumber.value.search(pattern) != -1){
+        if (pattern.test(phoneNumber.value)){
           phoneNumberError.value = ''
+          codeButtonActive.value = true
           } else {
-          phoneNumberError.value = '전화번호 입력은 필수입니다.'
+          phoneNumberError.value = '전화번호 11자리를 입력해주세요.'
+          codeButtonActive.value = false
         }
       }
       const setPhoneNumber = (event) => {
@@ -205,28 +192,85 @@
       }
 
       // 인증번호
-      const code = ref('')
-      const setCode = (event) => {
-        event.target.value = event.target.value.trim()
-        code.value = event.target.value
+      const randomCode = ref(null)
+      const codeActive = ref(false)
+      const getRandomCode = () => {
+        let randomCode = ''
+        for (let i = 0; i < 6; i++) {
+          randomCode += Math.ceil(Math.random() * 9)
+        }
+        return randomCode
       }
 
-      const submit = () => {
-        usernameValidator()
+      const sendSMS = async () => {
+        randomCode.value = getRandomCode()
+        codeActive.value = true
+        console.log(randomCode.value)
+        try {
+          const response = await users.sendSMS(phoneNumber.value, randomCode.value)
+          console.log(response.data)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+      const code = ref('')
+      const codeError = ref('')
+      const smsAuth = ref(false)
+      const codeValidator = () => {
+        const pattern = /\d{6}/
+        if (code.value.search(pattern) != -1) {
+          if (code.value === randomCode.value) {
+            codeButtonActive.value = false
+            codeActive.value = false
+            smsAuth.value = true
+            codeError.value = ''
+          } else {
+            codeError.value = '틀렸습니다.'
+          }
+        }
+      }
+      const setCode = (event) => {
+        event.target.value = event.target.value.trim().replace(/[^0-9]/g, '')
+        code.value = event.target.value
+        codeValidator()
+      }
+
+      
+      // 회원가입 form 제출
+      const submit = async () => {
+        console.log('click')
+        emailValidator()
         passwordValidator()
         nameValidator()
         birthValidator()
         phoneNumberValidator()
+        codeValidator()
 
-        if (!usernameError.value && !passwordError.value && !nameError.value && !birthError.value && !phoneNumberError.value) {
+        if (!emailError.value && !passwordError.value && !nameError.value && !birthError.value && !phoneNumberError.value && smsAuth.value) {
           console.log('submit')
+          const birthDate = new Date(birth.value.replace(/\./g, '-'))
+          const userInfo = {
+            email: email.value,
+            password: password.value,
+            name: name.value,
+            phone: phoneNumber.value,
+            birth: birthDate
+          }
+          console.log(userInfo)
+          try {
+            const response = await users.signup(userInfo)
+            console.log(response.data)
+          } catch (error) {
+            console.log(error)
+          }
         }
       }
 
       return {
-        username,
-        usernameError,
-        setUsername,
+        email,
+        emailError,
+        setEmail,
         password,
         passwordError,
         setPassword,
@@ -238,9 +282,15 @@
         setBirth,
         phoneNumber,
         phoneNumberError,
+        codeButtonActive,
         setPhoneNumber,
         code,
         setCode,
+        codeError,
+        randomCode,
+        sendSMS,
+        codeActive,
+        smsAuth,
         submit
       }
     }

@@ -15,8 +15,6 @@ COPY ${JAR_FILE} app.jar
 # CMD와 유사하나, 디폴트로 수행될 명령은 ENTRYPOINT를 사용해 지정
 ENTRYPOINT ["java", "-jar", "/app.jar"]
 
-#ARG DEBIAN_FRONTEND=noninteractive
-
 # 도커 timezone 변경
 ENV TZ=Asia/Seoul
 RUN apt-get install -y tzdata
