@@ -5,6 +5,9 @@ import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.admin.Admin;
 import org.web3j.protocol.admin.methods.response.PersonalUnlockAccount;
@@ -13,6 +16,7 @@ import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
+import org.web3j.utils.Numeric;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -45,6 +49,38 @@ public class ContractService {
         return clientVersion;
     }
 
+    public String ethSendRawTransaction(Function function) throws IOException, ExecutionException, InterruptedException {
+
+        //nonce 조회
+        EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
+                from, DefaultBlockParameterName.LATEST).sendAsync().get();
+        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+        System.out.println(nonce);
+//        Transaction transaction = Transaction.createFunctionCallTransaction(from, nonce, Transaction.DEFAULT_GAS,
+//                BigInteger.valueOf(1000000L), contract, FunctionEncoder.encode(function));
+
+        BigInteger GAS_PRICE = BigInteger.valueOf(20000000L);
+
+        BigInteger GAS_LIMIT = BigInteger.valueOf(772197L);
+
+        // 트랜잭션 생성
+        RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, GAS_PRICE,
+                GAS_LIMIT, contract, FunctionEncoder.encode(function));
+
+        // 트랜잭션 서명
+        Credentials credentials = Credentials.create(pwd);
+        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+        String hexValue = Numeric.toHexString(signedMessage);
+
+        // 트랜잭션 전송
+        EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).send();
+
+        if(ethSendTransaction.hasError()) {
+            System.out.println("Transcation error : " + ethSendTransaction.getError().getMessage());
+        }
+        String hash = ethSendTransaction.getTransactionHash();
+        return hash;
+    }
 
     public List<Type> ethCall(Function function) throws IOException {
         //1. transaction 제작
@@ -57,6 +93,7 @@ public class ContractService {
         //3. 결과값 decode
         List<Type> decode = FunctionReturnDecoder.decode(ethCall.getResult(),
                 function.getOutputParameters());
+
 
 //        System.out.println("ethCall.getResult() = " + ethCall.getResult());
 //        System.out.println("getValue = " + decode.get(0).getValue());
