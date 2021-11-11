@@ -1,6 +1,11 @@
 package com.a506.blockai.api.service;
 
+import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.java_websocket.util.Base64;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -9,15 +14,20 @@ import java.net.URL;
 import java.util.Arrays;
 
 
+@Getter
+@Setter
+@Component
 @Service
 @RequiredArgsConstructor
 public class AiServiceImpl implements AiService{
 
-    final private String endPoint = "https://westus.api.cognitive.microsoft.com";
-    final private String apiKey = "";
+    private final String accessKey ;
+    final private String endPoint = "https://westus.api.cognitive.microsoft.com/";
 
     @Override
     public String createProfile() {
+
+        System.out.println("key"+accessKey);
 
         String profileId = "";
 
@@ -25,7 +35,6 @@ public class AiServiceImpl implements AiService{
         HttpURLConnection conn = null;
         URL url = null;
         //http통신 후 응답 받기 위한 변수
-        String responseData = "";
         BufferedReader br = null;
         StringBuffer sb = null;
         String returnData = "";
@@ -33,7 +42,7 @@ public class AiServiceImpl implements AiService{
         //request body
         String requestBody = "{\"locale\" : \"en-us\"}";
         //나머지 url
-        String resUrl = endPoint+"/speaker/identification/v2.0/text-independent/profiles";
+        String resUrl = endPoint+"/speaker/verification/v2.0/text-independent/profiles";
 
         try{
             url = new URL(resUrl);
@@ -41,7 +50,7 @@ public class AiServiceImpl implements AiService{
 
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Ocp-Apim-Subscription-Key", apiKey);
+            conn.setRequestProperty("Ocp-Apim-Subscription-Key", accessKey);
             conn.setDoOutput(true); //OutputStream을 사용해서 post body 데이터 전송
             try(OutputStream os = conn.getOutputStream()){
                 byte request_data[] = requestBody.getBytes("utf-8");
@@ -92,13 +101,12 @@ public class AiServiceImpl implements AiService{
     }
 
     @Override
-    public String enrollment(String profileId) {
+    public String enrollment(String voiceId, VoiceBiometricsRequest voiceBiometricsRequest) {
 
         //http통신
         HttpURLConnection conn = null;
         URL url = null;
         //http통신 후 응답 받기 위한 변수
-        String responseData = "";
         BufferedReader br = null;
         StringBuffer sb = null;
         String returnData = "";
@@ -106,7 +114,7 @@ public class AiServiceImpl implements AiService{
         String responseCode="";
 
         //나머지 url
-        String resUrl = endPoint+"/speaker/identification/v2.0/text-independent/profiles/"+profileId+"/enrollments";
+        String resUrl = endPoint+"speaker/verification/v2.0/text-independent/profiles/"+voiceId+"/enrollments";
 
         try{
             url = new URL(resUrl);
@@ -114,21 +122,24 @@ public class AiServiceImpl implements AiService{
 
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "audio/wav; codecs=audio/pcm");
-            conn.setRequestProperty("Ocp-Apim-Subscription-Key", apiKey);
+            conn.setRequestProperty("Ocp-Apim-Subscription-Key", accessKey);
             conn.setDoOutput(true); //OutputStream을 사용해서 post body 데이터 전송
 
-            File file = new File("/Users/zsoo/Downloads/APPOINTMENTQ1.wav");
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+//            File file = new File("/Users/zsoo/Downloads/APPOINTMENTQ1.wav");
+//            ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+//
+//            int read;
+//            byte[] buff = new byte[1024];
+//            while ((read = in.read(buff)) > 0)
+//            {
+//                out.write(buff, 0, read);
+//            }
+//            out.flush();
+//            byte[] audioBytes = out.toByteArray();
 
-            int read;
-            byte[] buff = new byte[1024];
-            while ((read = in.read(buff)) > 0)
-            {
-                out.write(buff, 0, read);
-            }
-            out.flush();
-            byte[] audioBytes = out.toByteArray();
+            //base64로 변환된 wav파일 decode
+            byte[] audioBytes = Base64.decode(voiceBiometricsRequest.getVoice(),0);
 
             OutputStream os = conn.getOutputStream();
             os.write(audioBytes);
@@ -167,7 +178,7 @@ public class AiServiceImpl implements AiService{
     }
 
     @Override
-    public float identify(String profileId) {
+    public float identify(String voiceId, VoiceBiometricsRequest voiceBiometricsRequest) {
 
         //최종 유사도 점수
         float score = 0;
@@ -175,6 +186,7 @@ public class AiServiceImpl implements AiService{
         //http통신
         HttpURLConnection conn = null;
         URL url = null;
+
         //http통신 후 응답 받기 위한 변수
         String responseData = "";
         BufferedReader br = null;
@@ -182,29 +194,19 @@ public class AiServiceImpl implements AiService{
         String returnData = "";
 
         //나머지 url
-        String resUrl = endPoint+"/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds=";
+        String resUrl = endPoint+"speaker/verification/v2.0/text-independent/profiles/"+voiceId+"/verify";
 
         try{
-            url = new URL(resUrl+profileId);
+            url = new URL(resUrl);
             conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "audio/wav; codecs=audio/pcm");
-            conn.setRequestProperty("Ocp-Apim-Subscription-Key", apiKey);
+            conn.setRequestProperty("Ocp-Apim-Subscription-Key", accessKey);
             conn.setDoOutput(true); //OutputStream을 사용해서 post body 데이터 전송
 
-            File file = new File("/Users/zsoo/Downloads/APPOINTMENTQ1.wav");
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-
-            int read;
-            byte[] buff = new byte[1024];
-            while ((read = in.read(buff)) > 0)
-            {
-                out.write(buff, 0, read);
-            }
-            out.flush();
-            byte[] audioBytes = out.toByteArray();
+            //base64로 변환된 wav파일 decode
+            byte[] audioBytes = Base64.decode(voiceBiometricsRequest.getVoice(),0);
 
             OutputStream os = conn.getOutputStream();
             os.write(audioBytes);
