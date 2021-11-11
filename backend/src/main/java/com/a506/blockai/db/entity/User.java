@@ -40,7 +40,10 @@ public class User {
     private LocalDateTime created_at;
 
     @NotNull
-    private String key;
+    private String public_key;
+
+    @NotNull
+    private String private_key;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Certification certification;
