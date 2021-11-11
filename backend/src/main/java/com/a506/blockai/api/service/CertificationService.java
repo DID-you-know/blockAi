@@ -11,15 +11,20 @@ import com.a506.blockai.exception.DidNotFoundException;
 import com.a506.blockai.exception.DidNotYetIssuedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.abi.datatypes.generated.Uint256;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +49,9 @@ public class CertificationService {
         List<Type> ethereumCallResult = getBiometricsCertificateFromBlockchain(didAddress);
         String faceCertificateFromBlockchain = String.valueOf(ethereumCallResult.get(0).getValue());
         String voiceCertificateFromBlockchain = String.valueOf(ethereumCallResult.get(1).getValue());
-        LocalDateTime expiryTime = (LocalDateTime) ethereumCallResult.get(0).getValue();
+        BigInteger bigIntegerExpiryTime = (BigInteger) ethereumCallResult.get(2).getValue();
+        LocalDateTime expiryTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(bigIntegerExpiryTime.longValue()),
+                TimeZone.getDefault().toZoneId());
 
         // DID 만료 여부 확인
         if (expiryTime.isBefore(LocalDateTime.now())) {
@@ -69,7 +76,15 @@ public class CertificationService {
     }
 
     private List<Type> getBiometricsCertificateFromBlockchain(String didAddress) throws IOException {
-        Function function = new Function("getDID", Arrays.asList(new Address(didAddress)), Collections.emptyList());
+        List<TypeReference<?>> outputParameters = Arrays.asList(
+                new TypeReference<Utf8String>() {
+                },
+                new TypeReference<Utf8String>() {
+                },
+                new TypeReference<Uint256>() {
+                }
+        );
+        Function function = new Function("getDID", Arrays.asList(new Address(didAddress)), outputParameters);
         List<Type> ethereumCallResult = ethereumService.ethCall(function);
         return ethereumCallResult;
     }
