@@ -37,6 +37,7 @@ public class EthereumService {
         this.contract = ethereumProperties.getContract();
         this.privateKey = ethereumProperties.getPrivateKey();
         this.web3j = Admin.build(new HttpService(ethereumProperties.getNetworkUrl()));
+
     }
 
     public List<Type> ethCall(Function function) throws IOException {
@@ -71,11 +72,11 @@ public class EthereumService {
 
         //nonce 조회
         EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
-                from, DefaultBlockParameterName.LATEST).sendAsync().get();
+                from, DefaultBlockParameterName.PENDING).send();
         BigInteger nonce = ethGetTransactionCount.getTransactionCount();
         System.out.println(nonce);
 
-        BigInteger GAS_PRICE = BigInteger.valueOf(20000000L);
+        BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
         BigInteger GAS_LIMIT = BigInteger.valueOf(772197L);
 
         // 트랜잭션 생성

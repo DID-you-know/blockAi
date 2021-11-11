@@ -20,7 +20,7 @@ public class BlockaiApplication {
 
 	public static void main(String[] args) throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 
-//		 SpringApplication.run(BlockaiApplication.class, args);
+		SpringApplication.run(BlockaiApplication.class, args);
 
 		// DID 발급 테스트
 //		ContractService contractService = new ContractService();
