@@ -48,7 +48,7 @@
       }
       const submit = () => {
         console.log(phoneNumber.value)
-        store.dispatch('users/getUserId', phoneNumber.value)
+        store.dispatch('certification/getUserId', phoneNumber.value)
         router.push({ name: 'kioskLogin' })
       }
 

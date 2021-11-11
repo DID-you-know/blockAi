@@ -82,7 +82,7 @@
       
       // 얼굴 등록
       const faceStep = ref(1)
-      const faceMessage = ref('얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.')
+      const faceMessage = ref('카메라 연결 중입니다. 잠시만 기다려주세요.')
       const model = ref(null)
       const predictions = ref(null)
       const canvas = ref(null)
@@ -154,6 +154,7 @@
           const stream = await navigator.mediaDevices.getUserMedia(constraints)
           video.value.srcObject = stream
           cameraOn.value = true
+          faceMessage.value = '얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.'
         } catch(err) {
           console.log(err)
         }
