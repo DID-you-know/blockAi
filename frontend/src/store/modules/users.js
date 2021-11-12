@@ -3,6 +3,7 @@ import users from '@/api/users'
 
 const state = {
   accessToken: null,
+  isLogin: false,
   userId: null,
   name: null,
   isIssued: false,
@@ -28,7 +29,7 @@ const actions = {
 const mutations = {
   SET_ACCESS_TOKEN(state, accessToken) {
     state.accessToken = accessToken
-  }
+  },
 }
 
 const getters = {

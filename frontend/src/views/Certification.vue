@@ -1,30 +1,41 @@
 <template>
-  <div class="body issue">
-    <Progressbar :step="step" :content="['얼굴 등록', '음성 등록', '블록체인 생성', '등록 완료']" class="progressbar"/>
+  <div class="body certification">
     <template v-if="step === 1">
       <div class="message fs-2">
         {{ faceMessage }}
       </div>
 
       <div v-if="faceStep === 1 && !cameraOn" class="icon-box">
-        <img width="400" height="400" src="@/assets/image/icon/faceIdIcon.png" alt="faceIdIcon">
+        <img class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceIdIcon">
+        <WhiteButton value="얼굴 촬영 시작" @click="startCamera"/>
       </div>
-      <video v-show="faceStep === 1 && cameraOn" ref="video" autoplay></video>
-      <WhiteButton v-if="faceStep === 1 && cameraOn" value="얼굴 촬영" @click="captureFace"/>
+      <div v-show="faceStep === 1 && cameraOn" class="icon-box">
+        <video ref="video" autoplay></video>
+        <WhiteButton value="얼굴 촬영" @click="captureFace"/>
+      </div>
 
-      <canvas v-show="faceStep === 2" ref="canvas" width="640" height="480"></canvas>
-      <div v-if="faceStep === 2" class="button-box">
-        <WhiteButton value="재촬영" @click="reCapture"/>
-        <WhiteButton value="촬영 완료" @click="finishCapture"/>
+      <div v-show="faceStep === 2" class="icon-box">
+        <canvas ref="canvas" width="500" height="400"></canvas>
+        <canvas ref="faceCanvas" hidden></canvas>
+        <div class="button-box">
+          <WhiteButton value="재촬영" @click="reCapture"/>
+          <WhiteButton value="촬영 완료" @click="finishCapture"/>
+        </div>
       </div>
-    </template>
-    <template v-if="step === 2">
+
+      <div v-if="faceStep === 3" class="icon-box complete">
+        <img class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceIdIcon">
+        <div class="complete">얼굴 촬영 완료</div>
+      </div>
+
+      <div class="space"></div>
+
       <div class="message fs-2">
         {{ voiceMessage }}
       </div>
-      <div class="icon-box">
-        <img width="400" height="400" src="@/assets/image/icon/voiceIcon.png" alt="voiceIcon">
-        <WhiteButton v-if="voiceStep === 1" value="녹음 시작" @click="recordVoice"/>
+      <div v-if="voiceStep !== 4" class="icon-box">
+        <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voiceIcon">
+        <WhiteButton v-if="voiceStep === 1" value="음성 녹음 시작" @click="recordVoice"/>
         <WhiteButton v-if="voiceStep === 2" value="정지" @click="stopRecord"/>
         <template v-if="voiceStep === 3">
           <audio controls preload="auto">
@@ -36,67 +47,92 @@
           </div>
         </template>
       </div>
-    </template>
-    <template v-if="step === 3">
-      <div class="message fs-2">
-        블록체인에 저장중입니다. 잠시만 기다려주세요.
+      <div v-if="voiceStep === 4" class="icon-box complete">
+        <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voiceIcon">
+        <div class="complete">음성 녹음 완료</div>
       </div>
+    </template>
+    <template v-if="step === 2">
+      <div class="message fs-2">
+        블록체인에 저장된 얼굴, 음성과 비교하고 있습니다. 잠시만 기다려주세요.
+      </div>
+      <div class="space"></div>
       <div class="loading-box">
         <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
       </div>
     </template>
-    <template v-if="step === 4">
+    <template v-if="step === 3">
       <div class="message fs-2">
-        신분증명발급이 완료되었습니다.
+        신분 인증이 완료되었습니다.
       </div>
-      <WhiteButton value="신분증명 조회하기" @click="router.push({ name: 'home' })"/>
+      <WhiteButton value="결제하기" @click="router.push({ name: 'home' })"/>
     </template>
-    <canvas ref="faceCanvas" hidden></canvas>
   </div>
 </template>
 
 <script>
-  import Progressbar from '@/components/Progressbar'
   import WhiteButton from '@/components/WhiteButton'
-  import { ref, onMounted, onUpdated } from 'vue'
-  import { useRouter } from 'vue-router'
+  import { onUpdated, onMounted, ref } from 'vue'
   import * as blazeface from '@tensorflow-models/blazeface'
   import '@tensorflow/tfjs-backend-webgl'
   import '@tensorflow/tfjs'
-  import usersApi from '@/api/users'
-  // import AWS from 'aws-sdk'
+  import { useStore } from 'vuex'
+  import { useRouter } from 'vue-router'
 
 
   export default {
-    name: 'Issue',
+    name: 'Certification',
     components: {
-      Progressbar,
       WhiteButton
     },
     setup() {
+      const store = useStore()
       const router = useRouter()
       const step = ref(1)
-      const nextStep = () => {
-        step.value += 1
-      }
-      
-      // 얼굴 등록
+
+      // 얼굴 촬영
+      const faceMessage = ref('얼굴 촬영 시작 버튼을 눌러 얼굴 촬영을 해주세요.')
       const faceStep = ref(1)
-      const faceMessage = ref('카메라 연결 중입니다. 잠시만 기다려주세요.')
-      const model = ref(null)
-      const predictions = ref(null)
+      const cameraOn = ref(false)
+      const video = ref(null)
       const canvas = ref(null)
       const faceCanvas = ref(null)
+      const model = ref(null)
+      const predictions = ref(null)
       const faceBase64 = ref(null)
+      const captureComplete = ref(false)
+
       const getModel = async () => {
         model.value = Object.freeze(await blazeface.load())
         const ctx = canvas.value.getContext('2d')
-        ctx.drawImage(video.value, 0, 0, 640, 480)
+        ctx.drawImage(video.value, 0, 0, 500, 400)
         predictions.value = await model.value.estimateFaces(canvas.value, false)
       }
+
+      const startCamera = async () => {
+        faceMessage.value = '카메라 연결중입니다. 잠시만 기다려주세요.'
+        const constraints = {
+          audio: false,
+          video: {
+            width: { min: 500, ideal: 500},
+            height: { min: 400, ideal: 400},
+            aspectRatio: { ideal: 1 }
+          }
+        }
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia(constraints)
+          video.value.srcObject = stream
+          await getModel()
+          faceMessage.value = '얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.'
+          cameraOn.value = true
+        } catch(err) {
+          console.log(err)
+        }
+      }
+
       const captureFace = async () => {
         const ctx = canvas.value.getContext('2d')
-        ctx.drawImage(video.value, 0, 0, 640, 480)
+        ctx.drawImage(video.value, 0, 0, 500, 400)
 
         predictions.value = await model.value.estimateFaces(canvas.value, false)
 
@@ -134,55 +170,35 @@
         faceStep.value = 2
         faceMessage.value = '얼굴이 잘 인식되었는지 확인한 후 촬영 완료 버튼 혹은 재촬영 버튼을 눌러주세요.'
       }
-      const cameraOn = ref(false)
-      const video = ref(null)
+
+      const reCapture = () => {
+        faceStep.value = 1
+        faceMessage.value = '얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.'
+      }
+
       const stopCamera = () => {
         const tracks = video.value.srcObject.getTracks()
         tracks.forEach(track => track.stop())
         cameraOn.value = false
       }
-      const getCamera = async () => {
-        const constraints = {
-          audio: false,
-          video: {
-            width: { min: 640, ideal: 640},
-            height: { min: 480, ideal: 480},
-            aspectRatio: { ideal: 1.7777777778 }
-          }
-        }
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia(constraints)
-          video.value.srcObject = stream
-          cameraOn.value = true
-          faceMessage.value = '얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.'
-        } catch(err) {
-          console.log(err)
-        }
-      }
-      const reCapture = () => {
-        faceStep.value = 1
-        faceMessage.value = '얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.'
-      }
+
       const finishCapture = () => {
         stopCamera()
-        nextStep()
-        reCapture()
+        faceMessage.value = '얼굴 촬영이 완료되었습니다.'
+        faceStep.value += 1
+        captureComplete.value = true
       }
 
-      onMounted(() => {
-        if (step.value === 1 && cameraOn.value === false) {
-          getModel()
-          getCamera()
-        }
-      })
 
-      // 음성 등록
+      // 음성 녹음
       const voiceStep = ref(1)
-      const voiceMessage = ref('그림 아래에 있는 녹음 시작 버튼을 눌러 음성을 녹음해주세요.')
+      const voiceMessage = ref('음성 녹음 시작 버튼을 눌러 음성 녹음을 해주세요.')
       const mediaRecorder = ref(null)
       const audioStream = ref(null)
       const chunks = ref([])
       const audioBlob = ref(null)
+      const audioSource = ref(null)
+      const recordComplete = ref(false)
       const getMIC = async () => {
         const constraints = {
           audio: true,
@@ -218,7 +234,6 @@
           }
         }
       }
-      const audioSource = ref(null)
       const stopRecord = () => {
         mediaRecorder.value.stop()
         voiceMessage.value = '음성이 잘 녹음되었는지 확인한 뒤 녹음 완료 혹은 재녹음 버튼을 눌러주세요.'
@@ -234,101 +249,27 @@
       }
       const finishRecord = () => {
         stopMIC()
-        step.value += 1
-        voiceStep.value = 1
+        voiceStep.value += 1
+        voiceMessage.value = '음성 녹음이 완료되었습니다.'
+        recordComplete.value = true
       }
 
-      // 생체데이터 저장
-      // const facePath = ref(null)
-      // const faceImageUpload = async () => {
-      //   // S3 설정
-      //   AWS.config.update({
-      //     accessKeyId: process.env.VUE_APP_AWS_ACCESS_KEY,
-      //     secretKey: process.env.VUE_APP_AWS_SECRET_ACCESS_KEY,
-      //     region: process.env.VUE_APP_BUCKETREGION,
-      //     credentials: new AWS.CognitoIdentityCredentials({
-      //       IdentityPoolId: process.env.VUE_APP_IDENTITYPOOLID
-      //     })
-      //   })
-      //   const s3 = new AWS.S3({
-      //     apiVersion: "2006-03-01",
-      //     params: { Bucket: process.env.VUE_APP_ALBUMBUCKETNAME }
-      //   })
-
-      //   // canvas to blob
-      //   const base64 = faceCanvas.value.toDataURL('image/jpeg', 1.0)
-      //   const base64Response = await fetch(base64)
-      //   const blob = await base64Response.blob()
-
-      //   console.log(s3)
-      //   // 이미지 업로드
-      //   const upload = new AWS.S3.ManagedUpload({
-      //     params: {
-      //       Bucket: process.env.VUE_APP_ALBUMBUCKETNAME,
-      //       Key: '얼굴사진테스트.jpg',
-      //       Body: blob
-      //     }
-      //   })
-      //   const promise = upload.promise()
-      //   promise.then((data) => {
-      //     console.log('success', data)
-      //     facePath.value = data.Location
-      //   }, (err) => {
-      //     console.log('error', err)
-      //   })
-      // }
-
-      const facePath = ref(null)
-      const faceIssue = async (userId, faceData) => {
-        try {
-          const response = await usersApi.faceIssue(userId, faceData)
-          console.log(response.data)
-          facePath.value = response.data.facePath
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
-      const voiceId = ref(null)
-      const voiceIssue = async (userId, voiceData) => {
-        try {
-          const response = await usersApi.voiceIssue(userId, voiceData)
-          console.log(response.data)
-          voiceId.value = response.data.voiceId
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
-      const didIssueSuccess = ref(false)
-      const didIssue = async (userId, didData) => {
-        try {
-          const response = await usersApi.didIssue(userId, didData)
-          console.log(response.data)
-          didIssueSuccess.value = true
-        } catch (error) {
-          console.log(error)
-          didIssueSuccess.value = false
-          console.log('didIssue')
-        }
-      }
-
+      onMounted(() => {
+        getMIC()
+      })
       onUpdated(async () => {
-        if (step.value === 2 && audioStream.value === null) {
-          getMIC()
-        }
-        if (step.value === 3) {
-          // faceImageUpload()
-          await faceIssue(1, { voice: faceBase64.value })
-          await voiceIssue(1, { voice: audioBlob.value })
-          await didIssue(1, { facePath: facePath.value, voiceId: voiceId.value })
-          // faceIssue(userId, { voice: faceBase64.value })
-          // voiceIssue(userId, { voice: audioBlob.value })
-          // didIssue(userId, { facePath: facePath.value, voiceId: voiceId.value })
-          if (didIssueSuccess.value) {
+        if (captureComplete.value && recordComplete.value) {
+          captureComplete.value = false
+          recordComplete.value = false
+          step.value += 1
+        } else if (step.value === 2) {
+          await store.dispatch('certification/sendFace', faceBase64.value)
+          await store.dispatch('certification/sendVoice', audioBlob.value)
+          if (store.getters.certification.isPassed) {
             step.value += 1
+            store.commit('certification/RESET')
           } else {
-            console.log('발급에 실패했습니다.')
+            console.log('인증 실패')
           }
         }
       })
@@ -336,25 +277,23 @@
       return {
         router,
         step,
-        faceCanvas,
-        faceStep,
         faceMessage,
-        getCamera,
+        faceStep,
+        cameraOn,
+        video,
+        startCamera,
+        captureFace,
+        canvas,
+        faceCanvas,
         reCapture,
         finishCapture,
-        video,
-        model,
-        canvas,
-        cameraOn,
-        captureFace,
-        voiceMessage,
-        recordVoice,
         voiceStep,
-        stopRecord,
+        voiceMessage,
         audioSource,
-        audioBlob,
+        recordVoice,
+        stopRecord,
         reRecord,
-        finishRecord,
+        finishRecord
       }
     }
   }
@@ -364,13 +303,13 @@
   @import "@/assets/style/color.scss";
 
 
-  .issue {
+  .certification {
     background: rgb(109,143,201);
     background: linear-gradient(180deg, rgba(109,143,201,1) 0%, rgba(113,121,200,1) 40%, rgba(114,117,200,1) 60%, rgba(176,162,208,1) 100%);
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     gap: 4rem;
 
@@ -387,13 +326,30 @@
       border: 2px solid;
       color: $white;
       border-radius: 2rem;
-      padding: 50px 150px;
+      width: 35vh;
+      height: 30vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 1rem;
+      gap: 2rem;
 
+      .icon {
+        width: auto;
+        height: 20vh;
+      }
+
+      .complete {
+        color: $white;
+        background-color: $secondary;
+        padding: 1vh 1.5vh;
+        border-radius: 1.5vh;
+        font-size: 1.5vh;
+      }
+    }
+
+    .complete {
+      background-color: $light-hover;
     }
     
     .button-box {
@@ -401,83 +357,86 @@
       gap: 2rem;
     }
 
-    .loading-box {
-      height: 100%;
+    .space {
+      margin: 1vh;
+    }
 
+    .loading-box {
+      height: 30%;
 
       .lds-default {
         display: inline-block;
         position: relative;
-        width: 80px;
-        height: 80px;
+        width: 19.25vh;
+        height: 19.25vh;
       }
       .lds-default div {
         position: absolute;
-        width: 6px;
-        height: 6px;
+        width: 1vh;
+        height: 1vh;
         background: $white;
         border-radius: 50%;
         animation: lds-default 1.2s linear infinite;
       }
       .lds-default div:nth-child(1) {
         animation-delay: 0s;
-        top: 37px;
-        left: 66px;
+        top: 9.25vh;
+        left: 16.5vh;
       }
       .lds-default div:nth-child(2) {
         animation-delay: -0.1s;
-        top: 22px;
-        left: 62px;
+        top: 5.5vh;
+        left: 15.5vh;
       }
       .lds-default div:nth-child(3) {
         animation-delay: -0.2s;
-        top: 11px;
-        left: 52px;
+        top: 2.75vh;
+        left: 13vh;
       }
       .lds-default div:nth-child(4) {
         animation-delay: -0.3s;
-        top: 7px;
-        left: 37px;
+        top: 1.75vh;
+        left: 9.25vh;
       }
       .lds-default div:nth-child(5) {
         animation-delay: -0.4s;
-        top: 11px;
-        left: 22px;
+        top: 2.75vh;
+        left: 5.5vh;
       }
       .lds-default div:nth-child(6) {
         animation-delay: -0.5s;
-        top: 22px;
-        left: 11px;
+        top: 5.5vh;
+        left: 2.75vh;
       }
       .lds-default div:nth-child(7) {
         animation-delay: -0.6s;
-        top: 37px;
-        left: 7px;
+        top: 9.25vh;
+        left: 1.75vh;
       }
       .lds-default div:nth-child(8) {
         animation-delay: -0.7s;
-        top: 52px;
-        left: 11px;
+        top: 13vh;
+        left: 2.75vh;
       }
       .lds-default div:nth-child(9) {
         animation-delay: -0.8s;
-        top: 62px;
-        left: 22px;
+        top: 15.5vh;
+        left: 5.5vh;
       }
       .lds-default div:nth-child(10) {
         animation-delay: -0.9s;
-        top: 66px;
-        left: 37px;
+        top: 16.5vh;
+        left: 9.25vh;
       }
       .lds-default div:nth-child(11) {
         animation-delay: -1s;
-        top: 62px;
-        left: 52px;
+        top: 15.5vh;
+        left: 13vh;
       }
       .lds-default div:nth-child(12) {
         animation-delay: -1.1s;
-        top: 52px;
-        left: 62px;
+        top: 13vh;
+        left: 15.5vh;
       }
       @keyframes lds-default {
         0%, 20%, 80%, 100% {
@@ -487,7 +446,6 @@
           transform: scale(1.5);
         }
       }
-
     }
   }
 </style>
