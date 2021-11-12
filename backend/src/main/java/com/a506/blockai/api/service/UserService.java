@@ -5,6 +5,7 @@ import com.a506.blockai.api.dto.request.SignupRequest;
 import com.a506.blockai.db.entity.Role;
 import com.a506.blockai.db.entity.User;
 import com.a506.blockai.db.repository.UserRepository;
+import com.a506.blockai.exception.EmailDuplicatedException;
 import com.a506.blockai.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,19 +40,14 @@ public class UserService {
         Boolean existed = userRepository.existsByEmail(signupRequest.getEmail());
 
         if (existed) {
-            throw new IllegalArgumentException(signupRequest.getEmail());
-//            throw new UserIdDuplicateException(signupRequest.getEmail());
+            throw new EmailDuplicatedException();
         }
-
-//        SimpleDateFormat beforeDate = new SimpleDateFormat("yyyy.MM.dd");
-//        SimpleDateFormat afterDate = new SimpleDateFormat("yyyy-MM-dd");
 
         return userRepository.save(User.builder()
                 .name(signupRequest.getName())
                 .email(signupRequest.getEmail())
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .birth(signupRequest.getBirth())
-//                .birth(Date.valueOf(afterDate.format(beforeDate.parse(signupRequest.getBirth()))))
                 .phone(signupRequest.getPhone())
                 .roles(Collections.singleton(Role.USER))
                 .build());
