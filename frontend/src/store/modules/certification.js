@@ -5,6 +5,7 @@ const state = {
   userId: null,
   passFace: false,
   passVoice: false,
+  userPhone: null
 }
 
 const actions = {
@@ -54,6 +55,9 @@ const mutations = {
     state.userId = null
     state.passFace = false
     state.passVoice = false
+  },
+  SET_PHONE(state, phone) {
+    state.userPhone = phone
   }
 }
 
