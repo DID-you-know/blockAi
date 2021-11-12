@@ -1,6 +1,7 @@
 package com.a506.blockai.api.service;
 
 import com.a506.blockai.config.EthereumProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
@@ -31,13 +32,18 @@ public class EthereumService {
     private final String contract;
     private final String privateKey;
     private final Admin web3j;
+    private final String rsaPrivateKey;
+    private final String rsaPublicKey;
+    private final RSAService rsaService;
 
     public EthereumService(EthereumProperties ethereumProperties) {
         this.from = ethereumProperties.getFrom();
         this.contract = ethereumProperties.getContract();
         this.privateKey = ethereumProperties.getPrivateKey();
         this.web3j = Admin.build(new HttpService(ethereumProperties.getNetworkUrl()));
-
+        this.rsaPrivateKey = ethereumProperties.getRSAPrivateKey();
+        this.rsaPublicKey = ethereumProperties.getRSAPublicKey();
+        this.rsaService = new RSAService();
     }
 
     public List<Type> ethCall(Function function) throws IOException {
@@ -127,6 +133,15 @@ public class EthereumService {
             builder.append(String.format("%02X", b));
         }
         return builder.toString();
+    }
+
+
+    public String encode(String data) {
+        return rsaService.encode(data, rsaPublicKey);
+    }
+
+    public String decode(String data) {
+        return rsaService.decode(data, rsaPrivateKey);
     }
 
 }

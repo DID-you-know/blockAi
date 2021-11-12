@@ -23,6 +23,7 @@ public class DIDIssueService {
 
     private final DIDRepository didRepository;
     private final EthereumService ethereumService;
+    private final RSAService rsaService;
 
     public String issueDID(int userId, DIDIssueRequest didIssueRequest) throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 
@@ -32,8 +33,11 @@ public class DIDIssueService {
 
         // DID 발급
         List<Type> inputParameters = new ArrayList<>();
-        inputParameters.add(new Utf8String(didIssueRequest.getFacePath()));
-        inputParameters.add(new Utf8String(didIssueRequest.getVoiceId()));
+
+        String encryptedFacePath =  ethereumService.encode(didIssueRequest.getFacePath());
+        String encryptedvoiceId = ethereumService.encode(didIssueRequest.getVoiceId());
+        inputParameters.add(new Utf8String(encryptedFacePath));
+        inputParameters.add(new Utf8String(encryptedvoiceId));
         inputParameters.add(new Address(address));
 
         // 1. 호출하고자 하는 function 세팅[functionName, parameters]

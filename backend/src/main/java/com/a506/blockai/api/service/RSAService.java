@@ -1,4 +1,4 @@
-package com.a506.blockai;
+package com.a506.blockai.api.service;
 
 import org.springframework.stereotype.Service;
 
@@ -12,9 +12,9 @@ import java.util.HashMap;
 @Service
 public class RSAService {
 
-    static final int KEY_SIZE = 2048;
+    static final int KEY_SIZE = 512;
 
-    static HashMap<String, String> createKeypairAsString() {
+    public HashMap<String, String> createKeypairAsString() {
         HashMap<String, String> stringKeypair = new HashMap<>();
         try {
             SecureRandom secureRandom = new SecureRandom();
@@ -40,7 +40,7 @@ public class RSAService {
     /**
      * 암호화
      */
-    static String encode(String plainData, String stringPublicKey) {
+    public String encode(String plainData, String stringPublicKey) {
         String encryptedData = null;
         try {
             //평문으로 전달받은 공개키를 공개키객체로 만드는 과정
@@ -65,7 +65,7 @@ public class RSAService {
     /**
      * 복호화
      */
-    static String decode(String encryptedData, String stringPrivateKey) {
+    public String decode(String encryptedData, String stringPrivateKey) {
         String decryptedData = null;
         try {
             //평문으로 전달받은 개인키를 개인키객체로 만드는 과정
