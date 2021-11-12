@@ -15,5 +15,7 @@ public final class EthereumProperties {
     private final String contract;
     private final String networkUrl;
     private final String privateKey;
+    private final String RSAPrivateKey;
+    private final String RSAPublicKey;
 
 }

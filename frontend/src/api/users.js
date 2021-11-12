@@ -47,5 +47,17 @@ export default {
       method: 'post',
       data: didData
     })
+  },
+  getFace(userId) {
+    return _axios({
+      url: `/ai/${userId}/face`,
+      method: 'get'
+    })
+  },
+  getVoice(userId) {
+    return _axios({
+      url: `/ai/${userId}/voice`,
+      method: 'get'
+    })
   }
 }
