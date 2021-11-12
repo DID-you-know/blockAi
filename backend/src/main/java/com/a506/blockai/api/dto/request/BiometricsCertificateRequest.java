@@ -10,9 +10,11 @@ public class BiometricsCertificateRequest {
 
     private String face;
     private String voice;
+    private String certifiedBy;
 
-    public BiometricsCertificateRequest(String face, String voice) {
+    public BiometricsCertificateRequest(String face, String voice, String certifiedBy) {
         this.face = face;
         this.voice = voice;
+        this.certifiedBy = certifiedBy;
     }
 }
