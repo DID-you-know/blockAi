@@ -6,7 +6,7 @@ const state = () => ({
   isLogin: false,
   userId: null,
   name: null,
-  isIssued: true,
+  isIssued: false,
   issuedDate: null,
 })
 
