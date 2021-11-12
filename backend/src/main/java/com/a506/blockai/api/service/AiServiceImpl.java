@@ -2,6 +2,11 @@ package com.a506.blockai.api.service;
 
 import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
 import com.a506.blockai.config.AzureProperties;
+import com.amazonaws.services.rekognition.AmazonRekognition;
+import com.amazonaws.services.rekognition.model.*;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.util.IOUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,10 +16,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 
 @Getter
@@ -256,5 +264,14 @@ public class AiServiceImpl implements AiService{
 
         return score;
     }
+
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+//    public float detect(String encodedString) throws Exception {
+//
+//    }
+
 
 }

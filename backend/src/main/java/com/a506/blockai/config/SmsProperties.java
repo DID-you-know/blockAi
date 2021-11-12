@@ -8,9 +8,11 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @Getter
 @ConstructorBinding
 @RequiredArgsConstructor
-@ConfigurationProperties("aws")
-public final class AwsProperties {
+@ConfigurationProperties("sens")
+public final class SmsProperties {
 
     private final String accessKey;
+    private final String serviceKey;
     private final String secretKey;
+    private final String fromNum;
 }

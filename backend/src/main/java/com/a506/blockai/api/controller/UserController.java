@@ -3,13 +3,17 @@ package com.a506.blockai.api.controller;
 import com.a506.blockai.api.dto.request.LoginRequest;
 import com.a506.blockai.api.dto.request.SignupRequest;
 import com.a506.blockai.api.service.UserService;
-import com.a506.blockai.exception.ApplicationException;
 import com.a506.blockai.jwt.JwtTokenProvider;
+import com.a506.blockai.api.dto.request.SendSmsRequest;
+import com.a506.blockai.api.service.SmsService;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 
 /**
@@ -32,6 +40,9 @@ import java.text.ParseException;
 public class UserController {
 
     private final UserService userService;
+
+    @Autowired
+    private final SmsService smsService;
 
     /** 회원가입 */
     @PostMapping("/sign-up")
@@ -58,5 +69,16 @@ public class UserController {
         httpHeaders.add(JwtTokenProvider.AUTHORIZATION_HEADER, "Bearer " + jwt);
 
         return new ResponseEntity(jwt, httpHeaders, HttpStatus.OK);
+    }
+  
+    /** 문자인증 */
+    @PostMapping ("/sms")
+    public Object smsAuth(@RequestBody SendSmsRequest sendSmsRequest) throws JsonProcessingException, ParseException, UnsupportedEncodingException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException {
+        String phone = sendSmsRequest.getPhone().replaceAll("-","");
+        String randomCode = sendSmsRequest.getRandomCode();
+
+        smsService.sendSms(phone,randomCode);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
