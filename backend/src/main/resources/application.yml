@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: local
+    active: dev
     include: aws, ethereum, azure
 
 cloud:
@@ -16,3 +16,11 @@ cloud:
       instance-profile: true
     s3:
       bucket: blockai-bucket
+
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error

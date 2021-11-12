@@ -1,28 +1,43 @@
 package com.a506.blockai.api.service;
 
 import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
+import com.a506.blockai.config.AzureProperties;
+import com.amazonaws.services.rekognition.AmazonRekognition;
+import com.amazonaws.services.rekognition.model.*;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.util.IOUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.java_websocket.util.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 
 @Getter
 @Setter
-@Component
-@Service
+@Service("aiService")
 @RequiredArgsConstructor
 public class AiServiceImpl implements AiService{
 
-    private final String accessKey ;
+    private final String accessKey;
     final private String endPoint = "https://westus.api.cognitive.microsoft.com/";
+
+    @Autowired
+    public AiServiceImpl(AzureProperties azureProperties){
+        this.accessKey = azureProperties.getAccesskey();
+    }
 
     @Override
     public String createProfile() {
@@ -42,7 +57,7 @@ public class AiServiceImpl implements AiService{
         //request body
         String requestBody = "{\"locale\" : \"en-us\"}";
         //나머지 url
-        String resUrl = endPoint+"/speaker/verification/v2.0/text-independent/profiles";
+        String resUrl = endPoint+"speaker/identification/v2.0/text-independent/profiles";
 
         try{
             url = new URL(resUrl);
@@ -114,7 +129,7 @@ public class AiServiceImpl implements AiService{
         String responseCode="";
 
         //나머지 url
-        String resUrl = endPoint+"speaker/verification/v2.0/text-independent/profiles/"+voiceId+"/enrollments";
+        String resUrl = endPoint+"speaker/identification/v2.0/text-independent/profiles/"+voiceId+"/enrollments";
 
         try{
             url = new URL(resUrl);
@@ -194,10 +209,10 @@ public class AiServiceImpl implements AiService{
         String returnData = "";
 
         //나머지 url
-        String resUrl = endPoint+"speaker/verification/v2.0/text-independent/profiles/"+voiceId+"/verify";
+        String resUrl = endPoint+"speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds=";
 
         try{
-            url = new URL(resUrl);
+            url = new URL(resUrl+voiceId);
             conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("POST");
@@ -249,5 +264,14 @@ public class AiServiceImpl implements AiService{
 
         return score;
     }
+
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+//    public float detect(String encodedString) throws Exception {
+//
+//    }
+
 
 }

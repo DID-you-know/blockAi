@@ -329,5 +329,7 @@ build
 !/backend/gradle/wrapper/gradle-wrapper.jar
 
 application-prod.properties
+application-dev.yml
+application-local.yml
 
 # End of Back

@@ -1,9 +1,6 @@
 package com.a506.blockai.api.controller;
 
-import com.a506.blockai.ContractService;
-import com.a506.blockai.api.dto.request.BiometricsCertificateRequest;
 import com.a506.blockai.api.dto.request.DIDIssueRequest;
-import com.a506.blockai.api.service.CertificationService;
 import com.a506.blockai.api.service.DIDIssueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

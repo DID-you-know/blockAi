@@ -1,12 +1,6 @@
 package com.a506.blockai.api.service;
 
-import com.a506.blockai.ContractService;
-import com.a506.blockai.api.dto.request.BiometricsCertificateRequest;
 import com.a506.blockai.api.dto.request.DIDIssueRequest;
-import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
-import com.a506.blockai.db.entity.Certification;
-import com.a506.blockai.db.entity.DID;
-import com.a506.blockai.db.repository.CertificationRepository;
 import com.a506.blockai.db.repository.DIDRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +13,6 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -29,14 +22,13 @@ import java.util.concurrent.ExecutionException;
 public class DIDIssueService {
 
     private final DIDRepository didRepository;
-
-    private final ContractService contractService;
+    private final EthereumService ethereumService;
 
     public String issueDID(int userId, DIDIssueRequest didIssueRequest) throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
 
         // 랜덤 DID address 발급
-        String address = contractService.sha256(LocalDateTime.now().toString() + userId).substring(0,42);
-        System.out.println(address);
+        String address = ethereumService.sha256(LocalDateTime.now().toString() + userId).substring(0,42);
+        System.out.println("new DID address : " + address);
 
         // DID 발급
         List<Type> inputParameters = new ArrayList<>();
@@ -48,7 +40,7 @@ public class DIDIssueService {
         Function function = new Function("addDID", inputParameters, Collections.emptyList());
 
         // 2. 트랜잭션 전송
-        String txHash = contractService.ethSendRawTransaction(function);
+        String txHash = ethereumService.ethSendRawTransaction(function);
         System.out.println("txhash : " + txHash);
 
         // DB에 업데이트

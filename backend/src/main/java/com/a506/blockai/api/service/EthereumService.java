@@ -6,12 +6,16 @@ import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.admin.Admin;
 import org.web3j.protocol.admin.methods.response.PersonalUnlockAccount;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Numeric;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -33,6 +37,7 @@ public class EthereumService {
         this.contract = ethereumProperties.getContract();
         this.privateKey = ethereumProperties.getPrivateKey();
         this.web3j = Admin.build(new HttpService(ethereumProperties.getNetworkUrl()));
+
     }
 
     public List<Type> ethCall(Function function) throws IOException {
@@ -55,52 +60,42 @@ public class EthereumService {
 //        return decode.get(0).getValue();
     }
 
-    public String ethSendTransaction(Function function)
-            throws IOException, InterruptedException, ExecutionException {
+    public String test() throws IOException {
+        Web3ClientVersion web3ClientVersion = null;
+        web3ClientVersion = web3j.web3ClientVersion().send();
+        String clientVersion = web3ClientVersion.getWeb3ClientVersion();
+        System.out.println(clientVersion);
+        return clientVersion;
+    }
 
-        // 1. account에 대한 nonce값 가져오기.
+    public String ethSendRawTransaction(Function function) throws IOException, ExecutionException, InterruptedException {
+
+        //nonce 조회
         EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
-                from, DefaultBlockParameterName.LATEST).sendAsync().get();
+                from, DefaultBlockParameterName.PENDING).send();
+        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+        System.out.println(nonce);
 
-        EthGetBalance ethGetBalance = web3j.ethGetBalance(from, DefaultBlockParameterName.LATEST)
-                .sendAsync()
-                .get();
-        BigInteger wei = ethGetBalance.getBalance();
+        BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
+        BigInteger GAS_LIMIT = BigInteger.valueOf(772197L);
 
-        // 2. Account Lock 해제
-        PersonalUnlockAccount personalUnlockAccount = web3j.personalUnlockAccount(from, privateKey).send();
+        // 트랜잭션 생성
+        RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, GAS_PRICE,
+                GAS_LIMIT, contract, FunctionEncoder.encode(function));
 
-        if (personalUnlockAccount.accountUnlocked()) { // unlock 일때
+        // 트랜잭션 서명
+        Credentials credentials = Credentials.create(privateKey);
+        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+        String hexValue = Numeric.toHexString(signedMessage);
 
-            BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+        // 트랜잭션 전송
+        EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).send();
 
-            // 3. Transaction 값 제작
-            Transaction transaction = Transaction.createFunctionCallTransaction(from, nonce, Transaction.DEFAULT_GAS,
-                    BigInteger.valueOf(1000000L), contract, FunctionEncoder.encode(function));
-
-            // 4. ethereum Call &
-//            EthSendTransaction ethSendTransactionResponse = web3j.ethSendTransaction(transaction).send();
-
-            // 5. transaction에 대한 transaction Hash값 얻기.
-//            String transactionHash = ethSendTransactionResponse.getTransactionHash();
-
-            // ledger에 쓰여지기 까지 기다리기.
-//            Thread.sleep(5000);
-
-//            return transactionHash;
-
-
-            EthSendTransaction transactionResponse = web3j.ethSendTransaction(transaction).send();
-            if (transactionResponse.hasError()) {
-                String message = transactionResponse.getError().getMessage();
-                return message;
-            }else{
-                String hash = transactionResponse.getTransactionHash();
-                return hash;
-            }
-        } else {
-            throw new PersonalLockException("check ethereum personal Lock");
+        if(ethSendTransaction.hasError()) {
+            System.out.println("Transcation error : " + ethSendTransaction.getError().getMessage());
         }
+        String hash = ethSendTransaction.getTransactionHash();
+        return hash;
     }
 
     public TransactionReceipt getReceipt(String transactionHash) throws IOException {
@@ -116,11 +111,7 @@ public class EthereumService {
         return transactionReceipt.getResult();
     }
 
-    private class PersonalLockException extends RuntimeException {
-        public PersonalLockException(String msg) {
-            super(msg);
-        }
-    }
+
 
     public String sha256(String msg) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
