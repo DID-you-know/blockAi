@@ -15,12 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.Locale;
 
 /**
  * Created by Yeseul Kim on 2021-11-11
@@ -40,12 +35,12 @@ public class UserService {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public User register(final SignupRequest signupRequest) throws ParseException {
+    public User register(final SignupRequest signupRequest) {
         Boolean existed = userRepository.existsByEmail(signupRequest.getEmail());
 
         if (existed) {
             throw new IllegalArgumentException(signupRequest.getEmail());
-//            throw new MemberIdDuplicateException(signupRequest.getEmail());
+//            throw new UserIdDuplicateException(signupRequest.getEmail());
         }
 
 //        SimpleDateFormat beforeDate = new SimpleDateFormat("yyyy.MM.dd");

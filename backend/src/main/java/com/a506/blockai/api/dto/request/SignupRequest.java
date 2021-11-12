@@ -31,10 +31,10 @@ public class SignupRequest {
     @Size(min = 1, max = 30)
     private String name;
 
-    @ApiModelProperty(name = "유저 birth", example = "1999.02.22")
+    @ApiModelProperty(name = "유저 birth", example = "1999-02-22")
     @NotNull(message = "birth may not be empty")
     @Size(min = 10, max = 10)
-    private String birth;
+    private Date birth;
 
     @ApiModelProperty(name = "유저 phone", example = "010-2345-6868")
     @NotNull(message = "phone number may not be empty")

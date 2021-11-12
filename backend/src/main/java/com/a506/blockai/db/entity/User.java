@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,16 +42,10 @@ public class User implements UserDetails {
     private String password;
 
     @NotNull
-    private String birth;
+    private Date birth;
 
     @NotNull
     private String phone;
-
-    @NotNull
-    private String public_key;
-
-    @NotNull
-    private String private_key;
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp created_at;
