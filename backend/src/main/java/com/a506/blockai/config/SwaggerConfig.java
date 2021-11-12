@@ -25,6 +25,7 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 
 /* 스웨거 링크 : http://localhost:8080/swagger-ui.html */
+/* 스웨거 링크 : http://k5a506.p.ssafy.io:8080/swagger-ui.html */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport {
@@ -50,9 +51,10 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                 .apiInfo(apiInfo())     // 이 apiInfo는 바로 아래 select()보다 무조건 위에 있어야하는 것 같다!
                 .select()
                 .apis(RequestHandlerSelectors.any())        // 현재 RequestMapping으로 할당된 모든 URL 리스트를 추출
-                //      .paths(PathSelectors.ant("/**"))    // 그 중 /api/** 인 url들만 필터링
+              //  .paths(PathSelectors.any())
                 .apis(RequestHandlerSelectors.basePackage("com.a506.blockai.api.controller"))
                 .build()
+               // .pathMapping("/")
                 .securityContexts(newArrayList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()));
     }
@@ -68,7 +70,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
     // 헤더 설정 : jwt 입력
     private ApiKey apiKey() {
-        return new ApiKey("JWT", "Authorization", "header");
+        return new ApiKey(SECURITY_SCHEMA_NAME, "Authorization", "header");
     }
 
     private SecurityContext securityContext() {
