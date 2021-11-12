@@ -46,11 +46,11 @@ public class User implements UserDetails {
     @NotNull
     private String phone;
 
-    @NotNull
-    private String public_key;
-
-    @NotNull
-    private String private_key;
+//    @NotNull
+//    private String public_key;
+//
+//    @NotNull
+//    private String private_key;
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp created_at;
