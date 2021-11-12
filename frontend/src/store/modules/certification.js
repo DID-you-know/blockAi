@@ -1,16 +1,16 @@
 import certification from '@/api/certification'
-import users from '@/api/users'
+
 
 const state = {
   userId: null,
   passFace: false,
-  passVoice: false
+  passVoice: false,
 }
 
 const actions = {
   async getUserId({ commit }, phoneNumber) {
     try {
-      const response = await users.getUserId(phoneNumber)
+      const response = await certification.getUserId(phoneNumber)
       console.log(response.data)
       const userId = response.data.userId
       commit('SET_USER_ID', userId)
