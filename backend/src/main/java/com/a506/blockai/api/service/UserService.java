@@ -8,6 +8,10 @@ import com.a506.blockai.db.repository.UserRepository;
 import com.a506.blockai.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,16 +38,18 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
     public User register(final SignupRequest signupRequest) throws ParseException {
         Boolean existed = userRepository.existsByEmail(signupRequest.getEmail());
 
         if (existed) {
             throw new IllegalArgumentException(signupRequest.getEmail());
-//            throw new MemberIdDuplicateException(resources.getMemberId());
+//            throw new MemberIdDuplicateException(signupRequest.getEmail());
         }
 
-        SimpleDateFormat beforeDate = new SimpleDateFormat("yyyy.MM.dd");
-        SimpleDateFormat afterDate = new SimpleDateFormat("yyyy-MM-dd");
+//        SimpleDateFormat beforeDate = new SimpleDateFormat("yyyy.MM.dd");
+//        SimpleDateFormat afterDate = new SimpleDateFormat("yyyy-MM-dd");
 
         return userRepository.save(User.builder()
                 .name(signupRequest.getName())
@@ -57,11 +63,12 @@ public class UserService {
     }
 
     public String login(final LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() ->
-                        new IllegalArgumentException(loginRequest.getEmail())
-//                    new MemberNotFoundException(memberLoginRequestDto.getMemberId())
-        );
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
 
-        return jwtTokenProvider.createToken(user.getEmail(), user.getRoles());
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return jwtTokenProvider.createToken(authentication);
     }
 }
