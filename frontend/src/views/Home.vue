@@ -23,9 +23,10 @@
 </template>
 
 <script>
-import Button from "@/components/Button";
-import Navbar from "@/components/Navbar";
-import { useRouter } from "vue-router";
+import Button from '@/components/Button'
+import Navbar from '@/components/Navbar'
+import { useRouter } from 'vue-router'
+
 
 export default {
   name: "Home",

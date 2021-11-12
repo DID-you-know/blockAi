@@ -22,5 +22,8 @@
 <style lang="scss" scoped>
   .status {
     padding-top: 7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>

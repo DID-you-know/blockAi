@@ -24,17 +24,21 @@
         <div class="card-body">
           <div class="card-content">
             <div class="box">
-              <img class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="">
+              <img v-if="!isFaceOn" class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceId">
+              <img v-if="isFaceOn" class="image" :src="face.value" alt="face">
             </div>
-            <span class="fs-1 fw-light tag">
+            <span class="fs-1 fw-light tag" @click.stop="faceOn">
               얼굴 조회
             </span>
           </div>
           <div class="card-content">
             <div class="box">
-              <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="">
+              <img v-if="!isVoiceOn" class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voice">
+              <audio hidden>
+                <source :src="voice.value" type="audio/wav">
+              </audio>
             </div>
-            <span class="fs-1 fw-light tag">
+            <span class="fs-1 fw-light tag" @click.stop="voiceOn">
               음성 조회
             </span>
           </div>
@@ -68,6 +72,8 @@
   import { useStore } from 'vuex'
   import { useRouter } from 'vue-router'
   import WhiteButton from '@/components/WhiteButton'
+  import users from '@/api/users'
+
 
 
   export default {
@@ -76,22 +82,59 @@
       WhiteButton
     },
     setup() {
+      const store = useStore()
+
       const isFront = ref(false)
       const turnCard = () => {
         isFront.value = !isFront.value
       }
 
-      const store = useStore()
       const isIssued = computed(() => store.state.users.isIssued)
 
       const router = useRouter()
       const pushIssue = () => router.push({ name: 'issue' })
 
+      const face = ref(null)
+      const isFaceOn = ref(false)
+      const faceOn = async () => {
+        isFaceOn.value = !isFaceOn.value
+        if (face.value === null) {
+          console.log('axios')
+          try {
+            const response = await users.getFace(store.state.users.userId)
+            console.log(response.data)
+            face.value = response.data.face
+          } catch (error) {
+            console.log(error)
+          }
+        }
+      }
+
+      const voice = ref(null)
+      const isVoiceOn = ref(false)
+      const voiceOn = async () => {
+        isVoiceOn.value = !isVoiceOn.value
+        if (voice.value === null) {
+          console.log('axios')
+          try {
+            const response = await users.getVoice(store.state.users.userId)
+            console.log(response.data)
+            voice.value = response.data.voice
+          } catch (error) {
+            console.log(error)
+          }
+        }
+      }
+
       return {
         isFront,
         turnCard,
         isIssued,
-        pushIssue
+        pushIssue,
+        isFaceOn,
+        faceOn,
+        isVoiceOn,
+        voiceOn
       }
     }
   }
@@ -153,6 +196,7 @@
           }
 
           .box {
+            margin-top: 1rem;
             padding: 1.5rem 2.5rem;
             border: 1px solid;
             color: $white;
@@ -163,12 +207,25 @@
               width: 100px;
               height: 100px;
             }
+
+            .image {
+              width: 100px;
+              height: 100px;
+            }
           }
 
           .tag {
             color: $white;
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: $primary;
+            border-radius: 1rem;
+            cursor: default;
+
+            &:hover {
+              background-color: $primary-hover;
+            }
           }
 
           .stamp {
