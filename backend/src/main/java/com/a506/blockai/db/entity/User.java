@@ -1,25 +1,26 @@
 package com.a506.blockai.db.entity;
 
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
-@Builder
-@DynamicInsert
-@AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private int id;
 
     @NotNull
@@ -34,18 +35,30 @@ public class User {
     @NotNull
     private Date birth;
 
+    @NotNull
     private String phone;
 
-    @NotNull
-    private LocalDateTime created_at;
-
-    @NotNull
-    private String key;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Certification certification;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @Embedded
     private DID did;
 
+    @OneToMany(mappedBy = "user")
+    private List<Certification> certifications = new ArrayList<>();
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Builder
+    public User(String name, String email, String password, Date birth, String phone, DID did) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.birth = birth;
+        this.phone = phone;
+        this.did = did;
+    }
+
+    public void addCertification(Certification certification) {
+        this.certifications.add(certification);
+        certification.to(this);
+    }
 }

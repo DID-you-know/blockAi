@@ -1,42 +1,30 @@
 package com.a506.blockai.db.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 
-import static javax.persistence.FetchType.LAZY;
-
-@Entity
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Builder
-@DynamicInsert
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class DID {
 
-    @Id
-    private int id;
-
-    @NotNull
-    @OneToOne(fetch = LAZY)          // 일대일 관계에서 FK를 가지고 있는 애가 주인. 즉 얘가 주인
-    @JoinColumn(name = "user_id")     // 연관관계의 주인은 mappedBy X, JoinColumn 사용
-    private User user;
-
-    @NotNull
+    @Column(unique = true)
     private String didAddress;
+    private LocalDateTime issuedAt;
+    private LocalDateTime updatedAt;
 
-    private boolean didFlag;
+    public DID(String didAddress) {
+        this.didAddress = didAddress;
+        this.issuedAt = this.updatedAt = LocalDateTime.now();
+    }
 
-    @NotNull
-    private LocalDateTime issuedDate;
-
+    public void updateDid(String didAddress) {
+        this.didAddress = didAddress;
+        this.updatedAt = LocalDateTime.now();
+    }
 }
