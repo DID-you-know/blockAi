@@ -1,36 +1,17 @@
 @import "./color.scss";
 
 
-label {
-  cursor: default;
-}
-
-input[type=text],
-input[type=password] {
-  width: 100%;
-  padding: 15px;
-  background-color: $light;
-  border-radius: 10px;
-  border: none;
-  font-size: 20px;
-  
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px $tertiary;
-  }
-
-  &:hover:not(:focus):enabled {
-    background-color: $light-hover;
-  }
-
-  &:disabled {
-    color: $grey;
-    background-color: $grey-light;
-  }
-}
-
 .body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+}
+
+// break point
+$kiosk: 1080px;
+
+@mixin kiosk {
+  @media (min-width: #{$kiosk}) {
+    @content;
+  }
 }

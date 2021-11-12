@@ -1,13 +1,14 @@
 import users from '@/api/users'
 
 
-const state = {
+const state = () => ({
   accessToken: null,
+  isLogin: false,
   userId: null,
   name: null,
-  isIssued: false,
-  issuedDate: null
-}
+  isIssued: true,
+  issuedDate: null,
+})
 
 const actions = {
   async getAccessToken({ commit }, credentials) {
@@ -19,7 +20,7 @@ const actions = {
     } catch (error) {
       console.log(error)
     }
-  },
+  }
   // async getUserInfo({ commit }) {
 
   // }
@@ -28,7 +29,7 @@ const actions = {
 const mutations = {
   SET_ACCESS_TOKEN(state, accessToken) {
     state.accessToken = accessToken
-  }
+  },
 }
 
 const getters = {

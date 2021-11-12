@@ -5,7 +5,7 @@ import axios from 'axios'
 export default {
   sendSMS(phoneNumber, randomCode) {
     return axios({
-      url: '/users/sms',
+      url: '/ai/users/sms',
       method: 'post',
       data: {
         'phone': phoneNumber,
@@ -46,6 +46,18 @@ export default {
       url: `/users/${userId}/did/issue`,
       method: 'post',
       data: didData
+    })
+  },
+  getFace(userId) {
+    return _axios({
+      url: `/ai/${userId}/face`,
+      method: 'get'
+    })
+  },
+  getVoice(userId) {
+    return _axios({
+      url: `/ai/${userId}/voice`,
+      method: 'get'
     })
   }
 }

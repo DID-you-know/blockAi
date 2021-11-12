@@ -1,14 +1,16 @@
-import { createStore } from "vuex";
-import createPersistedState from "vuex-persistedstate";
-import users from "./modules/users";
-import image from "./modules/image";
+import { createStore } from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
+import users from './modules/users'
+import certification from './modules/certification'
+// import image from './modules/image'
 
 const store = createStore({
-  plugins: [createPersistedState()],
   modules: {
     users,
-    image,
+    certification,
+    // image,
   },
-});
+  plugins: [createPersistedState()]
+})
 
-export default store;
+export default store
