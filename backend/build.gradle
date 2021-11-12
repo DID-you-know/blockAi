@@ -39,6 +39,14 @@ dependencies {
 	// configuration
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+	// spring security
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.5.5'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
 	/* aws rekognition dependency */
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
 	implementation group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.12.105'

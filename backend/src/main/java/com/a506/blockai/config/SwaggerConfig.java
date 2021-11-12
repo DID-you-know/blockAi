@@ -25,6 +25,7 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 
 /* 스웨거 링크 : http://localhost:8080/swagger-ui.html */
+/* 스웨거 링크 : http://k5a506.p.ssafy.io:8080/swagger-ui.html */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport {
@@ -68,7 +69,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
     // 헤더 설정 : jwt 입력
     private ApiKey apiKey() {
-        return new ApiKey("JWT", "Authorization", "header");
+        return new ApiKey(SECURITY_SCHEMA_NAME, "Authorization", "header");
     }
 
     private SecurityContext securityContext() {
