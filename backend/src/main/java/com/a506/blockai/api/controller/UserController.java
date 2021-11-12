@@ -3,7 +3,11 @@ package com.a506.blockai.api.controller;
 import com.a506.blockai.api.dto.request.LoginRequest;
 import com.a506.blockai.api.dto.request.SignupRequest;
 import com.a506.blockai.api.service.UserService;
+import com.a506.blockai.exception.ApplicationException;
 import com.a506.blockai.jwt.JwtTokenProvider;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +35,10 @@ public class UserController {
 
     /** 회원가입 */
     @PostMapping("/sign-up")
+    @ApiOperation(value = "회원가입", notes = "<strong>이메일, 패스워드, 이름, 생일, 전화번호</strong>을 통해 회원가입 한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "회원가입 성공"),
+    })
     public ResponseEntity signup (@RequestBody SignupRequest signupRequest) throws ParseException {
         userService.register(signupRequest);
         return new ResponseEntity(HttpStatus.OK);
@@ -38,6 +46,11 @@ public class UserController {
 
     /** 로그인 */
     @PostMapping("/sign-in")
+    @ApiOperation(value = "로그인", notes = "<strong>이메일과 패스워드</strong>를 통해 로그인 한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "로그인 성공(헤더에도 토근 있음)", response = String.class),
+            @ApiResponse(code = 401, message = "인증 실패(이메일 존재X or 비밀번호 불일치)")
+    })
     public ResponseEntity<String> signin (@RequestBody LoginRequest loginRequest) {
         String jwt = userService.login(loginRequest);
 

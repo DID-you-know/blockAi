@@ -1,6 +1,8 @@
 package com.a506.blockai.config;
 
+import com.a506.blockai.jwt.JwtAccessDeniedHandler;
 import com.a506.blockai.jwt.JwtAuthenticationFilter;
+import com.a506.blockai.jwt.JwtEntryPoint;
 import com.a506.blockai.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +23,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtEntryPoint jwtEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -41,7 +45,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/favicon.ico",
                         "/error",
                         "/swagger-resources/**",
-                        "/swagger-ui.html",
+                        "/swagger-ui.html/**",
                         "/swagger-ui/**",
                         "/v2/api-docs",
                         "/webjars/**"
@@ -53,7 +57,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic().disable() // rest api 이므로 기본설정 사용안함. 기본설정은 비인증시 로그인폼 화면으로 리다이렉트 된다.
                 .csrf().disable() // rest api이므로 csrf 보안이 필요없으므로 disable처리.
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
+
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
 
                 .and()
                 .authorizeRequests()
