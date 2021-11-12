@@ -18,7 +18,6 @@ import static javax.persistence.FetchType.LAZY;
 @DynamicInsert
 @AllArgsConstructor
 @RequiredArgsConstructor
-//@PrimaryKeyJoinColumn(name="id")
 public class DID {
     @Id
     private int id;

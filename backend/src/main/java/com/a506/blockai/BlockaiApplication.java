@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutionException;
 
 //@SpringBootApplication
 @SpringBootApplication(exclude = ContextRegionProviderAutoConfiguration.class)
+// @ConfigurationPropertiesScan
 public class BlockaiApplication {
 
 	public static void main(String[] args) throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException, JsonProcessingException, ParseException, UnsupportedEncodingException, URISyntaxException, InvalidKeyException {

@@ -44,7 +44,6 @@ public class User {
     private LocalDateTime created_at;
 
     @NotNull
-
     private String public_key;
 
     @NotNull
