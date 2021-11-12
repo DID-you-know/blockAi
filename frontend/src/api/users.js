@@ -5,7 +5,7 @@ import axios from 'axios'
 export default {
   sendSMS(phoneNumber, randomCode) {
     return axios({
-      url: '/users/sms',
+      url: '/ai/users/sms',
       method: 'post',
       data: {
         'phone': phoneNumber,
