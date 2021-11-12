@@ -51,9 +51,10 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                 .apiInfo(apiInfo())     // 이 apiInfo는 바로 아래 select()보다 무조건 위에 있어야하는 것 같다!
                 .select()
                 .apis(RequestHandlerSelectors.any())        // 현재 RequestMapping으로 할당된 모든 URL 리스트를 추출
-                //      .paths(PathSelectors.ant("/**"))    // 그 중 /api/** 인 url들만 필터링
+              //  .paths(PathSelectors.any())
                 .apis(RequestHandlerSelectors.basePackage("com.a506.blockai.api.controller"))
                 .build()
+               // .pathMapping("/")
                 .securityContexts(newArrayList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()));
     }
