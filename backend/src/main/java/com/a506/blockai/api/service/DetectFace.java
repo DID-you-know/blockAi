@@ -1,6 +1,9 @@
 package com.a506.blockai.api.service;
 
+import com.a506.blockai.config.AwsProperties;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
 import com.amazonaws.services.rekognition.model.*;
@@ -20,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.java_websocket.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.swing.filechooser.FileSystemView;
@@ -28,6 +32,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class DetectFace {
+
+    @Bean
+    public AmazonRekognition amazonRekognition(AwsProperties awsProperties) {
+        System.out.println(awsProperties.getAccessKey());
+        BasicAWSCredentials credentials = new BasicAWSCredentials(awsProperties.getAccessKey(), awsProperties.getSecretKey());
+        return AmazonRekognitionClientBuilder
+                .standard()
+                .withRegion(Regions.AP_NORTHEAST_2)
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .build();
+    }
 
     @Autowired
     private AmazonRekognition rekognitionClient;

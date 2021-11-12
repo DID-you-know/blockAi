@@ -266,12 +266,4 @@ public class AiServiceImpl implements AiService{
     }
 
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-//    public float detect(String encodedString) throws Exception {
-//
-//    }
-
-
 }
