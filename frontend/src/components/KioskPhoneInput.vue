@@ -110,6 +110,10 @@
           justify-content: center;
           align-items: center;
           padding: 1vh;
+
+          &:hover {
+            background-color: $tertiary-hover;
+          }
         }
         
         .text {
@@ -119,6 +123,10 @@
         .submit {
           background-color: $primary;
           color: $white;
+
+          &:hover {
+            background-color: $primary-hover;
+          }
         }
       }
     }

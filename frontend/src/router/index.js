@@ -8,6 +8,7 @@ import ImageTest from '@/views/ImageTest'
 import Certification from '@/views/Certification'
 import KioskLogin from '@/views/KioskLogin'
 import KioskHome from '@/views/KioskHome'
+import KioskPayment from '@/views/KioskPayment'
 
 
 const routes = [
@@ -58,6 +59,12 @@ const routes = [
     path: '/kiosk',
     name: 'kioskHome',
     component: KioskHome
+  },
+  // 키오스크 결제
+  {
+    path: '/kiosk/payment',
+    name: 'kioskPayment',
+    component: KioskPayment
   },
   {
     path: '/image',
