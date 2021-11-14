@@ -85,7 +85,7 @@
     components: {
       WhiteButton
     },
-    setup() {
+    setup(props, { emit }) {
       const store = useStore()
       const router = useRouter()
       const step = ref(1)
@@ -268,6 +268,7 @@
           if (store.getters.certification.isPassed) {
             step.value += 1
             store.commit('certification/RESET')
+            emit('pass')
           } else {
             console.log('인증 실패')
           }
@@ -312,6 +313,8 @@
     justify-content: center;
     align-items: center;
     gap: 4rem;
+    border-radius: inherit;
+    padding-bottom: inherit;
 
     .progressbar {
       margin-top: 8vh;
