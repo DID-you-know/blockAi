@@ -58,13 +58,14 @@
 <script>
   import Progressbar from '@/components/Progressbar'
   import WhiteButton from '@/components/WhiteButton'
-  import { ref, onMounted, onUpdated } from 'vue'
+  import { ref, onMounted, onUpdated, computed } from 'vue'
   import { useRouter } from 'vue-router'
   import * as blazeface from '@tensorflow-models/blazeface'
   import '@tensorflow/tfjs-backend-webgl'
   import '@tensorflow/tfjs'
-  import usersApi from '@/api/users'
-  // import AWS from 'aws-sdk'
+  import AWS from 'aws-sdk'
+  import { useStore } from 'vuex'
+  import { v4 as uuidv4 } from 'uuid'
 
 
   export default {
@@ -74,6 +75,10 @@
       WhiteButton
     },
     setup() {
+      const store = useStore()
+      const userId = computed(() => store.state.users.userId)
+      const isIssued = computed(() => store.state.users.isIssued)
+
       const router = useRouter()
       const step = ref(1)
       const nextStep = () => {
@@ -207,12 +212,12 @@
             audioBlob.value = new Blob(chunks.value, { type: 'audio/wav' })
             chunks.value = []
 
-            // base64 encode
-            var reader = new FileReader();
-            reader.readAsDataURL(audioBlob.value);
-            reader.onloadend = function () {
-              audioBlob.value = reader.result;
-            }
+            // // base64 encode
+            // var reader = new FileReader();
+            // reader.readAsDataURL(audioBlob.value);
+            // reader.onloadend = function () {
+            //   audioBlob.value = reader.result;
+            // }
 
             audioSource.value = window.URL.createObjectURL(audioBlob.value)
           }
@@ -239,93 +244,71 @@
       }
 
       // 생체데이터 저장
-      // const facePath = ref(null)
-      // const faceImageUpload = async () => {
-      //   // S3 설정
-      //   AWS.config.update({
-      //     accessKeyId: process.env.VUE_APP_AWS_ACCESS_KEY,
-      //     secretKey: process.env.VUE_APP_AWS_SECRET_ACCESS_KEY,
-      //     region: process.env.VUE_APP_BUCKETREGION,
-      //     credentials: new AWS.CognitoIdentityCredentials({
-      //       IdentityPoolId: process.env.VUE_APP_IDENTITYPOOLID
-      //     })
-      //   })
-      //   const s3 = new AWS.S3({
-      //     apiVersion: "2006-03-01",
-      //     params: { Bucket: process.env.VUE_APP_ALBUMBUCKETNAME }
-      //   })
-
-      //   // canvas to blob
-      //   const base64 = faceCanvas.value.toDataURL('image/jpeg', 1.0)
-      //   const base64Response = await fetch(base64)
-      //   const blob = await base64Response.blob()
-
-      //   console.log(s3)
-      //   // 이미지 업로드
-      //   const upload = new AWS.S3.ManagedUpload({
-      //     params: {
-      //       Bucket: process.env.VUE_APP_ALBUMBUCKETNAME,
-      //       Key: '얼굴사진테스트.jpg',
-      //       Body: blob
-      //     }
-      //   })
-      //   const promise = upload.promise()
-      //   promise.then((data) => {
-      //     console.log('success', data)
-      //     facePath.value = data.Location
-      //   }, (err) => {
-      //     console.log('error', err)
-      //   })
-      // }
-
       const facePath = ref(null)
-      const faceIssue = async (userId, faceData) => {
-        try {
-          const response = await usersApi.faceIssue(userId, faceData)
-          console.log(response.data)
-          facePath.value = response.data.facePath
-        } catch (error) {
-          console.log(error)
-        }
+      const voicePath = ref(null)
+      const s3Upload = async () => {
+        // S3 설정
+        AWS.config.update({
+          accessKeyId: process.env.VUE_APP_AWS_ACCESS_KEY,
+          secretKey: process.env.VUE_APP_AWS_SECRET_ACCESS_KEY,
+          region: process.env.VUE_APP_BUCKETREGION,
+          credentials: new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: process.env.VUE_APP_IDENTITYPOOLID
+          })
+        })
+        const s3 = new AWS.S3({
+          apiVersion: "2006-03-01",
+          params: { Bucket: process.env.VUE_APP_ALBUMBUCKETNAME }
+        })
+
+        // canvas to blob
+        const base64 = faceCanvas.value.toDataURL('image/jpeg', 1.0)
+        const base64Response = await fetch(base64)
+        const faceBlob = await base64Response.blob()
+
+        console.log(s3)
+        // 이미지 업로드
+        const faceUpload = new AWS.S3.ManagedUpload({
+          params: {
+            Bucket: process.env.VUE_APP_ALBUMBUCKETNAME,
+            Key: uuidv4() + '-' + userId.value + '.jpg',
+            Body: faceBlob
+          }
+        })
+        const facePromise = faceUpload.promise()
+        facePromise.then((data) => {
+          console.log('success', data)
+          facePath.value = data.Location
+        }, (err) => {
+          console.log('error', err)
+        })
+
+        // 음성 업로드
+        const voiceUpload = new AWS.S3.ManagedUpload({
+          params: {
+            Bucket: process.env.VUE_APP_ALBUMBUCKETNAME,
+            Key: uuidv4() + '-' + userId.value + '.wav',
+            Body: audioBlob.value
+          }
+        })
+        const voicePromise = voiceUpload.promise()
+        voicePromise.then((data) => {
+          console.log('success', data)
+          voicePath.value = data.Location
+        }, (err) => {
+          console.log('error', err)
+        })
       }
 
-      const voiceId = ref(null)
-      const voiceIssue = async (userId, voiceData) => {
-        try {
-          const response = await usersApi.voiceIssue(userId, voiceData)
-          console.log(response.data)
-          voiceId.value = response.data.voiceId
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
-      const didIssueSuccess = ref(false)
-      const didIssue = async (userId, didData) => {
-        try {
-          const response = await usersApi.didIssue(userId, didData)
-          console.log(response.data)
-          didIssueSuccess.value = true
-        } catch (error) {
-          console.log(error)
-          didIssueSuccess.value = false
-          console.log('didIssue')
-        }
-      }
 
       onUpdated(async () => {
         if (step.value === 2 && audioStream.value === null) {
           getMIC()
         }
         if (step.value === 3) {
-          // faceImageUpload()
-          await faceIssue(1, { voice: faceBase64.value })
-          await voiceIssue(1, { voice: audioBlob.value })
-          await didIssue(1, { facePath: facePath.value, voiceId: voiceId.value })
-          // faceIssue(userId, { voice: faceBase64.value })
-          // voiceIssue(userId, { voice: audioBlob.value })
-          // didIssue(userId, { facePath: facePath.value, voiceId: voiceId.value })
-          if (didIssueSuccess.value) {
+          await s3Upload()
+          await store.dispatch('users/didIssue', { userId: userId.value, didData: { facePath: facePath.value, voicePath: voicePath.value } })
+          if (isIssued.value) {
             step.value += 1
           } else {
             console.log('발급에 실패했습니다.')

@@ -12,15 +12,24 @@
       <div class="price row"><span class="label">총 금액</span><span class="value fw-bold"><span class="total-price">{{ totalPrice }}</span>원</span></div>
     </div>
     <div class="footer">
-      <div class="button" @click="router.push({ name: 'kioskLogin' })">
+      <div class="button" @click="showModal">
         결제하기
       </div>
     </div>
+    <Modal v-show="isModalVisible" :isModalVisible="isModalVisible">
+      <KioskLogin v-if="step===1" @pass="nextStep"/>
+      <Certification v-if="step===2" @pass="nextStep"/>
+      <KioskPayment v-if="step===3"/>
+    </Modal>
   </div>
 </template>
 
 <script>
   import Item from '@/components/Item'
+  import Modal from '@/components/Modal'
+  import KioskLogin from '@/components/KioskLogin'
+  import Certification from '@/components/Certification'
+  import KioskPayment from '@/components/KioskPayment'
   import { computed, ref } from 'vue'
   import { useRouter } from 'vue-router'
 
@@ -28,13 +37,16 @@
   export default {
     name: 'KioskHome',
     components: {
-      Item
+      Item,
+      Modal,
+      KioskLogin,
+      Certification,
+      KioskPayment
     },
     setup() {
       const router = useRouter()
 
       const itemList = ref([
-
         {
           image: 'item1',
           name: '참이슬',
@@ -73,11 +85,25 @@
         return itemList.value.reduce((prev, cur) => prev + cur.count, 0)
       })
 
+      const isModalVisible = ref(false)
+      const showModal = () => {
+        isModalVisible.value = true
+      }
+
+      const step = ref(1)
+      const nextStep = () => {
+        step.value = 2
+      }
+
       return {
         router,
         itemList,
         totalPrice,
-        totalCount
+        totalCount,
+        isModalVisible,
+        showModal,
+        step,
+        nextStep
       }
     }
   }

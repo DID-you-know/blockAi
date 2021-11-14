@@ -43,6 +43,8 @@
     gap: 3vh;
     padding: 5vh;
     text-align: center;
+    border-radius: inherit;
+    padding-bottom: inherit;
 
     header {
       font-size: 3vh;
