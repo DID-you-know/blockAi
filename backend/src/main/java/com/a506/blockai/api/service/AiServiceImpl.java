@@ -334,7 +334,7 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public float detectFace(String encodedUserFace, String savedUserS3Url) throws Exception {
+    public float identifyFace(String encodedUserFace, String savedUserS3Url) throws Exception {
 
         Float similarityThreshold = 70F;
 

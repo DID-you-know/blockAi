@@ -9,6 +9,6 @@ public interface AiService {
     String createProfile();
     String enrollment(String profileId, VoiceBiometricsRequest voiceBiometricsRequest);
     float identify(String profileId, VoiceBiometricsRequest voiceBiometricsRequest);
-    float detectFace(String encodedString, String savedUserUrl) throws Exception;
+    float identifyFace(String encodedString, String savedUserUrl) throws Exception;
     String saveFace(String encodedUserFace, String userId) throws IOException;
 }
