@@ -48,8 +48,8 @@ public class CertificationService {
 
         String didAddress = did.getDidAddress();
         List<Type> ethereumCallResult = getBiometricsCertificateFromBlockchain(didAddress);
-        String faceCertificateFromBlockchain = String.valueOf(ethereumCallResult.get(0).getValue());
-        String voiceCertificateFromBlockchain = String.valueOf(ethereumCallResult.get(1).getValue());
+        String faceCertificateFromBlockchain = ethereumService.decode(String.valueOf(ethereumCallResult.get(0).getValue()));
+        String voiceCertificateFromBlockchain = ethereumService.decode(String.valueOf(ethereumCallResult.get(1).getValue()));
         BigInteger bigIntegerExpiryTime = (BigInteger) ethereumCallResult.get(2).getValue();
         LocalDateTime expiryTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(bigIntegerExpiryTime.longValue()),
                 TimeZone.getDefault().toZoneId());
