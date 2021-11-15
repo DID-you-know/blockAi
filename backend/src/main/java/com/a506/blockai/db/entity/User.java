@@ -1,9 +1,6 @@
 package com.a506.blockai.db.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +13,8 @@ import java.util.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -54,19 +53,6 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles;
-    }
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Certification> certification = new ArrayList<>();
-
-    @Builder
-    public User(String name, String email, String password, Date birth, String phone, DID did) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.birth = birth;
-        this.phone = phone;
-        this.did = did;
     }
 
     public void addCertification(Certification certification) {
