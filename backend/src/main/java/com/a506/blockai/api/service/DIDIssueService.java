@@ -53,11 +53,14 @@ public class DIDIssueService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         if (isIssuedDid(user)) {
+            System.out.println("did 있음");
             DID did = user.getDid();
             did.updateDid(address);
         } else {
+            System.out.println("did 없음 : " + address);
             user.createDid(address);
         }
+        userRepository.save(user);
         return address;
     }
 
