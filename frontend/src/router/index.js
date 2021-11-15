@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '@/store'
 import Home from '@/views/Home'
 import Signup from '@/views/Signup'
 import Login from '@/views/Login'
@@ -55,6 +56,17 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+// 로그인 리다이렉트
+router.beforeEach((to, from, next) => {
+  if (!store.state.users.isLogin) {
+    if (to.name === 'home' || to.name === 'signup' || to.name === 'login' || to.name === 'kioskHome') {
+      next()
+    } else {
+      next({ name: 'login' })
+    }
+  } else next()
 })
 
 export default router

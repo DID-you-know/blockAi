@@ -2,10 +2,12 @@ package com.a506.blockai.api.service;
 
 import com.a506.blockai.api.dto.request.LoginRequest;
 import com.a506.blockai.api.dto.request.SignupRequest;
+import com.a506.blockai.api.dto.response.LoginResponse;
 import com.a506.blockai.db.entity.Role;
 import com.a506.blockai.db.entity.User;
 import com.a506.blockai.db.repository.UserRepository;
 import com.a506.blockai.exception.EmailDuplicatedException;
+import com.a506.blockai.exception.UserNotFoundException;
 import com.a506.blockai.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,13 +55,22 @@ public class UserService {
                 .build());
     }
 
-    public String login(final LoginRequest loginRequest) {
+    public LoginResponse login(final LoginRequest loginRequest) {
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
+
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+                new UsernamePasswordAuthenticationToken(email, password);
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return jwtTokenProvider.createToken(authentication);
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        LoginResponse loginResponse = new LoginResponse(jwtTokenProvider.createToken(authentication), user.getId(), user.getName(), user.getDid() == null ? null : user.getDid().getIssuedAt());
+        return loginResponse;
     }
 }

@@ -4,15 +4,22 @@
       <Logo/>
     </div>
     <div class="container" :class="{ 'hide-content': $props.hideContent }">
-      <router-link :to="{ name: 'status' }" class="navbar-item fs-1">신원증명발급</router-link>
-      <router-link :to="{ name: 'login' }" class="navbar-item fs-1">로그인</router-link>
-      <router-link :to="{ name: 'signup' }" class="navbar-item fs-1">회원가입</router-link>
+      <template v-if="isLogin">
+        <router-link :to="{ name: 'status' }" class="navbar-item fs-1">신원증명발급</router-link>
+        <button class="navbar-item fs-1" @click="logout">로그아웃</button>
+      </template>
+      <template v-else>
+        <router-link :to="{ name: 'login' }" class="navbar-item fs-1">로그인</router-link>
+        <router-link :to="{ name: 'signup' }" class="navbar-item fs-1">회원가입</router-link>
+      </template>
     </div>
   </nav>
 </template>
 
 <script>
   import Logo from '@/components/Logo'
+  import { useStore } from 'vuex'
+  import { computed } from 'vue'
 
 
   export default {
@@ -24,6 +31,19 @@
       hideContent: {
         type: Boolean,
         default: false
+      }
+    },
+    setup() {
+      const store = useStore()
+      const isLogin = computed(() => store.state.users.isLogin)
+
+      const logout = () => {
+        store.commit('users/LOGOUT')
+      }
+
+      return {
+        isLogin,
+        logout
       }
     }
   }

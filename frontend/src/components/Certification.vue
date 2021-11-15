@@ -72,7 +72,7 @@
 
 <script>
   import WhiteButton from '@/components/WhiteButton'
-  import { onUpdated, onMounted, ref } from 'vue'
+  import { onUpdated, onMounted, ref, computed } from 'vue'
   import * as blazeface from '@tensorflow-models/blazeface'
   import '@tensorflow/tfjs-backend-webgl'
   import '@tensorflow/tfjs'
@@ -88,6 +88,7 @@
     setup(props, { emit }) {
       const store = useStore()
       const router = useRouter()
+      const isCertificated = computed(() => store.state.certification.isCertificated)
       const step = ref(1)
 
       // 얼굴 촬영
@@ -257,15 +258,20 @@
       onMounted(() => {
         getMIC()
       })
+
       onUpdated(async () => {
         if (captureComplete.value && recordComplete.value) {
           captureComplete.value = false
           recordComplete.value = false
           step.value += 1
         } else if (step.value === 2) {
-          await store.dispatch('certification/sendFace', faceBase64.value)
-          await store.dispatch('certification/sendVoice', audioBlob.value)
-          if (store.getters.certification.isPassed) {
+          const payload = {
+            face: faceBase64.value,
+            voice: audioBlob.value,
+            certifiedBy: '이마트'
+          }
+          await store.dispatch('certification/certification', payload)
+          if (isCertificated.value) {
             step.value += 1
             store.commit('certification/RESET')
             emit('pass')

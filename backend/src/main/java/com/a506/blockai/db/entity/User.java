@@ -1,7 +1,6 @@
 package com.a506.blockai.db.entity;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
@@ -43,7 +42,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Certification> certifications = new ArrayList<>();
 
-    @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -53,6 +52,11 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles;
+    }
+
+    @PrePersist
+    private void prePersist() {
+        createdAt = LocalDateTime.now();
     }
 
     public void addCertification(Certification certification) {

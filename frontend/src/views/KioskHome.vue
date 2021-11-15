@@ -1,6 +1,6 @@
 <template>
   <div class="body kiosk">
-    <img class="company-logo" src="@/assets/image/logo.png" alt="">
+    <img class="company-logo" src="@/assets/image/GS25.png" alt="">
     <div class="header">
       <h1 class="nanumGothic title">주문내역</h1>
     </div>
@@ -49,33 +49,33 @@
       const itemList = ref([
         {
           image: 'item1',
-          name: '참이슬',
+          name: '참이슬 fresh',
           price: 1300,
           count: 2
         },
         {
-          image: 'item1',
-          name: '참이슬',
-          price: 3300,
-          count: 5
+          image: 'item2',
+          name: '처음처럼',
+          price: 1300,
+          count: 2
         },
         {
-          image: 'item1',
-          name: '참이슬',
-          price: 3300,
-          count: 5
+          image: 'item3',
+          name: '진로이즈백',
+          price: 1300,
+          count: 3
         },
         {
-          image: 'item1',
-          name: '참이슬',
-          price: 3300,
-          count: 5
+          image: 'item4',
+          name: '테라',
+          price: 1450,
+          count: 4
         },
         {
-          image: 'item1',
-          name: '참이슬',
-          price: 3300,
-          count: 5
+          image: 'item5',
+          name: '장수막걸리',
+          price: 1300,
+          count: 2
         }
       ])
       const totalPrice = computed(() => {
@@ -198,7 +198,8 @@
       .button {
         background-color: $kiosk;
         padding: 1vh 3vh;
-        border-radius: 1vh;
+        width: 40vh;
+        border-radius: 3vh;
         font-size: 2.5vh;
 
         &:hover {
