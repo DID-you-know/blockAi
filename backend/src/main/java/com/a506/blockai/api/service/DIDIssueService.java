@@ -52,17 +52,17 @@ public class DIDIssueService {
         // DB에 업데이트
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        DID did = user.getDid();
-        if (isIssuedDid(did)) {
+        if (isIssuedDid(user)) {
+            DID did = user.getDid();
             did.updateDid(address);
         } else {
-            did = new DID(address);
+            user.createDid(address);
         }
         return address;
     }
 
-    private boolean isIssuedDid(DID did) {
-        return did != null;
+    private boolean isIssuedDid(User user) {
+        return user.getDid() != null;
     }
 
 
