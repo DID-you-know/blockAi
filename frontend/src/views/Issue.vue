@@ -211,14 +211,6 @@
           mediaRecorder.value.onstop = () => {
             audioBlob.value = new Blob(chunks.value, { type: 'audio/wav' })
             chunks.value = []
-
-            // // base64 encode
-            // var reader = new FileReader();
-            // reader.readAsDataURL(audioBlob.value);
-            // reader.onloadend = function () {
-            //   audioBlob.value = reader.result;
-            // }
-
             audioSource.value = window.URL.createObjectURL(audioBlob.value)
           }
         }
@@ -307,7 +299,7 @@
         }
         if (step.value === 3) {
           await s3Upload()
-          await store.dispatch('users/didIssue', { userId: userId.value, didData: { facePath: facePath.value, voicePath: voicePath.value } })
+          await store.dispatch('users/didIssue', { userId: userId.value, didData: { facePath: facePath.value, voiceId: voicePath.value } })
           if (isIssued.value) {
             step.value += 1
           } else {
