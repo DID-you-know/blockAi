@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 public interface AiService {
-    String createProfile();
-    String enrollment(String profileId, VoiceBiometricsRequest voiceBiometricsRequest);
-    float identify(String profileId, VoiceBiometricsRequest voiceBiometricsRequest);
+    float identify(String profileId, VoiceBiometricsRequest voiceBiometricsRequest) throws IOException;
     float detectFace(String encodedString) throws Exception;
     String saveFace(String encodedUserFace, String userId) throws IOException;
 }
