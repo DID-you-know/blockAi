@@ -1,6 +1,7 @@
 package com.a506.blockai.api.service;
 
 import com.a506.blockai.api.dto.request.BiometricsCertificateRequest;
+import com.a506.blockai.api.dto.request.FaceBiometricsRequest;
 import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
 import com.a506.blockai.db.entity.Certification;
 import com.a506.blockai.db.entity.DID;
@@ -59,11 +60,12 @@ public class CertificationService {
         }
 
         // 얼굴 유사도
-        float faceScore = 0;
+        FaceBiometricsRequest faceBiometricsRequest = new FaceBiometricsRequest(biometricsCertificateRequest.getFace(), faceCertificateFromBlockchain);
+        float faceScore = aiService.identifyFace(faceBiometricsRequest);
 
         // 목소리 유사도
-        VoiceBiometricsRequest voiceBiometricsRequest = new VoiceBiometricsRequest(biometricsCertificateRequest.getVoice());
-        float voiceScore = aiService.identify(voiceCertificateFromBlockchain, voiceBiometricsRequest);
+        VoiceBiometricsRequest voiceBiometricsRequest = new VoiceBiometricsRequest(biometricsCertificateRequest.getVoice(), voiceCertificateFromBlockchain);
+        float voiceScore = aiService.identifyVoice(voiceBiometricsRequest);
 
         if (!isSamePerson(faceScore, voiceScore)) {
             throw new UnauthorizedAccessException();
