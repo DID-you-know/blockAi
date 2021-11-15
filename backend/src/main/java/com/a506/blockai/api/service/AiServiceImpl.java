@@ -30,6 +30,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 
@@ -320,22 +322,27 @@ public class AiServiceImpl implements AiService {
         return inputImage;
     }
 
+    public File getFile(String filePath) throws IOException {
+
+        // S3에서 이미지 받아오는데 쓰이는 amazonS3Client
+        AmazonS3 amazonS3Client = amazonS3Client();
+
+        InputStream in = amazonS3Client.getObject(bucket, filePath).getObjectContent();
+        File file = File.createTempFile("s3file", "");
+        Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        return file;
+    }
+
     @Override
-    public float detectFace(String encodedUserFace) throws Exception {
+    public float detectFace(String encodedUserFace, String savedUserS3Url) throws Exception {
 
         Float similarityThreshold = 70F;
 
         // 프론트에서 넘어온 [촬영된 현재 사용자 이미지]를 file 형태로 변경
         File inputImage = decodeImage(encodedUserFace);
 
-        // S3에서 이미지 받아오는데 쓰이는 amazonS3Client
-        AmazonS3 amazonS3Client = amazonS3Client();
-
         // DID가 복호화한 [기존 저장된 사용자 이미지]
-        // 여기 key 부분을 수정해야함. 사용자 이미지 이름으로!
-        // s3://blockai-bucket/test.png 이런식으로 넘어오면 -> 앞 경로 컷하고 뒤의 이름만 가져와도 될듯.
-        String key = "test.png";
-        com.amazonaws.services.s3.model.S3Object originImage = amazonS3Client.getObject(new GetObjectRequest(bucket, key));
+        File savedUserImage = getFile(savedUserS3Url);
 
         ByteBuffer sourceImageBytes = null;
         ByteBuffer targetImageBytes = null;
@@ -347,7 +354,7 @@ public class AiServiceImpl implements AiService {
             System.out.println("Failed to load source image");
             System.exit(1);
         }
-        try (InputStream inputStream = originImage.getObjectContent()) {
+        try (InputStream inputStream = new FileInputStream(savedUserImage)) {
             targetImageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
         } catch (Exception e) {
             System.out.println("Failed to load target images");
