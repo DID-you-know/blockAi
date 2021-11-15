@@ -89,7 +89,7 @@
         isFront.value = !isFront.value
       }
 
-      const isIssued = computed(() => store.state.users.isIssued)
+      const isIssued = computed(() => store.getters.users.isIssued)
 
       const router = useRouter()
       const pushIssue = () => router.push({ name: 'issue' })

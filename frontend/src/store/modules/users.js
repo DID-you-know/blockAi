@@ -6,7 +6,6 @@ const state = () => ({
   isLogin: false,
   userId: null,
   name: null,
-  isIssued: false,
   issuedDate: null,
 })
 
@@ -17,6 +16,12 @@ const actions = {
       console.log(response.data)
       const accessToken = response.data.accessToken
       commit('SET_ACCESS_TOKEN', accessToken)
+      const payload = {
+        userId: response.data.userId,
+        name: response.data.name,
+        issuedDate: response.data.issued_at
+      }
+      commit('SET_USERINFO', payload)
     } catch (error) {
       console.log(error)
     }
@@ -37,22 +42,33 @@ const actions = {
 const mutations = {
   SET_ACCESS_TOKEN(state, accessToken) {
     state.accessToken = accessToken
+    state.isLogin = true
   },
   SET_ISISSUED(state, payload) {
     state.isIssued = payload
+  },
+  SET_USERINFO(state, payload) {
+    state.userId = payload.userId
+    state.name = payload.name
+    state.issuedDate = payload.issuedDate
   },
   LOGOUT(state) {
     state.accessToken = null
     state.isLogin = false
     state.userId = null
     state.name = null
-    state.isIssued = false
     state.issuedDate = null
   }
 }
 
 const getters = {
-
+  isIssued(state) {
+    if (state.issuedDate) {
+      return true
+    } else {
+      return false
+    }
+  }
 }
 
 export default {
