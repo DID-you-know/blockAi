@@ -1,7 +1,6 @@
 package com.a506.blockai.api.service;
 
 import com.a506.blockai.config.EthereumProperties;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
@@ -11,7 +10,6 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.admin.Admin;
-import org.web3j.protocol.admin.methods.response.PersonalUnlockAccount;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.*;
@@ -23,7 +21,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class EthereumService {
@@ -58,24 +55,10 @@ public class EthereumService {
         List<Type> decode = FunctionReturnDecoder.decode(ethCall.getResult(),
                 function.getOutputParameters());
 
-//        System.out.println("ethCall.getResult() = " + ethCall.getResult());
-//        System.out.println("getValue = " + decode.get(0).getValue());
-//        System.out.println("getType = " + decode.get(0).getTypeAsString());
-
         return decode;
-//        return decode.get(0).getValue();
     }
 
-    public String test() throws IOException {
-        Web3ClientVersion web3ClientVersion = null;
-        web3ClientVersion = web3j.web3ClientVersion().send();
-        String clientVersion = web3ClientVersion.getWeb3ClientVersion();
-        System.out.println(clientVersion);
-        return clientVersion;
-    }
-
-    public String ethSendRawTransaction(Function function) throws IOException, ExecutionException, InterruptedException {
-
+    public String ethSendRawTransaction(Function function) throws IOException {
         //nonce 조회
         EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
                 from, DefaultBlockParameterName.PENDING).send();
@@ -104,21 +87,6 @@ public class EthereumService {
         return hash;
     }
 
-    public TransactionReceipt getReceipt(String transactionHash) throws IOException {
-
-        EthGetTransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transactionHash).send();
-
-        if (transactionReceipt.getTransactionReceipt().isPresent()) {
-            System.out.println("transactionReceipt.getResult().getContractAddress() = " +
-                    transactionReceipt.getResult());
-        } else {
-            System.out.println("transaction complete not yet");
-        }
-        return transactionReceipt.getResult();
-    }
-
-
-
     public String sha256(String msg) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(msg.getBytes());
@@ -134,7 +102,6 @@ public class EthereumService {
         }
         return builder.toString();
     }
-
 
     public String encode(String data) {
         return rsaService.encode(data, rsaPublicKey);
