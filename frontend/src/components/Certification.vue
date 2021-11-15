@@ -271,7 +271,7 @@
             certifiedBy: '이마트'
           }
           await store.dispatch('certification/certification', payload)
-          if (isCertificated) {
+          if (isCertificated.value) {
             step.value += 1
             store.commit('certification/RESET')
             emit('pass')
