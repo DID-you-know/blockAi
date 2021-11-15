@@ -3,7 +3,6 @@ package com.a506.blockai.api.controller;
 import com.a506.blockai.api.dto.request.FaceBiometricsRequest;
 import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
 import com.a506.blockai.api.service.AiService;
-import com.a506.blockai.api.service.DetectFace;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class AiController {
 
     final private AiService aiService;
-    private final DetectFace detectFace;
 
     @PostMapping ("/users/{userId}/voice/issue")
     public ResponseEntity<?> createProfile(@PathVariable int userId, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) {
@@ -37,8 +35,10 @@ public class AiController {
 
     @PostMapping("/{userId}/face")
     public ResponseEntity<?>detect(@PathVariable String userId, @RequestBody FaceBiometricsRequest faceBiometricsRequest) throws Exception {
-       float result = detectFace.detect(faceBiometricsRequest.getFace());
-//        float result = 0;
+       float result = aiService.detectFace(faceBiometricsRequest.getFace());
+
+        System.out.println(aiService.saveFace(faceBiometricsRequest.getFace(), userId));
+
         return ResponseEntity.status(200).body(result);
     }
 }
