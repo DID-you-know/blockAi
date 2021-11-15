@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.musicg.fingerprint.FingerprintSimilarity;
 import com.musicg.wave.Wave;
@@ -25,8 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-
-import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -73,39 +72,52 @@ public class AiService {
     /* voice detection */
     public float identifyVoice(VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
 
-        String encodedUserVoice = voiceBiometricsRequest.getEncodedUserVoice();
-        String savedS3UserVoiceUrl = voiceBiometricsRequest.getSavedS3UserVoiceUrl();
+        String encodedUserVoice = voiceBiometricsRequest.getEncodedUserVoice(); //프론트에서 base64로 변환되어 넘어온 녹음된 파일
+        String savedS3UserVoiceUrl = voiceBiometricsRequest.getSavedS3UserVoiceUrl(); //DID발급 시 블록체인에 등록한 음성파일(S3 저장위치)
 
+        AmazonS3 amazonS3Client = amazonS3Client();
         //저장된 S3에 들어있는 음성파일 불러오기
-        InputStream in = amazonS3Client.getObject(bucket, savedS3UserVoiceUrl).getObjectContent();
-        File file = File.createTempFile("s3file", "");
-        Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        String fileName = savedS3UserVoiceUrl.split("/")[3];
+        com.amazonaws.services.s3.model.S3Object savedUserVoice = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
 
-        // DID가 복호화한 [기존 저장된 사용자 이미지]
-//      com.amazonaws.services.s3.model.S3Object originImage = amazonS3Client.getObject(new GetObjectRequest(bucket, "s3://blockai-bucket/test.png"));
+        //저장경로 지정
+        String rootPath = System.getProperty("user.dir");;
+        String movePath = "/src/main/java/com/a506/blockai/common/tmp/";
+        System.out.println("현재 프로젝트의 경로 : "+rootPath );
 
+        //1. base64로 변환된 음섣파일 decode해서 다시 wav파일로 변환
         byte[] decoded = Base64.decode(encodedUserVoice);
-        File recordFile = null;
+        InputStream record_in = new ByteArrayInputStream(decoded);
+        DataOutputStream dos = new DataOutputStream(new FileOutputStream(
+                rootPath+movePath+"record.wav"  ));
+        dos.write(decoded);
+        File recordFile = new File(rootPath+movePath+"record.wav");
 
-        try {
-            recordFile = new File("record.wav");
-            FileOutputStream os = new FileOutputStream(recordFile, true);
-            os.write(decoded);
-            os.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        //2. S3저장되어 있던 음성파일 File로 변환
+        S3ObjectInputStream s3is = savedUserVoice.getObjectContent();
+        FileOutputStream fos = new FileOutputStream(new File(rootPath+movePath+"saved.wav" ));
+        byte[] read_buf = new byte[1024];
+        int read_len = 0;
+        while ((read_len = s3is.read(read_buf)) > 0) {
+            fos.write(read_buf, 0, read_len);
         }
+        s3is.close();
+        fos.close();
+        File savedFile = new File(rootPath+movePath+"saved.wav");
 
-        String file2 = recordFile.getName();
 
-        Wave w1 = new Wave(file.getName());
-        Wave w2 = new Wave(file2);
+        Wave w1 = new Wave(recordFile.getPath());
+        Wave w2 = new Wave(savedFile.getPath());
+       //Wave w2 = new Wave(savedFile.getPath());
 
         FingerprintSimilarity fps = w1.getFingerprintSimilarity(w2);
-        float score = fps.getScore();
-        float sim = fps.getSimilarity();
-        System.out.println(score + " " + sim);
+        float fileScore = fps.getScore(); //유사위치 수
+        float score = fps.getSimilarity(); //유사도
 
+        //파일 삭제
+        recordFile.delete();
+        savedFile.delete();
         return score;
     }
 
@@ -205,6 +217,9 @@ public class AiService {
         }
         // List<ComparedFace> uncompared = compareFacesResult.getUnmatchedFaces();
 
+        //파일 삭제
+        inputImage.delete();
+        
         return result;
     }
 
