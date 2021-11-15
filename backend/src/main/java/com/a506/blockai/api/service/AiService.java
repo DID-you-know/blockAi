@@ -119,8 +119,11 @@ public class AiService {
 //        File inputImage = new File(FileSystemView.getFileSystemView().getHomeDirectory()
 //                + "img.jpg");
 
-        String path = AiService.class.getResource("").getPath();
-        File inputImage = new File(path + "img.jpg");
+        String rootPath = System.getProperty("user.dir");;
+        String movePath = "/src/main/java/com/a506/blockai/common/tmp/";
+
+        File inputImage = new File(rootPath+movePath + "img.jpg");
+
         FileOutputStream fileOutputStream = new FileOutputStream(inputImage);
         fileOutputStream.write(decodedBytes);
         fileOutputStream.close();
