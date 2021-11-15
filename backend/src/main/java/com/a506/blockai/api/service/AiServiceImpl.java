@@ -1,5 +1,6 @@
 package com.a506.blockai.api.service;
 
+import com.a506.blockai.api.dto.request.FaceBiometricsRequest;
 import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
 import com.a506.blockai.config.AwsProperties;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -28,6 +29,12 @@ import org.springframework.stereotype.Service;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.nio.ByteBuffer;
+<<<<<<< HEAD
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+=======
+>>>>>>> d29c69205ab303fdfb6bae6726ae77e789a0492b
 import java.util.List;
 
 
@@ -67,7 +74,7 @@ public class AiServiceImpl implements AiService {
 
     /* voice detection */
     @Override
-    public float identify(String voiceId, VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
+    public float identifyVoice(String voiceId, VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
 
         System.out.println("들어옴");
 
@@ -117,22 +124,27 @@ public class AiServiceImpl implements AiService {
         return inputImage;
     }
 
-    @Override
-    public float detectFace(String encodedUserFace) throws Exception {
-
-        Float similarityThreshold = 70F;
-
-        // 프론트에서 넘어온 [촬영된 현재 사용자 이미지]를 file 형태로 변경
-        File inputImage = decodeImage(encodedUserFace);
+    public File getFile(String filePath) throws IOException {
 
         // S3에서 이미지 받아오는데 쓰이는 amazonS3Client
         AmazonS3 amazonS3Client = amazonS3Client();
 
+        InputStream in = amazonS3Client.getObject(bucket, filePath).getObjectContent();
+        File file = File.createTempFile("s3file", "");
+        Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        return file;
+    }
+
+    @Override
+    public float identifyFace(FaceBiometricsRequest faceBiometricsRequest) throws Exception {
+
+        Float similarityThreshold = 70F;
+
+        // 프론트에서 넘어온 [촬영된 현재 사용자 이미지]를 file 형태로 변경
+        File inputImage = decodeImage(faceBiometricsRequest.getEncodedUserFace());
+
         // DID가 복호화한 [기존 저장된 사용자 이미지]
-        // 여기 key 부분을 수정해야함. 사용자 이미지 이름으로!
-        // s3://blockai-bucket/test.png 이런식으로 넘어오면 -> 앞 경로 컷하고 뒤의 이름만 가져와도 될듯.
-        String key = "test.png";
-        com.amazonaws.services.s3.model.S3Object originImage = amazonS3Client.getObject(new GetObjectRequest(bucket, key));
+        File savedUserImage = getFile(faceBiometricsRequest.getSavedS3UserFaceUrl());
 
         ByteBuffer sourceImageBytes = null;
         ByteBuffer targetImageBytes = null;
@@ -144,7 +156,7 @@ public class AiServiceImpl implements AiService {
             System.out.println("Failed to load source image");
             System.exit(1);
         }
-        try (InputStream inputStream = originImage.getObjectContent()) {
+        try (InputStream inputStream = new FileInputStream(savedUserImage)) {
             targetImageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
         } catch (Exception e) {
             System.out.println("Failed to load target images");
