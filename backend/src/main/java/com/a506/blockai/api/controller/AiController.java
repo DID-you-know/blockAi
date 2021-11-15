@@ -20,18 +20,18 @@ public class AiController {
 
     final private AiService aiService;
 
-    @PostMapping("/{voiceId}/voice")
-    public ResponseEntity<?> identify(@PathVariable String voiceId, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
-        return ResponseEntity.status(200).body(aiService.identify(voiceId,voiceBiometricsRequest));
-    }
+//    @PostMapping("/{voiceId}/voice")
+//    public ResponseEntity<?> identify(@PathVariable String voiceId, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
+//        return ResponseEntity.status(200).body(aiService.identify(voiceId,voiceBiometricsRequest));
+//    }
 
-    @PostMapping("/{userId}/face")
-    public ResponseEntity<?>detect(@PathVariable String userId, @RequestBody FaceBiometricsRequest faceBiometricsRequest) throws Exception {
-        String savedUserUrl="";
-       float result = aiService.detectFace(faceBiometricsRequest.getFace(), savedUserUrl);
-
-        System.out.println(aiService.saveFace(faceBiometricsRequest.getFace(), userId));
-
-        return ResponseEntity.status(200).body(result);
-    }
+//    @PostMapping("/{userId}/face")
+//    public ResponseEntity<?>detect(@PathVariable String userId, @RequestBody FaceBiometricsRequest faceBiometricsRequest) throws Exception {
+//        String savedUserUrl="";
+//       float result = aiService.detectFace(faceBiometricsRequest.getFace(), savedUserUrl);
+//
+//        System.out.println(aiService.saveFace(faceBiometricsRequest.getFace(), userId));
+//
+//        return ResponseEntity.status(200).body(result);
+//    }
 }
