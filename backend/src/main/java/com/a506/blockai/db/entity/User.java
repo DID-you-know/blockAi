@@ -60,6 +60,10 @@ public class User implements UserDetails {
         certification.to(this);
     }
 
+    public void createDid(String address) {
+        did = new DID(address);
+    }
+
     @Override
     public String getUsername() {
         return email;
