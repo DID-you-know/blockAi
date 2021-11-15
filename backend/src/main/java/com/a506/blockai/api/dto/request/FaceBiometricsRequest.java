@@ -8,9 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
 public class FaceBiometricsRequest {
 
-    private String face;
+    private String encodedUserFace;
+    private String savedS3UserFaceUrl;
 
-    public FaceBiometricsRequest(String face) {
-        this.face = face;
+    public FaceBiometricsRequest(String encodedUserFace, String savedS3UserFaceUrl) {
+        this.encodedUserFace = encodedUserFace;
+        this.savedS3UserFaceUrl = savedS3UserFaceUrl;
     }
 }
