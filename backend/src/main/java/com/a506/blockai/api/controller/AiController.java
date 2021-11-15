@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/ai/")
 @RequiredArgsConstructor
@@ -20,18 +22,8 @@ public class AiController {
     final private AiService aiService;
     private final DetectFace detectFace;
 
-    @PostMapping ("/users/{userId}/voice/issue")
-    public ResponseEntity<?> createProfile(@PathVariable int userId, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) {
-        String profileId = aiService.createProfile();
-        String enrollmentStatus = aiService.enrollment(profileId, voiceBiometricsRequest);
-
-        //profileId에 음성등록 완료시
-        if(enrollmentStatus.equals("200")) return ResponseEntity.status(200).body(profileId);
-        else  return ResponseEntity.status(400).body("ErrorCode" + enrollmentStatus); //오류코드있을 때
-    }
-
     @PostMapping("/{voiceId}/voice")
-    public ResponseEntity<?> identify(@PathVariable String voiceId, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) {
+    public ResponseEntity<?> identify(@PathVariable String voiceId, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
         return ResponseEntity.status(200).body(aiService.identify(voiceId,voiceBiometricsRequest));
     }
 

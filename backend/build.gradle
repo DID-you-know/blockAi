@@ -77,6 +77,10 @@ dependencies {
 	// database
 	runtimeOnly 'mysql:mysql-connector-java'
 	runtimeOnly 'com.h2database:h2'
+
+	// https://mvnrepository.com/artifact/com.github.fracpete/musicg
+	implementation group: 'com.github.fracpete', name: 'musicg', version: '1.4.2.2'
+
 }
 
 dependencyManagement {
