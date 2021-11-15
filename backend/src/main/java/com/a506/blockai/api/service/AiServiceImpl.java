@@ -29,12 +29,8 @@ import org.springframework.stereotype.Service;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.nio.ByteBuffer;
-<<<<<<< HEAD
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-=======
->>>>>>> d29c69205ab303fdfb6bae6726ae77e789a0492b
 import java.util.List;
 
 
@@ -66,6 +62,8 @@ public class AiServiceImpl implements AiService {
 
     @Autowired
     private AmazonRekognition rekognitionClient;
+
+    private final AmazonS3Client amazonS3Client;
     @Autowired
     AwsProperties awsProperties;
     @Value("${cloud.aws.s3.bucket}")
@@ -74,14 +72,20 @@ public class AiServiceImpl implements AiService {
 
     /* voice detection */
     @Override
-    public float identifyVoice(String voiceId, VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
+    public float identifyVoice(VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
 
-        System.out.println("들어옴");
+        String encodedUserVoice = voiceBiometricsRequest.getEncodedUserVoice();
+        String savedS3UserVoiceUrl = voiceBiometricsRequest.getSavedS3UserVoiceUrl();
+
+        //저장된 S3에 들어있는 음성파일 불러오기
+        InputStream in = amazonS3Client.getObject(bucket, savedS3UserVoiceUrl).getObjectContent();
+        File file = File.createTempFile("s3file", "");
+        Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         // DID가 복호화한 [기존 저장된 사용자 이미지]
 //      com.amazonaws.services.s3.model.S3Object originImage = amazonS3Client.getObject(new GetObjectRequest(bucket, "s3://blockai-bucket/test.png"));
 
-        byte[] decoded = Base64.decode(voiceBiometricsRequest.getVoice());
+        byte[] decoded = Base64.decode(encodedUserVoice);
         File recordFile = null;
 
         try
@@ -94,10 +98,9 @@ public class AiServiceImpl implements AiService {
             e.printStackTrace();
         }
 
-        String file1 = recordFile.getName();
         String file2 = recordFile.getName();
 
-        Wave w1 = new Wave(file1);
+        Wave w1 = new Wave(file.getName());
         Wave w2 = new Wave(file2);
 
         FingerprintSimilarity fps = w1.getFingerprintSimilarity(w2);

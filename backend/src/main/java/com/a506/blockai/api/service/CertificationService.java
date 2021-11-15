@@ -36,7 +36,7 @@ public class CertificationService {
     private final CertificationRepository certificationRepository;
     private final float similarity = 0.5f;
 
-    public void certifyBiometrics(int userId, BiometricsCertificateRequest biometricsCertificateRequest) throws IOException {
+    public void certifyBiometrics(int userId, BiometricsCertificateRequest biometricsCertificateRequest) throws Exception {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         DID did = user.getDid();

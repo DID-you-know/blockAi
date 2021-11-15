@@ -16,7 +16,7 @@ public class CertificationController {
     private final CertificationService certificationService;
 
     @PostMapping("/users/{userId}")
-    public ResponseEntity<Void> certifyBiometrics(@PathVariable int userId, @RequestBody BiometricsCertificateRequest biometricsCertificateRequest) throws IOException {
+    public ResponseEntity<Void> certifyBiometrics(@PathVariable int userId, @RequestBody BiometricsCertificateRequest biometricsCertificateRequest) throws Exception {
         certificationService.certifyBiometrics(userId, biometricsCertificateRequest);
         return ResponseEntity.ok().build();
     }
