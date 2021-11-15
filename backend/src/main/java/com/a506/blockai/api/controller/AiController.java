@@ -27,7 +27,8 @@ public class AiController {
 
     @PostMapping("/{userId}/face")
     public ResponseEntity<?>detect(@PathVariable String userId, @RequestBody FaceBiometricsRequest faceBiometricsRequest) throws Exception {
-       float result = aiService.detectFace(faceBiometricsRequest.getFace());
+        String savedUserUrl="";
+       float result = aiService.detectFace(faceBiometricsRequest.getFace(), savedUserUrl);
 
         System.out.println(aiService.saveFace(faceBiometricsRequest.getFace(), userId));
 
