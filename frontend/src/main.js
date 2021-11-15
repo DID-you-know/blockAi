@@ -6,5 +6,6 @@ import axios from 'axios'
 
 
 axios.defaults.baseURL = process.env.VUE_APP_SERVER_URL
+axios.defaults.timeout = 1000;
 
 createApp(App).use(store).use(router).mount("#app");

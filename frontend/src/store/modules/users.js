@@ -40,6 +40,14 @@ const mutations = {
   },
   SET_ISISSUED(state, payload) {
     state.isIssued = payload
+  },
+  LOGOUT(state) {
+    state.accessToken = null
+    state.isLogin = false
+    state.userId = null
+    state.name = null
+    state.isIssued = false
+    state.issuedDate = null
   }
 }
 

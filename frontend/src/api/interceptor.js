@@ -1,8 +1,16 @@
 import axios from 'axios'
+import store from '@/store'
 
 
 const _axios = axios.create({
-  baseURL: process.env.VUE_APP_SERVER_URL
+  baseURL: process.env.VUE_APP_SERVER_URL,
+  timeout: 1000
+})
+
+_axios.interceptors.request.use(
+  (config) => {
+  config.headers['Authorization'] = `Bearer ${store.state.users.accessToken}`
+  return config
 })
 
 export default _axios
