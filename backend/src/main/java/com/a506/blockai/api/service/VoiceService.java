@@ -42,7 +42,7 @@
 ////    }
 ////
 ////    @Autowired
-////    public AiServiceImpl(AzureProperties azureProperties) {
+////    public AiService(AzureProperties azureProperties) {
 ////        this.accessKey = azureProperties.getAccesskey();
 ////    }
 //

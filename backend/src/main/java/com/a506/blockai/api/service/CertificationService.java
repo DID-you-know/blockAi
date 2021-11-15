@@ -30,7 +30,7 @@ import java.util.TimeZone;
 @RequiredArgsConstructor
 public class CertificationService {
 
-    private final AiServiceImpl aiService;
+    private final AiService aiService;
     private final EthereumService ethereumService;
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
