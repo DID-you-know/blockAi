@@ -1,33 +1,51 @@
 <template>
   <div class="body kiosk">
     <img class="company-logo" src="@/assets/image/logo.png" alt="">
-    <div>
-      <h1 class="nanum title">주문내역</h1>
+    <div class="header">
+      <h1 class="nanumGothic title">주문내역</h1>
     </div>
     <div class="item-list">
-      <Item v-for="item in itemList" :key="item.name" :image="item.image" :name="item.name" :price="item.price" :count="item.count"/>
+      <Item v-for="(item, idx) in itemList" :key="idx" :image="item.image" :name="item.name" :price="item.price" :count="item.count"/>
     </div>
     <div class="total">
-      <span>총 수량 : <span class="fw-bold">{{ totalCount }}</span>개</span>
-      <span>총 금액 : <span class="fw-bold">{{ totalPrice }}</span>원</span>
+      <div class="count row"><span class="label">총 수량</span><span class="value fw-bold">{{ totalCount }}개</span></div>
+      <div class="price row"><span class="label">총 금액</span><span class="value fw-bold"><span class="total-price">{{ totalPrice }}</span>원</span></div>
     </div>
-    <div>
-      결제하기
+    <div class="footer">
+      <div class="button" @click="showModal">
+        결제하기
+      </div>
     </div>
+    <Modal v-show="isModalVisible" :isModalVisible="isModalVisible">
+      <KioskLogin v-if="step===1" @pass="nextStep"/>
+      <Certification v-if="step===2" @pass="nextStep"/>
+      <KioskPayment v-if="step===3"/>
+    </Modal>
   </div>
 </template>
 
 <script>
   import Item from '@/components/Item'
+  import Modal from '@/components/Modal'
+  import KioskLogin from '@/components/KioskLogin'
+  import Certification from '@/components/Certification'
+  import KioskPayment from '@/components/KioskPayment'
   import { computed, ref } from 'vue'
+  import { useRouter } from 'vue-router'
 
 
   export default {
     name: 'KioskHome',
     components: {
-      Item
+      Item,
+      Modal,
+      KioskLogin,
+      Certification,
+      KioskPayment
     },
     setup() {
+      const router = useRouter()
+
       const itemList = ref([
         {
           image: 'item1',
@@ -53,20 +71,39 @@
           price: 3300,
           count: 5
         },
+        {
+          image: 'item1',
+          name: '참이슬',
+          price: 3300,
+          count: 5
+        }
       ])
-
       const totalPrice = computed(() => {
         return itemList.value.reduce((prev, cur) => prev + cur.price * cur.count, 0)
       })
-
       const totalCount = computed(() => {
         return itemList.value.reduce((prev, cur) => prev + cur.count, 0)
       })
 
+      const isModalVisible = ref(false)
+      const showModal = () => {
+        isModalVisible.value = true
+      }
+
+      const step = ref(1)
+      const nextStep = () => {
+        step.value = 2
+      }
+
       return {
+        router,
         itemList,
         totalPrice,
-        totalCount
+        totalCount,
+        isModalVisible,
+        showModal,
+        step,
+        nextStep
       }
     }
   }
@@ -79,35 +116,95 @@
   .kiosk {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: center;
     height: 100vh;
-    background-color: $light-hover;
+    background-color: $white;
     gap: 2vh;
     padding: 5vh;
     text-align: center;
     font-size: 2vh;
 
     .company-logo {
+      flex: 1;
       width: 40vh;
-      margin-bottom: 5vh;
     }
 
+    .header {
+      flex: 1;
+      display: flex;
+      width: 40vh;
+      justify-content: flex-start;
+    }
+      
     .title {
       font-size: 5vh;
-      margin-bottom: 2vh;
+      margin-top: 2vh;
+      text-align: center;
     }
 
     .item-list {
+      flex: 6;
       display: flex;
       flex-direction: column;
       gap: 2vh;
+      background-color: $light-hover;
+      padding: 2vh;
+      border-radius: 3vh;
     }
 
     .total {
-      width: 100%;
+      flex: 2;
+      width: 45vh;
       display: flex;
-      justify-content: space-around;
+      flex-direction: column;
+      align-items: center;
+      gap: 1vh;
+
+      .row {
+        display: flex;
+        padding: 0 3vh;
+        width: 40vh;
+
+        .label {
+          flex: 5;
+          text-align: center;
+        }
+
+        .value {
+          flex: 5;
+          text-align: center;
+        }
+      }
+      
+      .count{
+        font-size: 2vh;
+      }
+
+      .price {
+        font-size: 3vh;
+        border: 0.2vh solid $secondary;
+        border-radius: 3vh;
+        padding : 1vh;
+
+        .total-price {
+          color: $danger;
+        }
+      }
+    }
+
+    .footer {
+      flex: 1;
+
+      .button {
+        background-color: $kiosk;
+        padding: 1vh 3vh;
+        border-radius: 1vh;
+        font-size: 2.5vh;
+
+        &:hover {
+          background-color: $kiosk-hover;
+        }
+      }
     }
   }
 </style>

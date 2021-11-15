@@ -3,7 +3,7 @@
     <div class="image-container" >
       <img class="image" :src="require(`@/assets/image/item/${image}.png`)" alt="">
     </div>
-    <span class="name fw-bold">{{ name }}</span>
+    <div class="name fw-bold">{{ name }}</div>
     <span class="price"><span class="fw-bold">{{ price }}</span>원</span>
     <span class="count"><span class="fw-bold">{{ count }}</span>개</span>
   </div>
@@ -31,7 +31,7 @@
     background-color: $white;
     padding: 1vh 2vh;
     border-radius: 3vh;
-    width: 45vh;
+    width: 40vh;
 
     .image-container {
       flex: 2;
@@ -44,14 +44,18 @@
 
     .name {
       flex: 5;
+      text-align: left;
+      padding-left: 3vh;
     }
 
     .price {
       flex: 3;
+      text-align: right;
     }
 
     .count {
       flex: 2;
+      text-align: right;
     }
   }
 </style>

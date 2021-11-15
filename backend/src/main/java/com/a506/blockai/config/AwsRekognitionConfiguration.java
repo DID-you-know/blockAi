@@ -21,10 +21,12 @@ public class AwsRekognitionConfiguration {
 //
 //    @Value("${cloud.aws.credentials.secret-key}")
 //    private String secretKey;
+
+//    AwsProperties awsProperties;
 //
 //    @Bean
 //    public AmazonRekognition amazonRekognition() {
-//        BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+//        BasicAWSCredentials credentials = new BasicAWSCredentials(awsProperties.getAccessKey(), awsProperties.getSecretKey());
 //        return AmazonRekognitionClientBuilder
 //                .standard()
 //                .withRegion(Regions.AP_NORTHEAST_2)

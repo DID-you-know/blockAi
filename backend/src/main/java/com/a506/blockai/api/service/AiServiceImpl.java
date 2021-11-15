@@ -35,7 +35,7 @@ import java.util.List;
 @Setter
 @Service("aiService")
 @RequiredArgsConstructor
-public class AiServiceImpl implements AiService{
+public class AiServiceImpl implements AiService {
 
     @Bean
     public AmazonRekognition amazonRekognition(AwsProperties awsProperties) {
@@ -64,6 +64,7 @@ public class AiServiceImpl implements AiService{
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+
     /* voice detection */
     @Override
     public float identify(String voiceId, VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
@@ -82,9 +83,7 @@ public class AiServiceImpl implements AiService{
             FileOutputStream os = new FileOutputStream(recordFile, true);
             os.write(decoded);
             os.close();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -101,7 +100,6 @@ public class AiServiceImpl implements AiService{
 
         return score;
     }
-
 
     /* face detection */
 
