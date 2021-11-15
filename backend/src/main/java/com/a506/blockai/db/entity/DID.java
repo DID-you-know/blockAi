@@ -1,37 +1,29 @@
 package com.a506.blockai.db.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 
-import static javax.persistence.FetchType.LAZY;
-
-@Entity
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@DynamicInsert
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class DID {
-    @Id
-    private int id;
 
-    @NotNull
-    @OneToOne(fetch = LAZY)          // 일대일 관계에서 FK를 가지고 있는 애가 주인. 즉 얘가 주인
-    @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id")
-    private User user;
-
+    @Column(unique = true)
     private String didAddress;
+    private LocalDateTime issuedAt;
+    private LocalDateTime updatedAt;
 
-    private boolean didFlag;
+    public DID(String didAddress) {
+        this.didAddress = didAddress;
+        this.issuedAt = this.updatedAt = LocalDateTime.now();
+    }
 
-    @NotNull
-    private LocalDateTime issuedDate;
-
+    public void updateDid(String didAddress) {
+        this.didAddress = didAddress;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

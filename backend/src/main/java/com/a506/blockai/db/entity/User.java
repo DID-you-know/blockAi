@@ -1,34 +1,26 @@
 package com.a506.blockai.db.entity;
 
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
-@Table(name = "user")
 @Getter
-@Builder
-@DynamicInsert
-@AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)     // PK 생성규칙 설정. AutoIncrement 설정
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private int id;
 
     @NotNull
@@ -41,19 +33,19 @@ public class User implements UserDetails {
     private String password;
 
     @NotNull
-    private String birth;
+    private Date birth;
 
     @NotNull
     private String phone;
 
-//    @NotNull
-//    private String public_key;
-//
-//    @NotNull
-//    private String private_key;
+    @Embedded
+    private DID did;
 
-    @Column(name = "created_at", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Timestamp created_at;
+    @OneToMany(mappedBy = "user")
+    private List<Certification> certifications = new ArrayList<>();
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -67,8 +59,20 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Certification> certification = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private DID did;
+    @Builder
+    public User(String name, String email, String password, Date birth, String phone, DID did) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.birth = birth;
+        this.phone = phone;
+        this.did = did;
+    }
+
+    public void addCertification(Certification certification) {
+        this.certifications.add(certification);
+        certification.to(this);
+    }
 
     @Override
     public String getUsername() {

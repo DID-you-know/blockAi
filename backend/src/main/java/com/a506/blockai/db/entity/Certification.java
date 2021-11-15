@@ -1,32 +1,34 @@
 package com.a506.blockai.db.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Builder
-@DynamicInsert
-@AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Certification {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "certification_id")
     private int id;
+    private String certifiedBy;
+    @CreatedDate
+    private LocalDateTime certifiedAt;
 
-    @NotNull
-    @ManyToOne(fetch = LAZY)          // 일대일 관계에서 FK를 가지고 있는 애가 주인. 즉 얘가 주인
-    @JoinColumn(name = "user_id")     // 연관관계의 주인은 mappedBy X, JoinColumn 사용
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    private String certificatedBy;
-    private LocalDateTime certificatedDate;
+    public Certification(String certifiedBy) {
+        this.certifiedBy = certifiedBy;
+    }
+
+    public void to(User user) {
+        this.user = user;
+    }
 }

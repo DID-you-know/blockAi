@@ -2,6 +2,7 @@ package com.a506.blockai.api.controller;
 
 import com.a506.blockai.api.dto.request.LoginRequest;
 import com.a506.blockai.api.dto.request.SignupRequest;
+import com.a506.blockai.api.dto.response.TokenResponse;
 import com.a506.blockai.api.service.UserService;
 import com.a506.blockai.jwt.JwtTokenProvider;
 import com.a506.blockai.api.dto.request.SendSmsRequest;
@@ -59,10 +60,10 @@ public class UserController {
     @PostMapping("/sign-in")
     @ApiOperation(value = "로그인", notes = "<strong>이메일과 패스워드</strong>를 통해 로그인 한다.")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "로그인 성공(헤더에도 토근 있음)", response = String.class),
+            @ApiResponse(code = 200, message = "로그인 성공(헤더에도 토근 있음)", response = TokenResponse.class),
             @ApiResponse(code = 401, message = "인증 실패(이메일 존재X or 비밀번호 불일치)")
     })
-    public ResponseEntity<String> signin (@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<TokenResponse> signin (@RequestBody LoginRequest loginRequest) {
         String jwt = userService.login(loginRequest);
 
         HttpHeaders httpHeaders = new HttpHeaders();

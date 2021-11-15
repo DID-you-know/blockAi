@@ -5,8 +5,7 @@ import Login from '@/views/Login'
 import Status from '@/views/Status'
 import Issue from '@/views/Issue'
 import ImageTest from '@/views/ImageTest'
-import Certification from '@/views/Certification'
-import KioskLogin from '@/views/KioskLogin'
+import KioskHome from '@/views/KioskHome'
 
 
 const routes = [
@@ -40,17 +39,11 @@ const routes = [
     name: 'issue',
     component: Issue
   },
-  // 인증
+  // 키오스크 홈
   {
-    path: '/certification',
-    name: 'certification',
-    component: Certification
-  },
-  // 키오스크 핸드폰번호 로그인
-  {
-    path: '/kiosk/login',
-    name: 'kioskLogin',
-    component: KioskLogin
+    path: '/kiosk',
+    name: 'kioskHome',
+    component: KioskHome
   },
   {
     path: '/image',

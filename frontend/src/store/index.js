@@ -10,7 +10,9 @@ const store = createStore({
     certification,
     // image,
   },
-  plugins: [createPersistedState()]
+  plugins: [createPersistedState({
+    key: 'blockAi'
+  })]
 })
 
 export default store
