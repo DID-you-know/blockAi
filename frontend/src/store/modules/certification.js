@@ -3,8 +3,7 @@ import certification from '@/api/certification'
 
 const state = {
   userId: null,
-  passFace: false,
-  passVoice: false,
+  isCertificated: false
 }
 
 const actions = {
@@ -18,22 +17,12 @@ const actions = {
       console.log(error)
     }
   },
-  async sendFace({ commit }, face) {
+  async certification({ commit }, { face, voice, certifiedBy }) {
     try {
-      const response = await certification.faceCertification(state.userId, face)
+      const response = await certification.certification(state.userId, face, voice, certifiedBy)
       console.log(response.data)
-      const passFace = true
-      commit('SET_PASSFACE', passFace)
-    } catch (error) {
-      console.log(error)
-    }
-  },
-  async sendVoice({ commit }, voice) {
-    try {
-      const response = await certification.voiceCertification(state.userId, voice)
-      console.log(response.data)
-      const passVoice = true
-      commit('SET_PASSVOICE', passVoice)
+      const isCertificated = true
+      commit('SET_ISCERTIFICATED', isCertificated)
     } catch (error) {
       console.log(error)
     }
@@ -44,22 +33,12 @@ const mutations = {
   SET_USER_ID(state, userId) {
     state.userId = userId
   },
-  SET_PASSFACE(state, passFace) {
-    state.passFace = passFace
-  },
-  SET_PASSVOICE(state, passVoice) {
-    state.passVoice = passVoice
+  SET_ISCERTIFICATED(state, isCertificated) {
+    state.isCertificated = isCertificated
   },
   RESET(state) {
     state.userId = null
-    state.passFace = false
-    state.passVoice = false
-  }
-}
-
-const getters = {
-  isPassed(state) {
-    return state.passFace && state.passVoice
+    state.isCertificated = false
   }
 }
 
@@ -67,6 +46,5 @@ export default {
   namespaced: true,
   state,
   actions,
-  mutations,
-  getters
+  mutations
 }
