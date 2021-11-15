@@ -37,7 +37,7 @@ public class AiController {
     public ResponseEntity<?>detect(@PathVariable String userId, @RequestBody FaceBiometricsRequest faceBiometricsRequest) throws Exception {
        float result = aiService.detectFace(faceBiometricsRequest.getFace());
 
-       aiService.saveFace(faceBiometricsRequest.getFace(), userId);
+        System.out.println(aiService.saveFace(faceBiometricsRequest.getFace(), userId));
 
         return ResponseEntity.status(200).body(result);
     }
