@@ -8,9 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
 public class VoiceBiometricsRequest {
 
-    private String voice;
+    private String encodedUserVoice;
+    private String savedS3UserVoiceUrl;
 
-    public VoiceBiometricsRequest(String voice) {
-        this.voice = voice;
+    public VoiceBiometricsRequest(String encodedUserVoice, String savedS3UserVoiceUrl) {
+        this.encodedUserVoice = encodedUserVoice;
+        this.savedS3UserVoiceUrl = savedS3UserVoiceUrl;
     }
 }
