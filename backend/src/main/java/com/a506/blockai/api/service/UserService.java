@@ -19,10 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Created by Yeseul Kim on 2021-11-11
- *
+ * <p>
  * 유저 관련 Service
  */
 @Service
@@ -72,5 +73,10 @@ public class UserService {
 
         LoginResponse loginResponse = new LoginResponse(jwtTokenProvider.createToken(authentication), user.getId(), user.getName(), user.getDid() == null ? null : user.getDid().getIssuedAt());
         return loginResponse;
+    }
+
+    public int getUserIdByPhoneNumber(String phoneNumber) {
+        User user = userRepository.findByPhone(phoneNumber);
+        return user == null ? -1 : user.getId();
     }
 }
