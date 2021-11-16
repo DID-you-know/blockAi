@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 발행 후 -->
-    <div v-if="isIssued" class="card-container" @click="turnCard">
+    <div v-if="issuedDate" class="card-container" @click="turnCard">
       <div class="card front" :class="{ 'front-turn': isFront }">
         <div class="card-title fs-2 fw-light">
           신원증명서
@@ -47,7 +47,7 @@
     </div>
 
     <!-- 발행 전 -->
-    <div v-if="!isIssued" class="card-container">
+    <div v-if="!issuedDate" class="card-container">
       <div class="card">
         <div class="card-title fs-2 fw-light blur">
           신원증명서
@@ -89,7 +89,7 @@
         isFront.value = !isFront.value
       }
 
-      const isIssued = computed(() => store.getters.users.isIssued)
+      const issuedDate = computed(() => store.state.users.issuedDate)
 
       const router = useRouter()
       const pushIssue = () => router.push({ name: 'issue' })
@@ -129,7 +129,7 @@
       return {
         isFront,
         turnCard,
-        isIssued,
+        issuedDate,
         pushIssue,
         isFaceOn,
         faceOn,

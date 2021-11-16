@@ -62,13 +62,7 @@ const mutations = {
 }
 
 const getters = {
-  isIssued(state) {
-    if (state.issuedDate) {
-      return true
-    } else {
-      return false
-    }
-  }
+
 }
 
 export default {
