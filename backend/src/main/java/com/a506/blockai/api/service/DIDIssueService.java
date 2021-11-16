@@ -35,7 +35,9 @@ public class DIDIssueService {
 
         // DID 발급
         List<Type> inputParameters = new ArrayList<>();
-
+        System.out.println("@@@@@@@@@@@@@@DID발급@@@@@@@@@@@@@@");
+        System.out.println("얼굴 사진 URL : " + didIssueRequest.getFacePath());
+        System.out.println("음성 파일 URL : " + didIssueRequest.getVoiceId());
         String encryptedFacePath =  ethereumService.encode(didIssueRequest.getFacePath());
         String encryptedvoiceId = ethereumService.encode(didIssueRequest.getVoiceId());
         inputParameters.add(new Utf8String(encryptedFacePath));
