@@ -26,7 +26,11 @@
       const name = computed(() => store.state.users.name)
       const issuedDate = computed(() => {
         const issuedAt = store.state.users.issuedDate
-        return issuedAt.slice(0, 10).replace(/-/g, '.')
+        if (issuedAt) {
+          return issuedAt.slice(0, 10).replace(/-/g, '.')
+        } else {
+          return null
+        }
       })
 
       return {
