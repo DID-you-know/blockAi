@@ -254,7 +254,22 @@ public class AiService {
         com.amazonaws.services.s3.model.S3Object savedUserImage = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
 
         // 파일로
-        InputStream inputStream = savedUserImage.getObjectContent();
+        String rootPath = System.getProperty("user.dir");;
+        String movePath = "/src/main/java/com/a506/blockai/common/tmp/";
+
+        S3ObjectInputStream s3is = savedUserImage.getObjectContent();
+        FileOutputStream fos = new FileOutputStream(new File(rootPath+movePath+"userImage.jpg" ));
+
+        byte[] read_buf = new byte[1024];
+        int read_len = 0;
+        while ((read_len = s3is.read(read_buf)) > 0) {
+            fos.write(read_buf, 0, read_len);
+        }
+        s3is.close();
+        fos.close();
+        File savedFile = new File(rootPath+movePath+"userImage.jpg");
+
+        // String encodedFaceData = Base64.encodeBytes(savedFile);
     }
 
     public void getVoiceData(int userId) throws IOException{
