@@ -1,5 +1,6 @@
 import _axios from './interceptor'
 import axios from 'axios'
+import didAxios from './didAxios'
 
 
 export default {
@@ -34,11 +35,11 @@ export default {
     })
   },
   didIssue(userId, didData) {
-    return _axios({
+    console.log(didData)
+    return didAxios({
       url: `/users/${userId}/did/issue`,
       method: 'post',
-      data: didData,
-      timeout: 60000
+      data: didData
     })
   },
   getFace(userId) {

@@ -16,8 +16,7 @@ export default {
         face: face,
         voice: voice,
         certified_by: certifiedBy
-      },
-      timeout: 60000
+      }
     })
   }
 }

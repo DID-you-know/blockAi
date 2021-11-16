@@ -42,6 +42,7 @@
   import Input from '@/components/Input'
   import { ref } from 'vue'
   import users from '@/api/users'
+  import { useRouter } from 'vue-router'
 
 
   export default {
@@ -51,6 +52,8 @@
       Input
     },
     setup() {
+      const router = useRouter()
+
       // 문자 확인하는 함수
       // 있으면 true 반환, 없으면 false 반환
       const checkWhitespace = (value) => {
@@ -261,6 +264,7 @@
           try {
             const response = await users.signup(userInfo)
             console.log(response.data)
+            router.push({ name: 'home' })
           } catch (error) {
             console.log(error)
           }

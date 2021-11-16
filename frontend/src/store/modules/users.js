@@ -7,6 +7,7 @@ const state = () => ({
   userId: null,
   name: null,
   issuedDate: null,
+  isIssued: false
 })
 
 const actions = {
@@ -58,6 +59,7 @@ const mutations = {
     state.userId = null
     state.name = null
     state.issuedDate = null
+    state.isIssued = false
   }
 }
 
