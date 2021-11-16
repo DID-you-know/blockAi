@@ -14,12 +14,12 @@ const actions = {
     try {
       const response = await users.login(credentials)
       console.log(response.data)
-      const accessToken = response.data.accessToken
+      const accessToken = response.data.token
       commit('SET_ACCESS_TOKEN', accessToken)
       const payload = {
-        userId: response.data.userId,
+        userId: response.data.id,
         name: response.data.name,
-        issuedDate: response.data.issued_at
+        issuedDate: response.data.issuedAt
       }
       commit('SET_USERINFO', payload)
     } catch (error) {
@@ -62,13 +62,7 @@ const mutations = {
 }
 
 const getters = {
-  isIssued(state) {
-    if (state.issuedDate) {
-      return true
-    } else {
-      return false
-    }
-  }
+
 }
 
 export default {
