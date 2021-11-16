@@ -62,5 +62,35 @@
 |   8080   |              Spring boot Docker Container               |
 |   3000   |               Vue, NGINX Docker Container               |
 
+## 🙆‍♀️ Git 컨벤션
+```
+feat:     새로운 기능을 추가할 경우
+fix:      버그를 고친 경우
+style:    코드 포맷 변경, 간단한 수정, 코드 변경이 없는 경우
+refactor: 프로덕션 코드 리팩토링
+docs:     문서를 수정한 경우(ex> Swagger)
+test:     테스트 코드
+rename:   파일 혹은 폴더명 수정 및 이동
+remove:   파일 삭제
+chore:    빌드 업무 수정(ex> dependency 추가)
+```
+```
+ex) feat: 회원가입 API 구현
+```
+
+## 🙆‍♀️ Git Flow 브랜치 전략
+```
+master: 제품으로 출시될 수 있는 브랜치
+develop: 다음 출시 버전을 개발하는 브랜치
+feature: 기능 개발하는 브랜치
+release: 이번 출시 버전을 준비하는 브랜치
+hotfix: 출시 버전에서 발생한 버그를 수정하는 브랜치
+```
+```
+feature/{keyword} 
+
+ex) feature-fe/loginRestApi
+```
+
 ## 추가 정보
 [👉팀 노션👈](https://www.notion.so/86346ce94a8e4074a34f901ed97f9c0d)
