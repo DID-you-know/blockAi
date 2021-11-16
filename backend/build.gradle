@@ -84,6 +84,10 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.github.fracpete/musicg
 	implementation group: 'com.github.fracpete', name: 'musicg', version: '1.4.2.2'
 
+	// https://mvnrepository.com/artifact/commons-io/commons-io
+	implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+
+
 }
 
 dependencyManagement {
