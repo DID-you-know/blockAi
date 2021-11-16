@@ -23,11 +23,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+<<<<<<< HEAD
+import java.util.Optional;
+=======
 import java.util.List;
+>>>>>>> 9f3f4dac77fd0bfdb4dea76351152897780f5de1
 
 /**
  * Created by Yeseul Kim on 2021-11-11
- *
+ * <p>
  * 유저 관련 Service
  */
 @Service
@@ -80,6 +84,10 @@ public class UserService {
         return loginResponse;
     }
 
+    public int getUserIdByPhoneNumber(String phoneNumber) {
+        User user = userRepository.findByPhone(phoneNumber);
+        return user == null ? -1 : user.getId();
+    }
     public  List<LogResponse> certLog(int userId) {
         List<LogResponse> logList = new ArrayList<>();
         List<Certification> list = certificationRepository.findByUserId(userId).orElse(null);

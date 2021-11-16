@@ -4,6 +4,7 @@ import com.a506.blockai.api.dto.request.LoginRequest;
 import com.a506.blockai.api.dto.request.SignupRequest;
 import com.a506.blockai.api.dto.response.LogResponse;
 import com.a506.blockai.api.dto.response.LoginResponse;
+import com.a506.blockai.api.dto.response.UserIdResponse;
 import com.a506.blockai.api.service.UserService;
 import com.a506.blockai.jwt.JwtTokenProvider;
 import com.a506.blockai.api.dto.request.SendSmsRequest;
@@ -86,7 +87,14 @@ public class UserController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    
+    @ApiOperation(value = "폰번호로 유저정보 조회", notes = "<strong>핸드폰 번호</strong>를 통해 userId를 반환한다.")
+    @GetMapping("/phone/{phoneNumber}")
+    public ResponseEntity<UserIdResponse> getUserIdByPhoneNumber(@PathVariable String phoneNumber) {
+        int id = userService.getUserIdByPhoneNumber(phoneNumber);
+        UserIdResponse res = new UserIdResponse(id);
+        return ResponseEntity.status(200).body(res);
+    }
     @GetMapping("/{userId}/log")
     @ApiOperation(value = "인증로그", notes = "입력한 userId의 인증기록을 보여준다.")
     @ApiResponses({
