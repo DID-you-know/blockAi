@@ -1,8 +1,14 @@
 package com.a506.blockai.api.service;
 
+import com.a506.blockai.api.dto.request.BiometricsCertificateRequest;
 import com.a506.blockai.api.dto.request.FaceBiometricsRequest;
 import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
 import com.a506.blockai.config.AwsProperties;
+import com.a506.blockai.db.entity.DID;
+import com.a506.blockai.db.entity.User;
+import com.a506.blockai.db.repository.UserRepository;
+import com.a506.blockai.exception.DidNotYetIssuedException;
+import com.a506.blockai.exception.UserNotFoundException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -21,15 +27,24 @@ import com.musicg.wave.Wave;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.io.FileUtils;
 import org.java_websocket.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.abi.datatypes.generated.Uint256;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -60,14 +75,21 @@ public class AiService {
     }
 
     @Autowired
+    AwsProperties awsProperties;
+
+    @Autowired
     private AmazonRekognition rekognitionClient;
 
     private final AmazonS3Client amazonS3Client;
-    @Autowired
-    AwsProperties awsProperties;
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    private final UserRepository userRepository;
+
+    //파일 경로
+    private final String rootPath = System.getProperty("user.dir");;
+    private final String movePath = "/src/main/java/com/a506/blockai/common/tmp/";
 
     /* voice detection */
     public float identifyVoice(VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
@@ -79,11 +101,6 @@ public class AiService {
         //저장된 S3에 들어있는 음성파일 불러오기
         String fileName = savedS3UserVoiceUrl.split("/")[3];
         com.amazonaws.services.s3.model.S3Object savedUserVoice = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
-
-        //저장경로 지정
-        String rootPath = System.getProperty("user.dir");;
-        String movePath = "/src/main/java/com/a506/blockai/common/tmp/";
-        System.out.println("현재 프로젝트의 경로 : "+rootPath );
 
         //1. base64로 변환된 음섣파일 decode해서 다시 wav파일로 변환
         byte[] decoded = Base64.decode(encodedUserVoice);
@@ -109,7 +126,7 @@ public class AiService {
 
         Wave w1 = new Wave(recordFile.getPath());
         Wave w2 = new Wave(savedFile.getPath());
-       //Wave w2 = new Wave(savedFile.getPath());
+        //Wave w2 = new Wave(savedFile.getPath());
 
         FingerprintSimilarity fps = w1.getFingerprintSimilarity(w2);
         float fileScore = fps.getScore(); //유사위치 수
@@ -130,9 +147,6 @@ public class AiService {
         // 들어온 이미지를 file 형태로 변경
 //        File inputImage = new File(FileSystemView.getFileSystemView().getHomeDirectory()
 //                + "img.jpg");
-
-        String rootPath = System.getProperty("user.dir");;
-        String movePath = "/src/main/java/com/a506/blockai/common/tmp/";
 
         File inputImage = new File(rootPath+movePath + "img.jpg");
 
@@ -164,7 +178,6 @@ public class AiService {
 
         AmazonS3 amazonS3Client = amazonS3Client();
         // DID가 복호화한 [기존 저장된 사용자 이미지]
-        //File savedUserImage = getFile(faceBiometricsRequest.getSavedS3UserFaceUrl());
         // https://blockai-bucket.s3.ap-northeast-2.amazonaws.com/test.png
         String fileName = faceBiometricsRequest.getSavedS3UserFaceUrl().split("/")[3];
         com.amazonaws.services.s3.model.S3Object savedUserImage = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
@@ -179,9 +192,6 @@ public class AiService {
             System.out.println("Failed to load source image");
             System.exit(1);
         }
-//        try (InputStream inputStream = new FileInputStream(savedUserImage)) {
-//            targetImageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
-//        }
         try (InputStream inputStream = savedUserImage.getObjectContent()) {
             targetImageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
         } catch (Exception e) {
@@ -219,7 +229,7 @@ public class AiService {
 
         //파일 삭제
         inputImage.delete();
-        
+
         return result;
     }
 
@@ -235,6 +245,101 @@ public class AiService {
         String uploadImageUrl = amazonS3Client.getUrl(bucket, fileName).toString();
 
         return uploadImageUrl;
+    }
+
+    private final EthereumService ethereumService;
+
+    private boolean isIssuedDid(DID did) {
+        return did != null;
+    }
+
+    private List<Type> getBiometricsCertificateFromBlockchain(String didAddress) throws IOException {
+        List<TypeReference<?>> outputParameters = Arrays.asList(
+                new TypeReference<Utf8String>() {
+                },
+                new TypeReference<Utf8String>() {
+                },
+                new TypeReference<Uint256>() {
+                }
+        );
+        Function function = new Function("getDID", Arrays.asList(new Address(didAddress)), outputParameters);
+        List<Type> ethereumCallResult = ethereumService.ethCall(function);
+        return ethereumCallResult;
+    }
+
+    public BiometricsCertificateRequest getBiometricsFromBlockchain(int userId) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        DID did = user.getDid();
+
+        // DID 발급 여부 확인
+        if (!isIssuedDid(did)) {
+            throw new DidNotYetIssuedException();
+        }
+
+        String didAddress = did.getDidAddress();
+        List<Type> ethereumCallResult = getBiometricsCertificateFromBlockchain(didAddress);
+        String faceCertificateFromBlockchain = ethereumService.decode(String.valueOf(ethereumCallResult.get(0).getValue()));
+        String voiceCertificateFromBlockchain = ethereumService.decode(String.valueOf(ethereumCallResult.get(1).getValue()));
+
+        BiometricsCertificateRequest res = new BiometricsCertificateRequest(faceCertificateFromBlockchain, voiceCertificateFromBlockchain, "");
+        return res;
+    }
+
+    /* 조회 */
+    public String getFaceData(int userId) throws Exception {
+        // 받아온 사용자 이미지 정보의 s3 경로
+        String faceData = getBiometricsFromBlockchain(userId).getFace();
+
+        AmazonS3 amazonS3Client = amazonS3Client();
+        String fileName = faceData.split("/")[3];
+        com.amazonaws.services.s3.model.S3Object savedUserImage = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
+
+        S3ObjectInputStream s3is = savedUserImage.getObjectContent();
+        FileOutputStream fos = new FileOutputStream(new File(rootPath+movePath+"userImage.jpg" ));
+
+        byte[] read_buf = new byte[1024];
+        int read_len = 0;
+        while ((read_len = s3is.read(read_buf)) > 0) {
+            fos.write(read_buf, 0, read_len);
+        }
+        s3is.close();
+        fos.close();
+        File savedFile = new File(rootPath+movePath+"userImage.jpg");
+
+        byte[] fileBytes = FileUtils.readFileToByteArray(savedFile);
+        String encodedBytes = Base64.encodeBytes(fileBytes);
+
+        savedFile.delete();
+        return encodedBytes;
+
+        // String encodedFaceData = Base64.encodeBytes(savedFile);
+    }
+
+    public String getVoiceData(int userId) throws Exception {
+        // 받아온 사용자 음성 정보의 s3 경로
+        String voiceData = getBiometricsFromBlockchain(userId).getVoice();
+
+        AmazonS3 amazonS3Client = amazonS3Client();
+        String fileName = voiceData.split("/")[3];
+        com.amazonaws.services.s3.model.S3Object savedUserVoice = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
+
+        S3ObjectInputStream s3is = savedUserVoice.getObjectContent();
+        FileOutputStream fos = new FileOutputStream(new File(rootPath+movePath+"userVoice.wav" ));
+        byte[] read_buf = new byte[1024];
+        int read_len = 0;
+        while ((read_len = s3is.read(read_buf)) > 0) {
+            fos.write(read_buf, 0, read_len);
+        }
+        s3is.close();
+        fos.close();
+        File savedFile = new File(rootPath+movePath+"userVoice.wav");
+
+        byte[] fileBytes = FileUtils.readFileToByteArray(savedFile);
+        String encodedBytes = Base64.encodeBytes(fileBytes);
+
+        savedFile.delete();
+        return encodedBytes;
     }
 
 }

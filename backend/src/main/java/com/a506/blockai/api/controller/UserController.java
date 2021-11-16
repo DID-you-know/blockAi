@@ -87,7 +87,7 @@ public class UserController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     @ApiOperation(value = "폰번호로 유저정보 조회", notes = "<strong>핸드폰 번호</strong>를 통해 userId를 반환한다.")
     @GetMapping("/phone/{phoneNumber}")
     public ResponseEntity<UserIdResponse> getUserIdByPhoneNumber(@PathVariable String phoneNumber) {
