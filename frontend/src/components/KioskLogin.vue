@@ -2,7 +2,7 @@
   <div class="kiosk-login">
     <img class="company-logo" src="@/assets/image/logo.png" alt="">
     <div class="kiosk-phone-input">
-      <input class="input" type="text" ref="input" v-model="phoneNumber">
+      <div class="input">{{ phoneNumber }}</div>
       <div class="number-pad">
         <div class="row">
           <div class="key" @click="clickNumber(1)"><span>1</span></div>
@@ -37,15 +37,26 @@
     name: 'KioskLogin',
     setup(props, { emit }) {
       const store = useStore()
-      const phoneNumber = ref('')
-      const input = ref(null)
+      const phoneNumber = ref(' ')
+
+      const convertPhoneNumber = (phoneNumber) => {
+        phoneNumber = phoneNumber.replace(/[^0-9]/g, '')
+        if (phoneNumber.length <= 3) {
+          return phoneNumber.slice(0, 3)
+        }
+        if (phoneNumber.length <= 7) {
+          return phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3, 7)
+        }
+        return phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3, 7) + '-' + phoneNumber.slice(7, 11)
+      }
 
       const clickNumber = (number) => {
-        phoneNumber.value += number
+        phoneNumber.value = convertPhoneNumber(phoneNumber.value + number)
       }
       const backspace = () => {
         phoneNumber.value = phoneNumber.value.slice(0, phoneNumber.value.length-1)
       }
+
       const submit = async () => {
         await store.dispatch('certification/getUserId', phoneNumber.value)
         emit('pass')
@@ -53,7 +64,6 @@
 
       return {
         phoneNumber,
-        input,
         clickNumber,
         backspace,
         submit
@@ -95,6 +105,7 @@
         background-color: transparent;
         color: $white;
         width: 40vh;
+        height: 8vh;
         letter-spacing: 0.1vh;
 
         &:focus {

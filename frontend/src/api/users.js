@@ -27,6 +27,12 @@ export default {
       data: credentials
     })
   },
+  getLog(userId) {
+    return _axios({
+      url: `/users/${userId}/log`,
+      method: 'get'
+    })
+  },
   didIssue(userId, didData) {
     return _axios({
       url: `/users/${userId}/did/issue`,
