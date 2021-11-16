@@ -21,7 +21,7 @@
     border-radius: 1rem;
 
     &:hover {
-      background-color: $white;
+      background-color: $white-hover;
     }
   }
 </style>

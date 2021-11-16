@@ -7,6 +7,7 @@ import Status from '@/views/Status'
 import Issue from '@/views/Issue'
 import ImageTest from '@/views/ImageTest'
 import KioskHome from '@/views/KioskHome'
+import CertificationLog from '@/views/CertificationLog'
 
 
 const routes = [
@@ -40,6 +41,12 @@ const routes = [
     name: 'issue',
     component: Issue
   },
+  // 인증 기록 조회
+  {
+    path: '/certificationLog',
+    name: 'certificationLog',
+    component: CertificationLog
+  },
   // 키오스크 홈
   {
     path: '/kiosk',
@@ -61,10 +68,15 @@ const router = createRouter({
 // 로그인 리다이렉트
 router.beforeEach((to, from, next) => {
   if (!store.state.users.isLogin) {
-    if (to.name === 'home' || to.name === 'signup' || to.name === 'login' || to.name === 'kioskHome') {
+    if (to.name === 'home' || to.name === 'signup' || to.name === 'login' || to.name === 'kioskHome' || to.name==='certificationLog') {
       next()
     } else {
-      next({ name: 'login' })
+      next({
+        name: 'login',
+        query: {
+          nextUrl: to.fullPath
+        }
+      })
     }
   } else next()
 })
