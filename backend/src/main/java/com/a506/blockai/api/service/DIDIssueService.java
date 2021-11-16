@@ -4,6 +4,7 @@ import com.a506.blockai.api.dto.request.DIDIssueRequest;
 import com.a506.blockai.db.entity.DID;
 import com.a506.blockai.db.entity.User;
 import com.a506.blockai.db.repository.UserRepository;
+import com.a506.blockai.exception.BadRequestException;
 import com.a506.blockai.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,13 @@ public class DIDIssueService {
     private final UserRepository userRepository;
 
     public String issueDID(int userId, DIDIssueRequest didIssueRequest) throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
+        // 존재하는 유저인지 확인
+        userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        // 인증 데이터가 존재하는지 확인
+        if (isBadBiometricsRequest(didIssueRequest)) throw new BadRequestException();
+
         // 랜덤 DID address 발급
         String address = ethereumService.sha256(LocalDateTime.now().toString() + userId).substring(0,42);
         System.out.println("new DID address : " + address);
@@ -61,6 +69,10 @@ public class DIDIssueService {
         }
         userRepository.save(user);
         return address;
+    }
+
+    private boolean isBadBiometricsRequest(DIDIssueRequest didIssueRequest) {
+        return didIssueRequest.getFacePath().isEmpty() || didIssueRequest.getVoiceId().isEmpty();
     }
 
     private boolean isIssuedDid(User user) {
