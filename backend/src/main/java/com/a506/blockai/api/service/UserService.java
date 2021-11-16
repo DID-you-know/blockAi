@@ -2,9 +2,12 @@ package com.a506.blockai.api.service;
 
 import com.a506.blockai.api.dto.request.LoginRequest;
 import com.a506.blockai.api.dto.request.SignupRequest;
+import com.a506.blockai.api.dto.response.LogResponse;
 import com.a506.blockai.api.dto.response.LoginResponse;
+import com.a506.blockai.db.entity.Certification;
 import com.a506.blockai.db.entity.Role;
 import com.a506.blockai.db.entity.User;
+import com.a506.blockai.db.repository.CertificationRepository;
 import com.a506.blockai.db.repository.UserRepository;
 import com.a506.blockai.exception.EmailDuplicatedException;
 import com.a506.blockai.exception.UserNotFoundException;
@@ -18,8 +21,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
+<<<<<<< HEAD
 import java.util.Optional;
+=======
+import java.util.List;
+>>>>>>> 9f3f4dac77fd0bfdb4dea76351152897780f5de1
 
 /**
  * Created by Yeseul Kim on 2021-11-11
@@ -32,6 +40,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CertificationRepository certificationRepository;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -78,5 +87,18 @@ public class UserService {
     public int getUserIdByPhoneNumber(String phoneNumber) {
         User user = userRepository.findByPhone(phoneNumber);
         return user == null ? -1 : user.getId();
+    }
+    public  List<LogResponse> certLog(int userId) {
+        List<LogResponse> logList = new ArrayList<>();
+        List<Certification> list = certificationRepository.findByUserId(userId).orElse(null);
+
+        for (Certification cert: list) {
+            LogResponse logResponse = new LogResponse();
+            logResponse.setId(cert.getId());
+            logResponse.setCertified_by(cert.getCertifiedBy());
+            logResponse.setCertified_at(cert.getCertifiedAt());
+            logList.add(logResponse);
+        }
+       return logList;
     }
 }
