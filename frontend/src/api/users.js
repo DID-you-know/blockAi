@@ -27,11 +27,18 @@ export default {
       data: credentials
     })
   },
+  getLog(userId) {
+    return _axios({
+      url: `/users/${userId}/log`,
+      method: 'get'
+    })
+  },
   didIssue(userId, didData) {
     return _axios({
       url: `/users/${userId}/did/issue`,
       method: 'post',
-      data: didData
+      data: didData,
+      timeout: 60000
     })
   },
   getFace(userId) {
