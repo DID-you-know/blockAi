@@ -7,7 +7,7 @@
           <h1 class="fs-3 fw-bold">로그인</h1>
         </div>
         <Input label="이메일" v-model="email" @input="setEmail"/>
-        <Input label="비밀번호" type="password" v-model="password" @input="setPassword"/>
+        <Input label="비밀번호" type="password" :error="error" v-model="password" @input="setPassword"/>
         <FormButton value="로그인" @click="submit"/>
       </div>
       <div class="bg lefttop">
@@ -30,8 +30,9 @@
   import Input from '@/components/Input'
   import FormButton from '@/components/FormButton'
   import Logo from '@/components/Logo'
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import { useStore } from 'vuex'
+  import { useRouter, useRoute } from 'vue-router'
 
 
   export default {
@@ -43,6 +44,10 @@
     },
     setup() {
       const store = useStore()
+      const router = useRouter()
+      const route = useRoute()
+
+      const isLogin = computed(() => store.state.users.isLogin)
 
       // 이메일
       const email = ref('')
@@ -58,14 +63,25 @@
         password.value = event.target.value
       }
 
+      const error = ref('')
+
       // 로그인 api 호출
-      const submit = () => {
-        console.log('submit')
+      const submit = async () => {
         const credentials = {
           email: email.value,
           password: password.value
         }
-        store.dispatch('users/getAccessToken', credentials)
+        await store.dispatch('users/getAccessToken', credentials)
+        if (isLogin.value) {
+          const next = route.query.nextUrl
+          if (next) {
+            router.push({ path: next })
+          } else {
+            router.push({ name: 'home' })
+          }
+        } else {
+          error.value = '아이디와 비밀번호가 잘못 입력 되었습니다.'
+        }
       }
 
       return {

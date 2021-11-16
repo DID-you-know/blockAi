@@ -268,7 +268,7 @@
           const payload = {
             face: faceBase64.value,
             voice: audioBlob.value,
-            certifiedBy: '이마트'
+            certifiedBy: 'GS25'
           }
           await store.dispatch('certification/certification', payload)
           if (isCertificated.value) {
