@@ -2,9 +2,12 @@ package com.a506.blockai.api.service;
 
 import com.a506.blockai.api.dto.request.LoginRequest;
 import com.a506.blockai.api.dto.request.SignupRequest;
+import com.a506.blockai.api.dto.response.LogResponse;
 import com.a506.blockai.api.dto.response.LoginResponse;
+import com.a506.blockai.db.entity.Certification;
 import com.a506.blockai.db.entity.Role;
 import com.a506.blockai.db.entity.User;
+import com.a506.blockai.db.repository.CertificationRepository;
 import com.a506.blockai.db.repository.UserRepository;
 import com.a506.blockai.exception.EmailDuplicatedException;
 import com.a506.blockai.exception.UserNotFoundException;
@@ -18,7 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Yeseul Kim on 2021-11-11
@@ -31,6 +36,7 @@ import java.util.Collections;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CertificationRepository certificationRepository;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -72,5 +78,19 @@ public class UserService {
 
         LoginResponse loginResponse = new LoginResponse(jwtTokenProvider.createToken(authentication), user.getId(), user.getName(), user.getDid() == null ? null : user.getDid().getIssuedAt());
         return loginResponse;
+    }
+
+    public  List<LogResponse> certLog(int userId) {
+        List<LogResponse> logList = new ArrayList<>();
+        List<Certification> list = certificationRepository.findByUserId(userId).orElse(null);
+
+        for (Certification cert: list) {
+            LogResponse logResponse = new LogResponse();
+            logResponse.setId(cert.getId());
+            logResponse.setCertified_by(cert.getCertifiedBy());
+            logResponse.setCertified_at(cert.getCertifiedAt());
+            logList.add(logResponse);
+        }
+       return logList;
     }
 }
