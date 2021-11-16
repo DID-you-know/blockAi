@@ -16,6 +16,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -55,27 +59,48 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-//                .httpBasic().disable() // rest api 이므로 기본설정 사용안함. 기본설정은 비인증시 로그인폼 화면으로 리다이렉트 된다.
-                .csrf().disable() // rest api이므로 csrf 보안이 필요없으므로 disable처리.
+//      .httpBasic().disable() // rest api 이므로 기본설정 사용안함. 기본설정은 비인증시 로그인폼 화면으로 리다이렉트 된다.
+        .csrf().disable() // rest api이므로 csrf 보안이 필요없으므로 disable처리.
 
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
+        .exceptionHandling()
+        .authenticationEntryPoint(jwtEntryPoint)
+        .accessDeniedHandler(jwtAccessDeniedHandler)
 
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
+        .and()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
 
-                .and()
-                .authorizeRequests()
-                .antMatchers("/api/users").permitAll()
-                .antMatchers("/api/users/login").permitAll()
-                .antMatchers("/api/users/sms").permitAll()
-                .antMatchers("/api/users/phone").permitAll()
-                .antMatchers("/api/certification/users").permitAll()
-                .anyRequest().authenticated()   // 어떠한 URI로 접근하든지 인증 필요
+        .and()
+        .authorizeRequests()
+        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+        .antMatchers("/api/users").permitAll()
+        .antMatchers("/api/users/login").permitAll()
+        .antMatchers("/api/users/sms").permitAll()
+        .antMatchers("/api/users/phone").permitAll()
+        .antMatchers("/api/certification/users").permitAll()
+        .anyRequest().authenticated()   // 어떠한 URI로 접근하든지 인증 필요
 
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter 삽입
+        .and()
+        .cors()
+
+        .and()
+        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter 삽입
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("https://k5a506.p.ssafy.io:3000");
+        configuration.addAllowedOrigin("https://k5a506.p.ssafy.io");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }
