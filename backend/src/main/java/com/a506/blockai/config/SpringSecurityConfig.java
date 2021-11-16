@@ -71,6 +71,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/users").permitAll()
                 .antMatchers("/api/users/login").permitAll()
                 .antMatchers("/api/users/sms").permitAll()
+                .antMatchers("/api/users/phone").permitAll()
                 .antMatchers("/api/certification/users").permitAll()
                 .anyRequest().authenticated()   // 어떠한 URI로 접근하든지 인증 필요
 
