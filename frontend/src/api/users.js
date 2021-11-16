@@ -37,7 +37,8 @@ export default {
     return _axios({
       url: `/users/${userId}/did/issue`,
       method: 'post',
-      data: didData
+      data: didData,
+      timeout: 60000
     })
   },
   getFace(userId) {
