@@ -3,16 +3,16 @@
     <!-- 발행 후 -->
     <div v-if="issuedDate" class="card-container" @click="turnCard">
       <div class="card front" :class="{ 'front-turn': isFront }">
-        <div class="card-title fs-2 fw-light">
+        <div class="card-title">
           신원증명서
         </div>
         <div class="card-body">
           <div class="card-content"><img class="stamp" src="@/assets/image/stamp.png" alt=""></div>
-          <div class="card-content fw-light">
+          <div class="card-content">
             <span class="label">이름</span>
-            <span class="value">홍길동</span>
+            <span class="value">{{ name }}</span>
             <span class="label">발급일</span>
-            <span class="value">2021.11.05</span>
+            <span class="value">{{ issuedAt }}</span>
           </div>
         </div>
       </div>
@@ -25,11 +25,9 @@
           <div class="card-content">
             <div class="box">
               <img v-if="!isFaceOn" class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceId">
-              <img v-if="isFaceOn" class="image" :src="face" alt="face">
+              <img v-else class="image" :src="face" alt="face">
             </div>
-            <span class="fs-1 fw-light tag" @click.stop="faceOn">
-              얼굴 조회
-            </span>
+            <WhiteButton class="tag" @click.stop="faceOn" value="얼굴 조회"/>
           </div>
           <div class="card-content">
             <div class="box">
@@ -38,9 +36,7 @@
                 <source :src="voice" type="audio/wav">
               </audio>
             </div>
-            <span class="fs-1 fw-light tag" @click.stop="voiceOn">
-              음성 조회
-            </span>
+            <WhiteButton class="tag" @click.stop="voiceOn" value="음성 조회"/>
           </div>
         </div>
       </div>
@@ -80,6 +76,10 @@
     name: 'DIDCard',
     components: {
       WhiteButton
+    },
+    props: {
+      name: String,
+      issuedAt: String
     },
     setup() {
       const store = useStore()
@@ -145,39 +145,42 @@
   @import '@/assets/style/color.scss';
 
 
-  $height: 20rem;
+  $height: 60vh;
 
   .blur {
     filter: blur(5px);
   }
 
   .card-container {
-    perspective: 1000px;
+    perspective: 150vh;
     display: inline-block;
     position: relative;
+    cursor: pointer;
 
     .card {
-      border-radius: 1rem;
+      border-radius: 3vh;
       width: $height * 1.62;
       height: $height;
       display: flex;
       flex-direction: column;
-      padding: 1rem 2rem;
+      padding: 3vh 6vh;
       background: rgb(93,78,136);
       background: linear-gradient(0deg, rgba(93,78,136,1) 0%, rgba(114,117,200,1) 66%, rgba(109,143,201,1) 100%);
       backface-visibility: hidden;
       transition: 1.5s;
+      box-shadow: 1vh 1vh 2vh 0 rgba($color: #000000, $alpha: 0.2);
 
       .card-title {
-        margin-left: 2rem;
+        margin-left: 6vh;
         color: $white;
+        font-size: 4.5vh
       }
 
       .card-body {
         display: flex;
         justify-content: space-around;
         height: 100%;
-        gap: 2rem;
+        gap: 6vh;
 
         .card-content {
           flex: 1;
@@ -186,51 +189,47 @@
           justify-content: center;
 
           .label {
-            margin: 1rem 0 5px 5px;
+            margin: 3vh 0 1vh 1vh;
             color: rgb(189, 189, 189);
+            font-size: 2vh;
           }
 
           .value {
-            font-size: 20px;
+            font-size: 3.5vh;
             color: $white;
-            margin-bottom: 2rem;
+            margin-bottom: 6vh;
+            letter-spacing: 0.1vh;
           }
 
           .box {
-            margin-top: 1rem;
-            padding: 1.5rem 2.5rem;
+            margin-top: 3vh;
+            padding: 4.5vh 7.5vh;
             border: 1px solid;
             color: $white;
-            border-radius: 1rem;
+            border-radius: 3vh;
             text-align: center;
 
             .icon {
-              width: 100px;
-              height: 100px;
+              width: 20vh;
+              height: 20vh;
             }
 
             .image {
-              width: 100px;
-              height: 100px;
+              width: 20vh;
+              height: 20vh;
             }
           }
 
           .tag {
-            color: $white;
             text-align: center;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: $primary;
-            border-radius: 1rem;
-            cursor: default;
-
-            &:hover {
-              background-color: $primary-hover;
-            }
+            margin-top: 2vh;
+            padding: 2vh;
+            border-radius: 3vh;
+            font-size: 2vh;
           }
 
           .stamp {
-            opacity: 0.3;
+            opacity: 0.6;
             width: 100%;
           }
         }
