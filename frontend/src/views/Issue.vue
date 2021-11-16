@@ -238,6 +238,7 @@
       // 생체데이터 저장
       const facePath = ref(null)
       const voicePath = ref(null)
+      // s3 저장 및 axios 요청
       const s3Upload = async () => {
         // S3 설정
         AWS.config.update({
@@ -267,13 +268,13 @@
             Body: faceBlob
           }
         })
-        const facePromise = faceUpload.promise()
-        facePromise.then((data) => {
-          console.log('success', data)
-          facePath.value = data.Location
-        }, (err) => {
-          console.log('error', err)
-        })
+        try {
+          const facePromise = await faceUpload.promise()
+          console.log(facePromise)
+          facePath.value = facePromise.Location
+        } catch (error) {
+          console.log('error', error)
+        }
 
         // 음성 업로드
         const voiceUpload = new AWS.S3.ManagedUpload({
@@ -283,13 +284,22 @@
             Body: audioBlob.value
           }
         })
-        const voicePromise = voiceUpload.promise()
-        voicePromise.then((data) => {
-          console.log('success', data)
-          voicePath.value = data.Location
-        }, (err) => {
-          console.log('error', err)
-        })
+        try {
+          const voicePromise = await voiceUpload.promise()
+          console.log(voicePromise)
+          voicePath.value = voicePromise.Location
+        } catch (error) {
+          console.log('error', error)
+        }
+
+        // axios
+        await store.dispatch('users/didIssue', { userId: userId.value, didData: { facePath: facePath.value, voiceId: voicePath.value } })
+        if (isIssued.value) {
+          step.value += 1
+        } else {
+          console.log('발급에 실패했습니다.')
+          router.push({ name: 'status' })
+        }
       }
 
 
@@ -299,12 +309,6 @@
         }
         if (step.value === 3) {
           await s3Upload()
-          await store.dispatch('users/didIssue', { userId: userId.value, didData: { facePath: facePath.value, voiceId: voicePath.value } })
-          if (isIssued.value) {
-            step.value += 1
-          } else {
-            console.log('발급에 실패했습니다.')
-          }
         }
       })
 
