@@ -46,7 +46,7 @@ public class UserController {
     private final SmsService smsService;
 
     /** 회원가입 */
-    @PostMapping("/sign-up")
+    @PostMapping("")
     @ApiOperation(value = "회원가입", notes = "<strong>이메일, 패스워드, 이름, 생일, 전화번호</strong>을 통해 회원가입 한다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "회원가입 성공"),
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     /** 로그인 */
-    @PostMapping("/sign-in")
+    @PostMapping("/login")
     @ApiOperation(value = "로그인", notes = "<strong>이메일과 패스워드</strong>를 통해 로그인 한다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "로그인 성공(헤더에도 토근 있음)", response = LoginResponse.class),

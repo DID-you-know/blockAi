@@ -55,7 +55,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .httpBasic().disable() // rest api 이므로 기본설정 사용안함. 기본설정은 비인증시 로그인폼 화면으로 리다이렉트 된다.
+//                .httpBasic().disable() // rest api 이므로 기본설정 사용안함. 기본설정은 비인증시 로그인폼 화면으로 리다이렉트 된다.
                 .csrf().disable() // rest api이므로 csrf 보안이 필요없으므로 disable처리.
 
                 .exceptionHandling()
@@ -68,8 +68,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/users/sign-in").permitAll()
-                .antMatchers("/api/users/sign-up").permitAll()
+                .antMatchers("/api/users").permitAll()
+                .antMatchers("/api/users/login").permitAll()
                 .antMatchers("/api/users/sms").permitAll()
                 .antMatchers("/api/certification/users").permitAll()
                 .anyRequest().authenticated()   // 어떠한 URI로 접근하든지 인증 필요
