@@ -3,6 +3,7 @@ package com.a506.blockai.exception;
 import com.a506.blockai.exception.dto.ExceptionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,10 +22,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse> Exception(ApplicationException e) {
+    public ResponseEntity<ExceptionResponse> Exception(Exception e) {
         logger.info("Unhandled Exception", e);
 
         ExceptionResponse response = ExceptionResponse.of(e.getMessage());
-        return ResponseEntity.status(e.getHttpStatus()).body(response);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
