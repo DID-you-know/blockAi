@@ -89,6 +89,7 @@
         setEmail,
         password,
         setPassword,
+        error,
         submit
       }
     }

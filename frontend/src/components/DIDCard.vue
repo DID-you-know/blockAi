@@ -25,7 +25,7 @@
           <div class="card-content">
             <div class="box">
               <img v-if="!isFaceOn" class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceId">
-              <img v-if="isFaceOn" class="image" :src="face.value" alt="face">
+              <img v-if="isFaceOn" class="image" :src="face" alt="face">
             </div>
             <span class="fs-1 fw-light tag" @click.stop="faceOn">
               얼굴 조회
@@ -33,9 +33,9 @@
           </div>
           <div class="card-content">
             <div class="box">
-              <img v-if="!isVoiceOn" class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voice">
+              <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voice">
               <audio hidden>
-                <source :src="voice.value" type="audio/wav">
+                <source :src="voice" type="audio/wav">
               </audio>
             </div>
             <span class="fs-1 fw-light tag" @click.stop="voiceOn">
@@ -47,7 +47,7 @@
     </div>
 
     <!-- 발행 전 -->
-    <div v-if="!issuedDate" class="card-container">
+    <div v-else class="card-container">
       <div class="card">
         <div class="card-title fs-2 fw-light blur">
           신원증명서
@@ -83,13 +83,12 @@
     },
     setup() {
       const store = useStore()
+      const issuedDate = computed(() => store.state.users.issuedDate)
 
       const isFront = ref(false)
       const turnCard = () => {
         isFront.value = !isFront.value
       }
-
-      const issuedDate = computed(() => store.state.users.issuedDate)
 
       const router = useRouter()
       const pushIssue = () => router.push({ name: 'issue' })
@@ -134,7 +133,9 @@
         isFaceOn,
         faceOn,
         isVoiceOn,
-        voiceOn
+        voiceOn,
+        face,
+        voice
       }
     }
   }
