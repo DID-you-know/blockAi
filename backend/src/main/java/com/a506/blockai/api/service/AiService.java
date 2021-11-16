@@ -3,6 +3,11 @@ package com.a506.blockai.api.service;
 import com.a506.blockai.api.dto.request.FaceBiometricsRequest;
 import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
 import com.a506.blockai.config.AwsProperties;
+import com.a506.blockai.db.entity.DID;
+import com.a506.blockai.db.entity.User;
+import com.a506.blockai.db.repository.UserRepository;
+import com.a506.blockai.exception.DidNotYetIssuedException;
+import com.a506.blockai.exception.UserNotFoundException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -26,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.web3j.abi.datatypes.Type;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -60,14 +67,18 @@ public class AiService {
     }
 
     @Autowired
+    AwsProperties awsProperties;
+
+    @Autowired
     private AmazonRekognition rekognitionClient;
 
     private final AmazonS3Client amazonS3Client;
-    @Autowired
-    AwsProperties awsProperties;
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    private final UserRepository userRepository;
+    private final CertificationService certificationService;
 
     /* voice detection */
     public float identifyVoice(VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
@@ -164,7 +175,6 @@ public class AiService {
 
         AmazonS3 amazonS3Client = amazonS3Client();
         // DID가 복호화한 [기존 저장된 사용자 이미지]
-        //File savedUserImage = getFile(faceBiometricsRequest.getSavedS3UserFaceUrl());
         // https://blockai-bucket.s3.ap-northeast-2.amazonaws.com/test.png
         String fileName = faceBiometricsRequest.getSavedS3UserFaceUrl().split("/")[3];
         com.amazonaws.services.s3.model.S3Object savedUserImage = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
@@ -179,9 +189,6 @@ public class AiService {
             System.out.println("Failed to load source image");
             System.exit(1);
         }
-//        try (InputStream inputStream = new FileInputStream(savedUserImage)) {
-//            targetImageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
-//        }
         try (InputStream inputStream = savedUserImage.getObjectContent()) {
             targetImageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
         } catch (Exception e) {
@@ -235,6 +242,25 @@ public class AiService {
         String uploadImageUrl = amazonS3Client.getUrl(bucket, fileName).toString();
 
         return uploadImageUrl;
+    }
+
+    /* 조회 */
+    public void getFaceData(int userId) throws IOException {
+        // 받아온 사용자 이미지 정보의 s3 경로
+        String faceData = certificationService.getBiometricDataUrl(userId).getFace();
+
+        AmazonS3 amazonS3Client = amazonS3Client();
+        String fileName = faceData.split("/")[3];
+        com.amazonaws.services.s3.model.S3Object savedUserImage = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
+
+        // 파일로
+        InputStream inputStream = savedUserImage.getObjectContent();
+    }
+
+    public void getVoiceData(int userId) throws IOException{
+        // 받아온 사용자 음성 정보의 s3 경로
+        String voiceData = certificationService.getBiometricDataUrl(userId).getVoice();
+
     }
 
 }

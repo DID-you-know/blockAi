@@ -36,6 +36,7 @@ public class CertificationService {
     private final CertificationRepository certificationRepository;
     private final float similarity = 0.5f;
 
+
     public void certifyBiometrics(int userId, BiometricsCertificateRequest biometricsCertificateRequest) throws Exception {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
@@ -99,6 +100,25 @@ public class CertificationService {
         Certification certification = new Certification(certifiedBy);
         user.addCertification(certification);
         certificationRepository.save(certification);
+    }
+
+    public BiometricsCertificateRequest getBiometricDataUrl(int userId) throws IOException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        DID did = user.getDid();
+
+        // DID 발급 여부 확인
+        if (!isIssuedDid(did)) {
+            throw new DidNotYetIssuedException();
+        }
+
+        String didAddress = did.getDidAddress();
+        List<Type> ethereumCallResult = getBiometricsCertificateFromBlockchain(didAddress);
+        String faceCertificateFromBlockchain = ethereumService.decode(String.valueOf(ethereumCallResult.get(0).getValue()));
+        String voiceCertificateFromBlockchain = ethereumService.decode(String.valueOf(ethereumCallResult.get(1).getValue()));
+
+        BiometricsCertificateRequest res = new BiometricsCertificateRequest(faceCertificateFromBlockchain, voiceCertificateFromBlockchain, "");
+        return res;
     }
 
 }

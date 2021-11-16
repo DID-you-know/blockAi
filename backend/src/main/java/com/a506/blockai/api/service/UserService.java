@@ -23,11 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-<<<<<<< HEAD
-import java.util.Optional;
-=======
 import java.util.List;
->>>>>>> 9f3f4dac77fd0bfdb4dea76351152897780f5de1
 
 /**
  * Created by Yeseul Kim on 2021-11-11
