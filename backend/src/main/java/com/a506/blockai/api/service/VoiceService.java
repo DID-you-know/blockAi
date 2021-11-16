@@ -26,8 +26,8 @@
 //    private final String accessKey;
 //    final private String endPoint = "https://westus.api.cognitive.microsoft.com/";
 //
-////    @PostMapping("/users/{userId}/voice/issue")
-////    public ResponseEntity<?> createProfile(@PathVariable int userId, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) {
+////    @PostMapping("/users/{UserIdResponse}/voice/issue")
+////    public ResponseEntity<?> createProfile(@PathVariable int UserIdResponse, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) {
 ////        String profileId = aiService.createProfile();
 ////        String enrollmentStatus = aiService.enrollment(profileId, voiceBiometricsRequest);
 ////

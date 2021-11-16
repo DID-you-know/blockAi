@@ -14,6 +14,23 @@
 
 
 ## 🖥️ 기술스택
+<div>
+<img src="https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=Java&logoColor=white"/> 
+<img src="https://img.shields.io/badge/Spring-6ec45c?style=flat-square&logo=Spring&logoColor=white"/>
+<img src="https://img.shields.io/badge/JPA-6DB33F?style=flat-square&logo=SpringBoot&logoColor=white"/>
+<img src="https://img.shields.io/badge/MySQL-485899?style=flat-square&logo=MySQL&logoColor=white"/>
+<img src="https://img.shields.io/badge/JavaScript-gray?style=flat-square&logo=JavaScript&logoColor=yellow"/> 
+<img src="https://img.shields.io/badge/Vue-35495e?style=flat-square&logo=Vue.js&logoColor=4FC08D"/>
+<img src="https://img.shields.io/badge/Solidity-C0C0C0?style=flat-square&logo=Solidity&logoColor=363636"/>
+<img src="https://img.shields.io/badge/Ethereum-white?style=flat-square&logo=Ethereum&logoColor=3c3c3d"/>
+<img src="https://img.shields.io/badge/Jenkins-D24939?style=flat-square&logo=Jenkins&logoColor=white"/>
+<img src="https://img.shields.io/badge/AWS EC2-232F3E?style=flat-square&logo=AmazonAWS&logoColor=FF9900"/>
+<img src="https://img.shields.io/badge/AWS S3-232F3E?style=flat-square&logo=AmazonAWS&logoColor=D24939"/>
+<img src="https://img.shields.io/badge/NGINX-CFE1D0?style=flat-square&logo=NGINX&logoColor=009639"/>
+<img src="https://img.shields.io/badge/Docker-DAE4EB?style=flat-square&logo=Docker&logoColor=2496ED"/>
+</div>
+<br>
+
 **Backend** `Java` `SpringBoot` `JPA`
 
 **Frontend**  `Javascript` `Vue.js`
@@ -35,6 +52,15 @@
 |FE|BE & Devops|BE & AI|BE & AI|BE & Blockchain|BE & Blockchain|
 |[@kiung22](https://github.com/kiung22)| [@qlcid](https://github.com/qlcid) | [@ParkSeRyeong](https://github.com/ParkSeRyeong) | [@zsoozsoo](https://github.com/zsoozsoo) | [@hanull](https://github.com/hanull) | [@lim8662](https://github.com/lim8662) |
 
+## ⛓ 포트 포워딩
+| **PORT** |                        **이름**                         |
+| :------: | :-----------------------------------------------------: |
+|   443    |                          HTTPS                          |
+|    80    |       HTTP - HTTPS로 리다이렉트(프론트로 리다이렉트)     |
+|   3306   |                          MySQL                          |
+|   8081   |                         Jenkins                         |
+|   8080   |              Spring boot Docker Container               |
+|   3000   |               Vue, NGINX Docker Container               |
 
 ## 추가 정보
 [👉팀 노션👈](https://www.notion.so/86346ce94a8e4074a34f901ed97f9c0d)

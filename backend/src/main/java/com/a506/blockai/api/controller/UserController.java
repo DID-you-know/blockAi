@@ -2,7 +2,9 @@ package com.a506.blockai.api.controller;
 
 import com.a506.blockai.api.dto.request.LoginRequest;
 import com.a506.blockai.api.dto.request.SignupRequest;
+import com.a506.blockai.api.dto.response.LogResponse;
 import com.a506.blockai.api.dto.response.LoginResponse;
+import com.a506.blockai.api.dto.response.UserIdResponse;
 import com.a506.blockai.api.service.UserService;
 import com.a506.blockai.jwt.JwtTokenProvider;
 import com.a506.blockai.api.dto.request.SendSmsRequest;
@@ -18,16 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * Created by Yeseul Kim on 2021-11-11
@@ -75,6 +75,10 @@ public class UserController {
   
     /** 문자인증 */
     @PostMapping ("/sms")
+    @ApiOperation(value = "문자인증", notes = "휴대폰번호와 랜덤번호를 받아 인증을 진행한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "문자인증 성공"),
+    })
     public Object smsAuth(@RequestBody SendSmsRequest sendSmsRequest) throws JsonProcessingException, ParseException, UnsupportedEncodingException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException {
         String phone = sendSmsRequest.getPhone().replaceAll("-","");
         String randomCode = sendSmsRequest.getRandomCode();
@@ -82,5 +86,22 @@ public class UserController {
         smsService.sendSms(phone,randomCode);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @ApiOperation(value = "폰번호로 유저정보 조회", notes = "<strong>핸드폰 번호</strong>를 통해 userId를 반환한다.")
+    @GetMapping("/phone/{phoneNumber}")
+    public ResponseEntity<UserIdResponse> getUserIdByPhoneNumber(@PathVariable String phoneNumber) {
+        int id = userService.getUserIdByPhoneNumber(phoneNumber);
+        UserIdResponse res = new UserIdResponse(id);
+        return ResponseEntity.status(200).body(res);
+    }
+    @GetMapping("/{userId}/log")
+    @ApiOperation(value = "인증로그", notes = "입력한 userId의 인증기록을 보여준다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "인증로그 불러오기 성공"),
+    })
+    public ResponseEntity<LogResponse> getCertLog (@PathVariable int userId) {
+        List<LogResponse> list = userService.certLog(userId);
+        return new ResponseEntity(list, HttpStatus.OK);
     }
 }
