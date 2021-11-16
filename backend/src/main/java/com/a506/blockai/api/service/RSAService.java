@@ -12,7 +12,7 @@ import java.util.HashMap;
 @Service
 public class RSAService {
 
-    static final int KEY_SIZE = 512;
+    static final int KEY_SIZE = 1024;
 
     public HashMap<String, String> createKeypairAsString() {
         HashMap<String, String> stringKeypair = new HashMap<>();
@@ -27,6 +27,9 @@ public class RSAService {
 
             String stringPublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
             String stringPrivateKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+
+            System.out.println(stringPublicKey);
+            System.out.println(stringPrivateKey);
 
             stringKeypair.put("publicKey", stringPublicKey);
             stringKeypair.put("privateKey", stringPrivateKey);

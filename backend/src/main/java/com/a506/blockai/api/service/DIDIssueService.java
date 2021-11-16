@@ -26,7 +26,6 @@ public class DIDIssueService {
 
     private final EthereumService ethereumService;
     private final UserRepository userRepository;
-    private final RSAService rsaService;
 
     public String issueDID(int userId, DIDIssueRequest didIssueRequest) throws NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
         // 랜덤 DID address 발급
