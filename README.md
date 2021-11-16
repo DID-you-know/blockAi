@@ -52,7 +52,7 @@
 |FE|BE & Devops|BE & AI|BE & AI|BE & Blockchain|BE & Blockchain|
 |[@kiung22](https://github.com/kiung22)| [@qlcid](https://github.com/qlcid) | [@ParkSeRyeong](https://github.com/ParkSeRyeong) | [@zsoozsoo](https://github.com/zsoozsoo) | [@hanull](https://github.com/hanull) | [@lim8662](https://github.com/lim8662) |
 
-## ⛓ 포트 포워딩
+## ⛓ 포트 메뉴얼
 | **PORT** |                        **이름**                         |
 | :------: | :-----------------------------------------------------: |
 |   443    |                          HTTPS                          |
