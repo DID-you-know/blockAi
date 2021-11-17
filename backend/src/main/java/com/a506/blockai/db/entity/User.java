@@ -39,7 +39,7 @@ public class User implements UserDetails {
     @Embedded
     private DID did;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Certification> certifications = new ArrayList<>();
 
     @Column(updatable = false)
