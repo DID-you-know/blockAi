@@ -5,21 +5,25 @@
     <div v-if="issuedDate" class="background">
       <span class="message">위 사람은 BlockAi가 인증된 신원임을 보장합니다.</span>
     </div>
+    <PlusButton class="plus-button" @click="reIssue"/>
   </div>
 </template>
 
 <script>
   import Navbar from '@/components/Navbar'
   import DIDCard from '@/components/DIDCard'
+  import PlusButton from '@/components/PlusButton'
   import { useStore } from 'vuex'
   import { computed } from 'vue'
+  import { useRouter } from 'vue-router'
 
 
   export default {
     name: 'Status',
     components: {
       Navbar,
-      DIDCard
+      DIDCard,
+      PlusButton
     },
     setup() {
       const store = useStore()
@@ -33,9 +37,15 @@
         }
       })
 
+      const router = useRouter()
+      const reIssue = () => {
+        router.push({ name: 'issue' })
+      }
+
       return {
         name,
-        issuedDate
+        issuedDate,
+        reIssue
       }
     }
   }
@@ -78,6 +88,12 @@
         transform: translateX(-50%);
         font-size: 2.5vh;
       }
+    }
+
+    .plus-button {
+      position: absolute;
+      top: 7rem;
+      right: 10%;
     }
   }
 </style>
