@@ -2,7 +2,7 @@
   <div class="status body">
     <Navbar/>
     <DIDCard :name="name" :issuedAt="issuedDate" class="did-card"/>
-    <div class="background">
+    <div v-if="issuedAt" class="background">
       <span class="message">위 사람은 BlockAi가 인증된 신원임을 보장합니다.</span>
     </div>
   </div>
