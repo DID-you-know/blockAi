@@ -1,8 +1,10 @@
 package com.a506.blockai.api.service;
 
 import com.a506.blockai.api.dto.request.BiometricsCertificateRequest;
-import com.a506.blockai.api.dto.request.FaceBiometricsRequest;
-import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
+import com.a506.blockai.api.dto.request.FaceBiometricRequest;
+import com.a506.blockai.api.dto.request.VoiceBiometricRequest;
+import com.a506.blockai.api.dto.response.FaceBiometricResponse;
+import com.a506.blockai.api.dto.response.VoiceBiometricResponse;
 import com.a506.blockai.config.AwsProperties;
 import com.a506.blockai.db.entity.DID;
 import com.a506.blockai.db.entity.User;
@@ -26,10 +28,8 @@ import com.musicg.fingerprint.FingerprintSimilarity;
 import com.musicg.wave.Wave;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 import org.java_websocket.util.Base64;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
@@ -53,13 +53,24 @@ import java.util.List;
 
 
 @Getter
-@Setter
-@Service("aiService")
+@Service
 @RequiredArgsConstructor
 public class AiService {
 
+    private final EthereumService ethereumService;
+    private final AwsProperties awsProperties;
+    private final AmazonS3Client amazonS3Client;
+    private final UserRepository userRepository;
+    private AmazonRekognition rekognitionClient;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    //파일 경로
+    private final String rootPath = System.getProperty("user.dir");;
+    private final String movePath = "/src/main/java/com/a506/blockai/common/file/";
+
     @Bean
-    public AmazonRekognition amazonRekognition(AwsProperties awsProperties) {
+    public AmazonRekognition amazonRekognition() {
         BasicAWSCredentials credentials = new BasicAWSCredentials(awsProperties.getAccessKey(), awsProperties.getSecretKey());
 
         return AmazonRekognitionClientBuilder
@@ -78,25 +89,9 @@ public class AiService {
                 .build();
     }
 
-    @Autowired
-    AwsProperties awsProperties;
-
-    @Autowired
-    private AmazonRekognition rekognitionClient;
-
-    private final AmazonS3Client amazonS3Client;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    private final UserRepository userRepository;
-
-    //파일 경로
-    private final String rootPath = System.getProperty("user.dir");;
-    private final String movePath = "/src/main/java/com/a506/blockai/common/file/";
 
     /* voice detection */
-    public float identifyVoice(VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
+    public float identifyVoice(VoiceBiometricRequest voiceBiometricsRequest) throws IOException {
 
         String encodedUserVoice = voiceBiometricsRequest.getEncodedUserVoice(); //프론트에서 base64로 변환되어 넘어온 녹음된 파일
         String savedS3UserVoiceUrl = voiceBiometricsRequest.getSavedS3UserVoiceUrl(); //DID발급 시 블록체인에 등록한 음성파일(S3 저장위치)
@@ -189,7 +184,7 @@ public class AiService {
     }
 
 
-    public float identifyFace(FaceBiometricsRequest faceBiometricsRequest) throws Exception {
+    public float identifyFace(FaceBiometricRequest faceBiometricsRequest) throws Exception {
 
         Float similarityThreshold = 70F;
 
@@ -255,7 +250,6 @@ public class AiService {
 
 
     public String saveFace(String encodedUserFace, String userId) throws IOException {
-
         // 프론트에서 넘어온 등록해야할 [촬영된 현재 사용자 이미지]
         File inputImage = decodeImage(encodedUserFace);
 
@@ -266,8 +260,6 @@ public class AiService {
 
         return uploadImageUrl;
     }
-
-    private final EthereumService ethereumService;
 
     private boolean isIssuedDid(DID did) {
         return did != null;
@@ -307,7 +299,7 @@ public class AiService {
     }
 
     /* 조회 */
-    public String getFaceData(int userId) throws Exception {
+    public FaceBiometricResponse getFaceData(int userId) throws Exception {
         // 받아온 사용자 이미지 정보의 s3 경로
         String faceData = getBiometricsFromBlockchain(userId).getFace();
 
@@ -316,10 +308,10 @@ public class AiService {
         com.amazonaws.services.s3.model.S3Object savedUserImage = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
 
         S3ObjectInputStream s3is = savedUserImage.getObjectContent();
-        FileOutputStream fos = new FileOutputStream(new File(rootPath+movePath+"userImage.jpg" ));
+        FileOutputStream fos = new FileOutputStream(rootPath+movePath+"userImage.jpg");
 
         byte[] read_buf = new byte[1024];
-        int read_len = 0;
+        int read_len;
         while ((read_len = s3is.read(read_buf)) > 0) {
             fos.write(read_buf, 0, read_len);
         }
@@ -331,12 +323,10 @@ public class AiService {
         String encodedBytes = Base64.encodeBytes(fileBytes);
 
         savedFile.delete();
-        return encodedBytes;
-
-        // String encodedFaceData = Base64.encodeBytes(savedFile);
+        return FaceBiometricResponse.from(encodedBytes);
     }
 
-    public String getVoiceData(int userId) throws Exception {
+    public VoiceBiometricResponse getVoiceData(int userId) throws Exception {
         // 받아온 사용자 음성 정보의 s3 경로
         String voiceData = getBiometricsFromBlockchain(userId).getVoice();
 
@@ -345,9 +335,9 @@ public class AiService {
         com.amazonaws.services.s3.model.S3Object savedUserVoice = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
 
         S3ObjectInputStream s3is = savedUserVoice.getObjectContent();
-        FileOutputStream fos = new FileOutputStream(new File(rootPath+movePath+"userVoice.wav" ));
+        FileOutputStream fos = new FileOutputStream(rootPath+movePath+"userVoice.wav");
         byte[] read_buf = new byte[1024];
-        int read_len = 0;
+        int read_len;
         while ((read_len = s3is.read(read_buf)) > 0) {
             fos.write(read_buf, 0, read_len);
         }
@@ -359,7 +349,7 @@ public class AiService {
         String encodedBytes = Base64.encodeBytes(fileBytes);
 
         savedFile.delete();
-        return encodedBytes;
+        return VoiceBiometricResponse.from(encodedBytes);
     }
 
 }
