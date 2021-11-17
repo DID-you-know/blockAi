@@ -215,7 +215,7 @@
         mediaRecorder.value = new MediaRecorder(audioStream.value)
         mediaRecorder.value.start()
         if (mediaRecorder.value.state === 'recording') {
-          voiceMessage.value = '~~~라고 따라 말해주세요.'
+          voiceMessage.value = '"본인인증합니다."라고 말해주세요.'
           voiceStep.value += 1
           mediaRecorder.value.ondataavailable = (e) => {
             chunks.value.push(e.data)
