@@ -47,6 +47,9 @@ const mutations = {
   },
   SET_ISISSUED(state, payload) {
     state.isIssued = payload
+    if (payload) {
+      state.issuedDate = new Date().toLocaleDateString().replace(/\s/g, '')
+    }
   },
   SET_USERINFO(state, payload) {
     state.userId = payload.userId
