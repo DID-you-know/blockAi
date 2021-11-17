@@ -19,6 +19,8 @@ const actions = {
   },
   async certification({ commit, state }, { face, voice, certifiedBy }) {
     console.log('certification', state.userId)
+    console.log('face', face)
+    console.log('voice', voice)
     try {
       const response = await certification.certification(state.userId, face, voice, certifiedBy)
       console.log(response.data)
