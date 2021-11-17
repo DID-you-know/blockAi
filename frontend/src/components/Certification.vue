@@ -266,8 +266,8 @@
           step.value += 1
         } else if (step.value === 2) {
           const payload = {
-            face: faceBase64.value,
-            voice: audioBlob.value,
+            face: faceBase64.value.replace(/:/g, '='),
+            voice: audioBlob.value.replace(/:/g, '='),
             certifiedBy: 'GS25'
           }
           await store.dispatch('certification/certification', payload)
