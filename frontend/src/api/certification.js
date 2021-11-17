@@ -1,4 +1,5 @@
 import axios from 'axios'
+import didAxios from './didAxios'
 
 
 export default {
@@ -13,7 +14,7 @@ export default {
     console.log('face', face)
     console.log('voice', voice)
     console.log('certifiedBy', certifiedBy)
-    return axios({
+    return didAxios({
       url: `/certification/users/${userId}`,
       method: 'post',
       data: {
