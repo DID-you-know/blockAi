@@ -18,6 +18,7 @@ const actions = {
     }
   },
   async certification({ commit }, { face, voice, certifiedBy }) {
+    console.log('certification'. state.userId)
     try {
       const response = await certification.certification(state.userId, face, voice, certifiedBy)
       console.log(response.data)
@@ -31,6 +32,7 @@ const actions = {
 
 const mutations = {
   SET_USER_ID(state, userId) {
+    console.log('SET_USER_ID', userId)
     state.userId = userId
   },
   SET_ISCERTIFICATED(state, isCertificated) {
