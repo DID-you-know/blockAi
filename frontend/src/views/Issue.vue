@@ -174,10 +174,10 @@
         reCapture()
       }
 
-      onMounted(() => {
+      onMounted(async () => {
         if (step.value === 1 && cameraOn.value === false) {
-          getModel()
-          getCamera()
+          await getModel()
+          await getCamera()
         }
       })
 

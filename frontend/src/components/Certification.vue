@@ -63,9 +63,9 @@
     </template>
     <template v-if="step === 3">
       <div class="message fs-2">
-        신분 인증이 완료되었습니다.
+        신분 인증이 완료되었습니다.<br/>{{ timer }}초 뒤에 결제화면으로 이동합니다.
       </div>
-      <WhiteButton value="결제하기" @click="router.push({ name: 'home' })"/>
+      <WhiteButton value="결제하기" @click="passCertification"/>
     </template>
   </div>
 </template>
@@ -259,6 +259,10 @@
         getMIC()
       })
 
+      const timer = ref(5)
+      const passCertification = () => {
+        emit('pass')
+      }
       onUpdated(async () => {
         if (captureComplete.value && recordComplete.value) {
           captureComplete.value = false
@@ -274,9 +278,18 @@
           if (isCertificated.value) {
             step.value += 1
             store.commit('certification/RESET')
-            emit('pass')
           } else {
             console.log('인증 실패')
+          }
+        } else if (step.value === 3) {
+          if (timer.value !== 0) {
+            setTimeout(() => {
+              timer.value -= 1
+            }, 1000)
+          } else {
+            setTimeout(() => {
+              passCertification()
+            }, 1000)
           }
         }
       })
@@ -300,7 +313,9 @@
         recordVoice,
         stopRecord,
         reRecord,
-        finishRecord
+        finishRecord,
+        timer,
+        passCertification
       }
     }
   }
