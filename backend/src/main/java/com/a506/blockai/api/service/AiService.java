@@ -127,6 +127,8 @@ public class AiService {
         Wave w1 = new Wave(recordFile.getPath());
         Wave w2 = new Wave(savedFile.getPath());
         //Wave w2 = new Wave(savedFile.getPath());
+        System.out.println(w1);
+        System.out.println(w2);
 
         FingerprintSimilarity fps = w1.getFingerprintSimilarity(w2);
         float fileScore = fps.getScore(); //유사위치 수

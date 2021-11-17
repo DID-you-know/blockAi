@@ -34,7 +34,8 @@ public class CertificationService {
     private final EthereumService ethereumService;
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
-    private final float similarity = 0.5f;
+    private final float faceSimilarity = 0.8f;
+    private final float voiceSimilarity = 0.05f;
 
 
     public void certifyBiometrics(int userId, BiometricsCertificateRequest biometricsCertificateRequest) throws Exception {
@@ -63,10 +64,12 @@ public class CertificationService {
         // 얼굴 유사도
         FaceBiometricsRequest faceBiometricsRequest = new FaceBiometricsRequest(biometricsCertificateRequest.getFace(), faceCertificateFromBlockchain);
         float faceScore = aiService.identifyFace(faceBiometricsRequest);
+        System.out.println(faceScore);
 
         // 목소리 유사도
         VoiceBiometricsRequest voiceBiometricsRequest = new VoiceBiometricsRequest(biometricsCertificateRequest.getVoice(), voiceCertificateFromBlockchain);
         float voiceScore = aiService.identifyVoice(voiceBiometricsRequest);
+        System.out.println(voiceScore);
 
         if (!isSamePerson(faceScore, voiceScore)) {
             throw new UnauthorizedAccessException();
@@ -79,7 +82,7 @@ public class CertificationService {
     }
 
     private boolean isSamePerson(float faceScore, float voiceScore) {
-        return faceScore >= similarity && voiceScore >= similarity;
+        return faceScore >= faceSimilarity && voiceScore >= voiceSimilarity;
     }
 
     private List<Type> getBiometricsCertificateFromBlockchain(String didAddress) throws IOException {
@@ -101,6 +104,5 @@ public class CertificationService {
         user.addCertification(certification);
         certificationRepository.save(certification);
     }
-
 
 }
