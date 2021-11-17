@@ -5,7 +5,7 @@
     <div v-if="issuedDate" class="background">
       <span class="message">위 사람은 BlockAi가 인증된 신원임을 보장합니다.</span>
     </div>
-    <PlusButton class="plus-button" @click="reIssue"/>
+    <PlusButton v-if="issuedDate" class="plus-button" @click="reIssue"/>
   </div>
 </template>
 
