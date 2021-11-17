@@ -47,9 +47,9 @@
     </template>
     <template v-if="step === 4">
       <div class="message fs-2">
-        신분증명발급이 완료되었습니다.
+        신분증명발급이 완료되었습니다.<br/>{{ timer }}초 뒤에 신분증명조회 페이지로 이동합니다.
       </div>
-      <WhiteButton value="신분증명 조회하기" @click="router.push({ name: 'home' })"/>
+      <WhiteButton value="신분증명 조회하기" @click="router.push({ name: 'status' })"/>
     </template>
     <canvas ref="faceCanvas" hidden></canvas>
   </div>
@@ -302,13 +302,22 @@
         }
       }
 
-
+      const timer = ref(5)
       onUpdated(async () => {
         if (step.value === 2 && audioStream.value === null) {
           getMIC()
-        }
-        if (step.value === 3) {
+        } else if (step.value === 3) {
           await s3Upload()
+        } else if (step.value === 4) {
+          if (timer.value !== 0) {
+            setTimeout(() => {
+              timer.value -= 1
+            }, 1000)
+          } else {
+            setTimeout(() => {
+              router.push({ name: 'status' })
+            }, 1000)
+          }
         }
       })
 
@@ -334,6 +343,7 @@
         audioBlob,
         reRecord,
         finishRecord,
+        timer
       }
     }
   }
