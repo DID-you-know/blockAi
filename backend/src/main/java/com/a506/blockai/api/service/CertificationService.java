@@ -35,7 +35,7 @@ public class CertificationService {
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
     private final float faceSimilarity = 0.8f;
-    private final float voiceSimilarity = 0.05f;
+    private final float voiceSimilarity = 0.03f;
 
 
     public void certifyBiometrics(int userId, BiometricsCertificateRequest biometricsCertificateRequest) throws Exception {

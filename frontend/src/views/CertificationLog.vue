@@ -36,7 +36,7 @@
       const logList = ref([])
       const userId = computed(() => store.state.users.userId)
       try {
-        const response = await users.getLog(userId)
+        const response = await users.getLog(userId.value)
         console.log(response.data)
         logList.value = response.data
       } catch (error) {

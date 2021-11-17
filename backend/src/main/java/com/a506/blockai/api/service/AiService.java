@@ -40,6 +40,10 @@ import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.abi.datatypes.generated.Uint256;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -103,40 +107,55 @@ public class AiService {
         com.amazonaws.services.s3.model.S3Object savedUserVoice = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
 
         //1. base64로 변환된 음섣파일 decode해서 다시 wav파일로 변환
-        byte[] decoded = Base64.decode(encodedUserVoice);
-        InputStream record_in = new ByteArrayInputStream(decoded);
-        DataOutputStream dos = new DataOutputStream(new FileOutputStream(
-                rootPath+movePath+"record.wav"  ));
-        dos.write(decoded);
-        File recordFile = new File(rootPath+movePath+"record.wav");
+        byte[] decoded1 = Base64.decode(encodedUserVoice);
+//        InputStream record_in = new ByteArrayInputStream(decoded);
+//        DataOutputStream dos = new DataOutputStream(new FileOutputStream(
+//                rootPath+movePath+"record.wav"  ));
+//        dos.write(decoded);
+//        File recordFile = new File(rootPath+movePath+"record.wav");
 
+        File recordFile = null;
+        InputStream recordIn = new ByteArrayInputStream(decoded1);
+        try {
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream(rootPath+movePath+"record.wav"));
+            dos.write(decoded1);
+            AudioFormat format = new AudioFormat(8000f, 16, 1, true, false);
+            AudioInputStream stream = new AudioInputStream(recordIn, format, decoded1.length);
+            recordFile = new File(rootPath+movePath+"record.wav");
+            AudioSystem.write(stream, AudioFileFormat.Type.WAVE, recordFile);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         //2. S3저장되어 있던 음성파일 File로 변환
-        S3ObjectInputStream s3is = savedUserVoice.getObjectContent();
-        FileOutputStream fos = new FileOutputStream(new File(rootPath+movePath+"saved.wav" ));
-        byte[] read_buf = new byte[1024];
-        int read_len = 0;
-        while ((read_len = s3is.read(read_buf)) > 0) {
-            fos.write(read_buf, 0, read_len);
+        InputStream s3is = savedUserVoice.getObjectContent();
+        byte[] decoded2 = IOUtils.toByteArray(s3is);
+        File savedFile = null;
+        InputStream saveIn = new ByteArrayInputStream(decoded2);
+        try {
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream(rootPath+movePath+"saved.wav"));
+            dos.write(decoded2);
+            AudioFormat format = new AudioFormat(8000f, 16, 1, true, false);
+            AudioInputStream stream = new AudioInputStream(saveIn, format, decoded2.length);
+            savedFile = new File(rootPath+movePath+"saved.wav");
+            AudioSystem.write(stream, AudioFileFormat.Type.WAVE, savedFile);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        s3is.close();
-        fos.close();
-        File savedFile = new File(rootPath+movePath+"saved.wav");
 
 
         Wave w1 = new Wave(recordFile.getPath());
         Wave w2 = new Wave(savedFile.getPath());
-        //Wave w2 = new Wave(savedFile.getPath());
-        System.out.println(w1);
-        System.out.println(w2);
 
         FingerprintSimilarity fps = w1.getFingerprintSimilarity(w2);
         float fileScore = fps.getScore(); //유사위치 수
         float score = fps.getSimilarity(); //유사도
-
-        //파일 삭제
+        System.out.println("유사도점수"+score+" "+fileScore);
+//
+//        //파일 삭제
         recordFile.delete();
         savedFile.delete();
+
         return score;
     }
 

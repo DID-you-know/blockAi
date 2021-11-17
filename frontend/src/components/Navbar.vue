@@ -6,6 +6,7 @@
     <div class="container" :class="{ 'hide-content': $props.hideContent }">
       <template v-if="isLogin">
         <router-link :to="{ name: 'status' }" class="navbar-item fs-1">신원증명발급</router-link>
+        <router-link :to="{ name: 'certificationLog' }" class="navbar-item fs-1">인증내역조회</router-link>
         <button class="navbar-item fs-1" @click="logout">로그아웃</button>
       </template>
       <template v-else>
