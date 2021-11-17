@@ -1,4 +1,4 @@
-package com.a506.blockai.common.dto.response;
+package com.a506.blockai.api.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SendSmsResponseDto {
+public class SendSmsResponse {
     private String statusCode;
     private String statusName;
     private String requestId;

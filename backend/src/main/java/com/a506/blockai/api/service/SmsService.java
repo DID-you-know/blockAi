@@ -1,8 +1,8 @@
 package com.a506.blockai.api.service;
 
-import com.a506.blockai.api.dto.request.MessagesRequestDto;
-import com.a506.blockai.common.dto.response.SendSmsResponseDto;
-import com.a506.blockai.api.dto.request.SmsRequestDto;
+import com.a506.blockai.api.dto.request.MessagesRequest;
+import com.a506.blockai.api.dto.response.SendSmsResponse;
+import com.a506.blockai.api.dto.request.SmsRequest;
 import com.a506.blockai.config.SmsProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +13,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,7 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,19 +46,19 @@ public class SmsService {
         this.fromNum = smsProperties.getFromNum();
     }
 
-    public SendSmsResponseDto sendSms(String recipientPhoneNumber, String certNum) throws ParseException, JsonProcessingException, UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, URISyntaxException {
+    public SendSmsResponse sendSms(String recipientPhoneNumber, String certNum) throws JsonProcessingException, UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, URISyntaxException {
 
         Date currentDate = new Date();
         Long time = currentDate.getTime();
-        List<MessagesRequestDto> messages = new ArrayList<>();
+        List<MessagesRequest> messages = new ArrayList<>();
 
         String content = "[blockAi] 인증번호 ["+certNum+"]를 입력해주세요.";
 
         // 보내는 사람에게 내용을 보냄.
-        messages.add(new MessagesRequestDto(recipientPhoneNumber,content)); // content부분이 내용임
+        messages.add(new MessagesRequest(recipientPhoneNumber,content)); // content부분이 내용임
 
         // 전체 json에 대해 메시지를 만든다.
-        SmsRequestDto smsRequestDto = new SmsRequestDto("SMS", "COMM", "82",fromNum, "MangoLtd", messages);
+        SmsRequest smsRequestDto = new SmsRequest("SMS", "COMM", "82",fromNum, "MangoLtd", messages);
 
         // 쌓아온 바디를 json 형태로 변환시켜준다.
         ObjectMapper objectMapper = new ObjectMapper();
@@ -83,7 +81,7 @@ public class SmsService {
 
         // restTemplate로 post 요청을 보낸다. 별 일 없으면 202 코드 반환된다.
         RestTemplate restTemplate = new RestTemplate();
-        SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+serviceAPIKey+"/messages"), body, SendSmsResponseDto.class);
+        SendSmsResponse sendSmsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+serviceAPIKey+"/messages"), body, SendSmsResponse.class);
         System.out.println(sendSmsResponseDto.getStatusCode());
         return sendSmsResponseDto;
     }
