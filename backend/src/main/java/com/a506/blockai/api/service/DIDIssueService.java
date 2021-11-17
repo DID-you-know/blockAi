@@ -72,7 +72,7 @@ public class DIDIssueService {
     }
 
     private boolean isBadBiometricsRequest(DIDIssueRequest didIssueRequest) {
-        return didIssueRequest.getFacePath().isEmpty() || didIssueRequest.getVoiceId().isEmpty();
+        return didIssueRequest.getFacePath() == null || didIssueRequest.getVoiceId() == null;
     }
 
     private boolean isIssuedDid(User user) {
