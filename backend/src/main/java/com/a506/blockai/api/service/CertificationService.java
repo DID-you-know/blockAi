@@ -34,7 +34,8 @@ public class CertificationService {
     private final EthereumService ethereumService;
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
-    private final float similarity = 0.5f;
+    private final float faceSimilarity = 0.5f;
+    private final float voiceSimilarity = 0.03f;
 
 
     public void certifyBiometrics(int userId, BiometricsCertificateRequest biometricsCertificateRequest) throws Exception {
@@ -79,7 +80,7 @@ public class CertificationService {
     }
 
     private boolean isSamePerson(float faceScore, float voiceScore) {
-        return faceScore >= similarity && voiceScore >= similarity;
+        return faceScore >= faceSimilarity && voiceScore >= voiceSimilarity;
     }
 
     private List<Type> getBiometricsCertificateFromBlockchain(String didAddress) throws IOException {

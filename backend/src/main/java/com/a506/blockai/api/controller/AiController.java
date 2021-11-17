@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 
 @RestController
@@ -17,7 +18,7 @@ public class AiController {
     final private AiService aiService;
 
     @PostMapping("/{voiceId}/voice")
-    public ResponseEntity<?> identify(@PathVariable String voiceId, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
+    public ResponseEntity<?> identify(@PathVariable String voiceId, @RequestBody VoiceBiometricsRequest voiceBiometricsRequest) throws IOException, UnsupportedAudioFileException {
         return ResponseEntity.status(200).body(aiService.identifyVoice(voiceBiometricsRequest));
     }
 
