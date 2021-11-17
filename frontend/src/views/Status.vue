@@ -2,7 +2,7 @@
   <div class="status body">
     <Navbar/>
     <DIDCard :name="name" :issuedAt="issuedDate" class="did-card"/>
-    <div v-if="issuedAt" class="background">
+    <div v-if="issuedDate" class="background">
       <span class="message">위 사람은 BlockAi가 인증된 신원임을 보장합니다.</span>
     </div>
   </div>
@@ -56,13 +56,15 @@
     background-color: $light;
 
     .did-card {
-      z-index: 1;
+      z-index: 2;
     }
 
     $height: 70vh;
 
     .background {
+      z-index: 1;
       position: absolute;
+      background-color: $white;
       width: $height * 1.62;
       height: $height;
       box-shadow: 1vh 1vh 3vh 1vh rgba($color: #000000, $alpha: 0.15);
