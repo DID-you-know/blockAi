@@ -33,7 +33,7 @@ public class JwtTokenProvider {
     private String secretKey = "12345678901234567890123456789012";
 
     /** 토큰 지속 시간 mill * sec * min * hour * day */
-    private long tokenValidTime = 1000L * 60 * 30;
+    private long tokenValidTime = 1000L * 60 * 60 * 24 * 1;
 
     /** Security UserDetailsService */
     private final UserDetailsService userDetailsService;
