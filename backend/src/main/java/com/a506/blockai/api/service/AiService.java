@@ -89,7 +89,7 @@ public class AiService {
 
     //파일 경로
     private final String rootPath = System.getProperty("user.dir");;
-    private final String movePath = "/src/main/java/com/a506/blockai/common/tmp/";
+    private final String movePath = "/src/main/java/com/a506/blockai/common/file/";
 
     /* voice detection */
     public float identifyVoice(VoiceBiometricsRequest voiceBiometricsRequest) throws IOException {
@@ -158,7 +158,6 @@ public class AiService {
     }
 
     public File getFile(String filePath) throws IOException {
-
         // S3에서 이미지 받아오는데 쓰이는 amazonS3Client
         AmazonS3 amazonS3Client = amazonS3Client();
 

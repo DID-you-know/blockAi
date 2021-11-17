@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import java.sql.Date;
 
 @Getter
-@Setter
 public class SignupRequest {
 
     @ApiModelProperty(name = "유저 email", example = "test@naver.com")
