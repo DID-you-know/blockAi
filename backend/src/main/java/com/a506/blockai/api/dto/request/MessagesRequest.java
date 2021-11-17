@@ -5,7 +5,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SendSmsRequest {
-    private String phone;
-    private String randomCode;
+public class MessagesRequest {
+    private String to;
+    private String content;
 }
