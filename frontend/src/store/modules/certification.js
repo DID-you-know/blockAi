@@ -17,8 +17,8 @@ const actions = {
       console.log(error)
     }
   },
-  async certification({ commit }, { face, voice, certifiedBy }) {
-    console.log('certification'. state.userId)
+  async certification({ commit, state }, { face, voice, certifiedBy }) {
+    console.log('certification', state.userId)
     try {
       const response = await certification.certification(state.userId, face, voice, certifiedBy)
       console.log(response.data)
