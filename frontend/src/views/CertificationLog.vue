@@ -53,8 +53,8 @@
         }
       }
 
-      onMounted(() => {
-        getLog()
+      onMounted(async () => {
+        await getLog()
       })
 
       return {
@@ -111,8 +111,7 @@
           .field-1 {
             position: absolute;
             top: -1rem;
-            left: 35%;
-            transform: translateX(-50%)
+            left: 25%;
           }
           .field-2 {
             position: absolute;

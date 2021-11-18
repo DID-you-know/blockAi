@@ -52,11 +52,14 @@
       justify-content: space-around;
       align-items: center;
 
+      .title {
+        flex: 2;
+        padding: 3rem;
+      }
+
       .datetime {
-        text-align: right;
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
+        flex: 3;
+        padding: 3rem;
       }
     }
   }
