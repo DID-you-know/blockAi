@@ -159,7 +159,7 @@
   $height: 60vh;
 
   .blur {
-    filter: blur(5px);
+    filter: blur(10px);
   }
 
   .card-container {

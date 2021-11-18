@@ -4,9 +4,13 @@
       <img src="@/assets/image/onlyLogo.png" alt="">
     </div>
     <div class="card-body">
-      <div class="title fw-bold fs-2">{{ company }}</div>
+      <div class="title">
+        <span class="fw-bold fs-2">{{ company }}</span>
+        <span v-if="idx===0" class="title-label">발급처</span>
+      </div>
       <div class="datetime">
-        {{ datetime }}
+        <span>{{ datetime }}</span>
+        <span v-if="idx===0" class="datetime-label">발급날짜</span>
       </div>
     </div>
   </div>
@@ -17,7 +21,8 @@
     name: 'LogCard',
     props: {
       company: String,
-      datetime: String
+      datetime: String,
+      idx: Number
     }
   }
 </script>
@@ -54,13 +59,34 @@
 
       .title {
         flex: 2;
-        padding: 3rem;
+        padding-left: 3rem;
+        position: relative;
+        line-height: 100%;
+
+        .title-label {
+          position: absolute;
+          top: -3rem;
+          font-size: 1rem;
+          left: 3.5rem;
+        }
       }
 
       .datetime {
         flex: 3;
-        padding: 3rem;
+        position: relative;
+        line-height: 100%;
+        display: flex;
+        justify-content: center;
+
+        .datetime-label {
+          position: absolute;
+          top: -3rem;
+          font-size: 1rem;
+          left: 50%;
+          transform: translateX(-50%);
+        }
       }
     }
   }
+
 </style>

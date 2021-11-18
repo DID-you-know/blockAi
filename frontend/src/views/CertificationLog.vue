@@ -8,11 +8,7 @@
       <h1 class="fs-3 fw-bold">인증 내역</h1>
       <div class="log-card-list">
         <template v-if="logList.length > 0">
-          <div class="log-field">
-            <span class="field-1">발급처</span>
-            <span class="field-2">발급날짜</span>
-          </div>
-          <LogCard v-for="log in logList" :key="log.id" :company="log.certifiedBy" :datetime="log.certifiedAt"/>
+          <LogCard v-for="(log, idx) in logList" :key="log.id" :company="log.certifiedBy" :datetime="log.certifiedAt" :idx="idx"/>
         </template>
         <template v-else>
           <div class="log-empty">
@@ -102,6 +98,7 @@
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        margin-top: 1rem;
 
         .log-field {
           position: relative;
@@ -110,13 +107,14 @@
           .field-1 {
             position: absolute;
             top: -1rem;
-            left: 25%;
+            right: 80%;
+            transform: translateX(50%);
           }
           .field-2 {
             position: absolute;
             top: -1rem;
-            left: 75%;
-            transform: translateX(-50%)
+            right: 30%;
+            transform: translateX(50%);
           }
         }
 
