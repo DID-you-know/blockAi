@@ -289,6 +289,8 @@
           recordComplete.value = false
           step.value += 1
         } else if (step.value === 2) {
+          console.log(faceBase64.value)
+          console.log(audioBlob.value)
           const payload = {
             face: faceBase64.value.split(',')[1],
             voice: audioBlob.value.split(',')[1],

@@ -32,7 +32,7 @@
           <div class="card-content">
             <div class="box">
               <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voice">
-              <audio hidden>
+              <audio hidden ref="audio">
                 <source :src="voice" type="audio/wav">
               </audio>
             </div>
@@ -102,7 +102,7 @@
           try {
             const response = await users.getFace(store.state.users.userId)
             console.log(response.data)
-            face.value = response.data.encodeFaceFile
+            face.value = 'data:image/jpeg;base64,' + response.data.encodeFaceFile
           } catch (error) {
             console.log(error)
           }
@@ -111,6 +111,7 @@
 
       const voice = ref(null)
       const isVoiceOn = ref(false)
+      const audio = ref(null)
       const voiceOn = async () => {
         isVoiceOn.value = !isVoiceOn.value
         if (voice.value === null) {
@@ -118,11 +119,12 @@
           try {
             const response = await users.getVoice(store.state.users.userId)
             console.log(response.data)
-            voice.value = response.data.encodeVoiceFile
+            voice.value = 'data:audio/wav;base64,' + response.data.encodeVoiceFile
           } catch (error) {
             console.log(error)
           }
         }
+        audio.value.play()
       }
 
       return {
@@ -135,7 +137,8 @@
         isVoiceOn,
         voiceOn,
         face,
-        voice
+        voice,
+        audio
       }
     }
   }
@@ -215,8 +218,9 @@
             }
 
             .image {
-              width: 20vh;
-              height: 20vh;
+              max-width: 20vh;
+              max-height: 20vh;
+              height: auto;
             }
           }
 
