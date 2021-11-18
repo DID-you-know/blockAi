@@ -340,6 +340,8 @@ public class AiService {
 
         byte[] fileBytes = FileUtils.readFileToByteArray(savedFile);
         String encodedBytes = Base64.encodeBytes(fileBytes);
+        File file = new File(rootPath+movePath+"saved.wav");
+        System.out.println("파일있는지"+file.exists());
 //        S3ObjectInputStream s3is = savedUserVoice.getObjectContent();
 //        FileOutputStream fos = new FileOutputStream(rootPath+movePath+"userVoice.wav");
 //
