@@ -32,12 +32,12 @@ public class AiController {
 
     @GetMapping("/users/{userId}/face")
     public ResponseEntity<FaceBiometricResponse> searchFace(@PathVariable int userId) throws Exception {
-        return ResponseEntity.ok(aiService.getFaceData(userId));
+        return ResponseEntity.ok(aiService.searchFace(userId));
     }
 
     @GetMapping("/users/{userId}/voice")
     public ResponseEntity<VoiceBiometricResponse> searchVoice(@PathVariable int userId) throws Exception {
-        return ResponseEntity.ok(aiService.getVoiceData(userId));
+        return ResponseEntity.ok(aiService.searchVoice(userId));
     }
 
 }

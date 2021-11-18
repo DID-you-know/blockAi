@@ -37,7 +37,7 @@ public class CertificationService {
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
     private final float faceSimilarity = 0.8f;
-    private final float voiceSimilarity = 0.03f;
+    private final float voiceSimilarity = 0.0f;
 
 
     public void certifyBiometrics(int userId, BiometricsCertificateRequest biometricsCertificateRequest) throws Exception {
@@ -50,7 +50,6 @@ public class CertificationService {
         BigInteger bigIntegerExpiryTime = (BigInteger) ethereumCallResult.get(2).getValue();
         LocalDateTime expiryTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(bigIntegerExpiryTime.longValue()),
                 TimeZone.getDefault().toZoneId());
-        System.out.println(didAddress);
 
         // DID 만료 여부 확인
         if (expiryTime.isBefore(LocalDateTime.now())) {
@@ -60,12 +59,10 @@ public class CertificationService {
         // 얼굴 유사도
         FaceBiometricRequest faceBiometricsRequest = new FaceBiometricRequest(biometricsCertificateRequest.getFace(), faceCertificateFromBlockchain);
         float faceScore = aiService.identifyFace(faceBiometricsRequest);
-        System.out.println(faceScore);
 
         // 목소리 유사도
         VoiceBiometricRequest voiceBiometricsRequest = new VoiceBiometricRequest(biometricsCertificateRequest.getVoice(), voiceCertificateFromBlockchain);
         float voiceScore = aiService.identifyVoice(voiceBiometricsRequest);
-        System.out.println(voiceScore);
 
         if (!isSamePerson(faceScore, voiceScore)) {
             throw new UnauthorizedAccessException();
