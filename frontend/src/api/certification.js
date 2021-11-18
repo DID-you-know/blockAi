@@ -10,10 +10,6 @@ export default {
     })
   },
   certification(userId, face, voice, certifiedBy) {
-    console.log('userId', userId)
-    console.log('face', face)
-    console.log('voice', voice)
-    console.log('certifiedBy', certifiedBy)
     return didAxios({
       url: `/certification/users/${userId}`,
       method: 'post',
