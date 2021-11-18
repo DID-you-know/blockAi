@@ -41,7 +41,7 @@
 
 
 ## 프로젝트 아키텍처
-
+![아키텍쳐](https://user-images.githubusercontent.com/43156636/142373145-c76bc37f-c8d4-49c3-86b9-435e8c4aca4c.PNG)
 
 ## 💞DID you know 팀원을 소개합니다!
 ---
