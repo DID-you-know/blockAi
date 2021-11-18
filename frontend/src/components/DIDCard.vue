@@ -18,7 +18,7 @@
       </div>
 
       <div class="card back" :class="{ 'back-turn': isFront }">
-        <div class="card-title fs-2 fw-light">
+        <div class="card-title">
           신원증명서
         </div>
         <div class="card-body">
@@ -102,7 +102,7 @@
           try {
             const response = await users.getFace(store.state.users.userId)
             console.log(response.data)
-            face.value = response.data.face
+            face.value = response.data.encodeFaceFile
           } catch (error) {
             console.log(error)
           }
@@ -118,7 +118,7 @@
           try {
             const response = await users.getVoice(store.state.users.userId)
             console.log(response.data)
-            voice.value = response.data.voice
+            voice.value = response.data.encodeVoiceFile
           } catch (error) {
             console.log(error)
           }

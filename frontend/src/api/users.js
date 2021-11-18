@@ -44,13 +44,13 @@ export default {
   },
   getFace(userId) {
     return _axios({
-      url: `/ai/${userId}/face`,
+      url: `/ai/users/${userId}/face`,
       method: 'get'
     })
   },
   getVoice(userId) {
     return _axios({
-      url: `/ai/${userId}/voice`,
+      url: `/ai/users/${userId}/voice`,
       method: 'get'
     })
   }

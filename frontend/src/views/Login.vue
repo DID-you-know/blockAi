@@ -7,7 +7,7 @@
           <h1 class="fs-3 fw-bold">로그인</h1>
         </div>
         <Input label="이메일" v-model="email" @input="setEmail"/>
-        <Input label="비밀번호" type="password" :error="error" v-model="password" @input="setPassword"/>
+        <Input label="비밀번호" type="password" :error="error" v-model="password" @input="setPassword" @keyup.enter="submit"/>
         <FormButton value="로그인" @click="submit"/>
       </div>
       <div class="bg lefttop">
