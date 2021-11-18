@@ -22,6 +22,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.musicg.fingerprint.FingerprintSimilarity;
@@ -300,13 +301,7 @@ public class AiService {
 
     /* 조회 */
     public FaceBiometricResponse getFaceData(int userId) throws Exception {
-        // 받아온 사용자 이미지 정보의 s3 경로
-        String faceData = getBiometricsFromBlockchain(userId).getFace();
-
-        AmazonS3 amazonS3Client = amazonS3Client();
-        String fileName = faceData.split("/")[3];
-        com.amazonaws.services.s3.model.S3Object savedUserImage = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
-
+        S3Object savedUserImage = getS3Object(userId);
         S3ObjectInputStream s3is = savedUserImage.getObjectContent();
         FileOutputStream fos = new FileOutputStream(rootPath+movePath+"userImage.jpg");
 
@@ -327,15 +322,10 @@ public class AiService {
     }
 
     public VoiceBiometricResponse getVoiceData(int userId) throws Exception {
-        // 받아온 사용자 음성 정보의 s3 경로
-        String voiceData = getBiometricsFromBlockchain(userId).getVoice();
-
-        AmazonS3 amazonS3Client = amazonS3Client();
-        String fileName = voiceData.split("/")[3];
-        com.amazonaws.services.s3.model.S3Object savedUserVoice = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
-
+        S3Object savedUserVoice = getS3Object(userId);
         S3ObjectInputStream s3is = savedUserVoice.getObjectContent();
         FileOutputStream fos = new FileOutputStream(rootPath+movePath+"userVoice.wav");
+
         byte[] read_buf = new byte[1024];
         int read_len;
         while ((read_len = s3is.read(read_buf)) > 0) {
@@ -350,6 +340,14 @@ public class AiService {
 
         savedFile.delete();
         return VoiceBiometricResponse.from(encodedBytes);
+    }
+
+    private S3Object getS3Object(int userId) throws Exception {
+        // 받아온 사용자 음성 정보의 s3 경로
+        String voiceData = getBiometricsFromBlockchain(userId).getVoice();
+        AmazonS3 amazonS3Client = amazonS3Client();
+        String fileName = voiceData.split("/")[3];
+        return amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
     }
 
 }

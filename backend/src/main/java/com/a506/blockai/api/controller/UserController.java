@@ -41,8 +41,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
-    @Autowired
     private final SmsService smsService;
 
     /** 회원가입 */

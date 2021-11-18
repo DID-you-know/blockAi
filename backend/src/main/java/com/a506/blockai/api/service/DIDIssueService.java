@@ -38,17 +38,13 @@ public class DIDIssueService {
 
         // 랜덤 DID address 발급
         String address = ethereumService.sha256(LocalDateTime.now().toString() + userId).substring(0,42);
-        System.out.println("new DID address : " + address);
 
         // DID 발급
         List<Type> inputParameters = new ArrayList<>();
-        System.out.println("@@@@@@@@@@@@@@DID발급@@@@@@@@@@@@@@");
-        System.out.println("얼굴 사진 URL : " + didIssueRequest.getFacePath());
-        System.out.println("음성 파일 URL : " + didIssueRequest.getVoiceId());
         String encryptedFacePath =  ethereumService.encode(didIssueRequest.getFacePath());
-        String encryptedvoiceId = ethereumService.encode(didIssueRequest.getVoiceId());
+        String encryptedVoiceId = ethereumService.encode(didIssueRequest.getVoiceId());
         inputParameters.add(new Utf8String(encryptedFacePath));
-        inputParameters.add(new Utf8String(encryptedvoiceId));
+        inputParameters.add(new Utf8String(encryptedVoiceId));
         inputParameters.add(new Address(address));
 
         // 1. 호출하고자 하는 function 세팅[functionName, parameters]
@@ -56,7 +52,6 @@ public class DIDIssueService {
 
         // 2. 트랜잭션 전송
         String txHash = ethereumService.ethSendRawTransaction(function);
-        System.out.println("txhash : " + txHash);
 
         // DB에 업데이트
         User user = userRepository.findById(userId)
