@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
-public class FaceBiometricsRequest {
+public class FaceBiometricRequest {
 
     private String encodedUserFace;
     private String savedS3UserFaceUrl;
 
-    public FaceBiometricsRequest(String encodedUserFace, String savedS3UserFaceUrl) {
+    public FaceBiometricRequest(String encodedUserFace, String savedS3UserFaceUrl) {
         this.encodedUserFace = encodedUserFace;
         this.savedS3UserFaceUrl = savedS3UserFaceUrl;
     }

@@ -1,8 +1,8 @@
 package com.a506.blockai.api.service;
 
 import com.a506.blockai.api.dto.request.BiometricsCertificateRequest;
-import com.a506.blockai.api.dto.request.FaceBiometricsRequest;
-import com.a506.blockai.api.dto.request.VoiceBiometricsRequest;
+import com.a506.blockai.api.dto.request.FaceBiometricRequest;
+import com.a506.blockai.api.dto.request.VoiceBiometricRequest;
 import com.a506.blockai.db.entity.Certification;
 import com.a506.blockai.db.entity.DID;
 import com.a506.blockai.db.entity.User;
@@ -41,14 +41,7 @@ public class CertificationService {
     public void certifyBiometrics(int userId, BiometricsCertificateRequest biometricsCertificateRequest) throws Exception {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        DID did = user.getDid();
-
-        // DID 발급 여부 확인
-        if (!isIssuedDid(did)) {
-            throw new DidNotYetIssuedException();
-        }
-
-        String didAddress = did.getDidAddress();
+        String didAddress = getDidAddress(userId);
         List<Type> ethereumCallResult = getBiometricsCertificateFromBlockchain(didAddress);
         String faceCertificateFromBlockchain = ethereumService.decode(String.valueOf(ethereumCallResult.get(0).getValue()));
         String voiceCertificateFromBlockchain = ethereumService.decode(String.valueOf(ethereumCallResult.get(1).getValue()));
@@ -62,12 +55,12 @@ public class CertificationService {
         }
 
         // 얼굴 유사도
-        FaceBiometricsRequest faceBiometricsRequest = new FaceBiometricsRequest(biometricsCertificateRequest.getFace(), faceCertificateFromBlockchain);
+        FaceBiometricRequest faceBiometricsRequest = new FaceBiometricRequest(biometricsCertificateRequest.getFace(), faceCertificateFromBlockchain);
         float faceScore = aiService.identifyFace(faceBiometricsRequest);
         System.out.println(faceScore);
 
         // 목소리 유사도
-        VoiceBiometricsRequest voiceBiometricsRequest = new VoiceBiometricsRequest(biometricsCertificateRequest.getVoice(), voiceCertificateFromBlockchain);
+        VoiceBiometricRequest voiceBiometricsRequest = new VoiceBiometricRequest(biometricsCertificateRequest.getVoice(), voiceCertificateFromBlockchain);
         float voiceScore = aiService.identifyVoice(voiceBiometricsRequest);
         System.out.println(voiceScore);
 
@@ -85,7 +78,14 @@ public class CertificationService {
         return faceScore >= faceSimilarity && voiceScore >= voiceSimilarity;
     }
 
-    private List<Type> getBiometricsCertificateFromBlockchain(String didAddress) throws IOException {
+    public List<Type> getBiometricsCertificateFromBlockchain(String didAddress) throws IOException {
+        List<TypeReference<?>> outputParameters = getOutputParameters();
+        Function function = new Function("getDID", Arrays.asList(new Address(didAddress)), outputParameters);
+        List<Type> ethereumCallResult = ethereumService.ethCall(function);
+        return ethereumCallResult;
+    }
+
+    private List<TypeReference<?>> getOutputParameters() {
         List<TypeReference<?>> outputParameters = Arrays.asList(
                 new TypeReference<Utf8String>() {
                 },
@@ -94,15 +94,21 @@ public class CertificationService {
                 new TypeReference<Uint256>() {
                 }
         );
-        Function function = new Function("getDID", Arrays.asList(new Address(didAddress)), outputParameters);
-        List<Type> ethereumCallResult = ethereumService.ethCall(function);
-        return ethereumCallResult;
+        return outputParameters;
     }
 
     private void saveCertificateHistory(User user, String certifiedBy) {
         Certification certification = new Certification(certifiedBy);
         user.addCertification(certification);
         certificationRepository.save(certification);
+    }
+
+    private String getDidAddress(int userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        DID did = user.getDid();
+        if (isIssuedDid(did)) throw new DidNotYetIssuedException();
+        return did.getDidAddress();
     }
 
 }
