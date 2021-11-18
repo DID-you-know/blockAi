@@ -1,6 +1,6 @@
 <template>
   <transition name="alert">
-    <div v-if="alertOn" class="alert">
+    <div v-if="alertOn" class="alert" @click="close">
       <div class="start" :class="alertType"></div>
       <div class="icon">
         <img :src="require(`@/assets/image/icon/${alertType}.png`)" alt="">
@@ -61,6 +61,7 @@
     align-items: center;
     box-shadow: 3px 3px 15px 2px rgba($color: #000000, $alpha: 0.1);
     white-space: nowrap;
+    cursor: pointer;
 
     .start {
       height: 100%;

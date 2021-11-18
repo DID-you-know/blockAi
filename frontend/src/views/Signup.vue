@@ -43,6 +43,7 @@
   import { ref } from 'vue'
   import users from '@/api/users'
   import { useRouter } from 'vue-router'
+  import { useStore } from 'vuex'
 
 
   export default {
@@ -53,6 +54,7 @@
     },
     setup() {
       const router = useRouter()
+      const store = useStore()
 
       // 문자 확인하는 함수
       // 있으면 true 반환, 없으면 false 반환
@@ -265,8 +267,16 @@
             const response = await users.signup(userInfo)
             console.log(response.data)
             router.push({ name: 'home' })
+            store.dispatch('alert/popAlert', {
+              type: 'success',
+              message: '회원가입에 성공했습니다.'
+            })
           } catch (error) {
             console.log(error)
+            store.dispatch('alert/popAlert', {
+              type: 'danger',
+              message: '회원가입에 실패했습니다.'
+            })
           }
         }
       }

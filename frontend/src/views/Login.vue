@@ -74,6 +74,10 @@
         await store.dispatch('users/getAccessToken', credentials)
         if (isLogin.value) {
           const next = route.query.nextUrl
+          store.dispatch('alert/popAlert', {
+            type: 'success',
+            message: '로그인에 성공했습니다.'
+          })
           if (next) {
             router.push({ path: next })
           } else {
@@ -81,6 +85,10 @@
           }
         } else {
           error.value = '아이디와 비밀번호가 잘못 입력 되었습니다.'
+          store.dispatch('alert/popAlert', {
+            type: 'danger',
+            message: '로그인에 실패했습니다.'
+          })
         }
       }
 
