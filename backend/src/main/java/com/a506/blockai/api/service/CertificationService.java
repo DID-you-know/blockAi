@@ -3,6 +3,7 @@ package com.a506.blockai.api.service;
 import com.a506.blockai.api.dto.request.BiometricsCertificateRequest;
 import com.a506.blockai.api.dto.request.FaceBiometricRequest;
 import com.a506.blockai.api.dto.request.VoiceBiometricRequest;
+import com.a506.blockai.api.dto.response.CertificationResponse;
 import com.a506.blockai.db.entity.Certification;
 import com.a506.blockai.db.entity.DID;
 import com.a506.blockai.db.entity.User;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -111,4 +113,10 @@ public class CertificationService {
         return did.getDidAddress();
     }
 
+    public List<CertificationResponse> searchAllCertification(int userId) {
+        return certificationRepository.findAllById(userId)
+                .stream()
+                .map(CertificationResponse::from)
+                .collect(Collectors.toList());
+    }
 }
