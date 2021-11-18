@@ -53,8 +53,8 @@
 
       .close {
         position: absolute;
-        top: 4rem;
-        right: 4rem;
+        top: 5rem;
+        right: 5rem;
         width: 2rem;
         height: 2rem;
 

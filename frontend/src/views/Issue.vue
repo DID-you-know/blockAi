@@ -367,6 +367,7 @@
     justify-content: flex-start;
     align-items: center;
     gap: 4rem;
+    overflow: auto;
 
     .progressbar {
       margin-top: 8vh;

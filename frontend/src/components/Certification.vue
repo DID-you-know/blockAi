@@ -1,77 +1,87 @@
 <template>
   <div class="body certification">
     <template v-if="step === 1">
-      <div class="message fs-2">
-        {{ faceMessage }}
-      </div>
+      <div class="container">
+        <div class="message fs-2">
+          {{ faceMessage }}
+        </div>
 
-      <div v-if="faceStep === 1 && !cameraOn" class="icon-box">
-        <img class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceIdIcon">
-        <WhiteButton value="얼굴 촬영 시작" @click="startCamera"/>
-      </div>
-      <div v-show="faceStep === 1 && cameraOn" class="icon-box">
-        <video ref="video" autoplay></video>
-        <WhiteButton value="얼굴 촬영" @click="captureFace"/>
-      </div>
+        <div v-if="faceStep === 1 && !cameraOn" class="icon-box">
+          <img class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceIdIcon">
+          <WhiteButton value="얼굴 촬영 시작" @click="startCamera"/>
+        </div>
+        <div v-show="faceStep === 1 && cameraOn" class="icon-box">
+          <video ref="video" autoplay></video>
+          <WhiteButton value="얼굴 촬영" @click="captureFace"/>
+        </div>
 
-      <div v-show="faceStep === 2" class="icon-box">
-        <canvas ref="canvas" width="500" height="400"></canvas>
-        <canvas ref="faceCanvas" hidden></canvas>
-        <div class="button-box">
-          <WhiteButton value="재촬영" @click="reCapture"/>
-          <WhiteButton value="촬영 완료" @click="finishCapture"/>
+        <div v-show="faceStep === 2" class="icon-box">
+          <canvas ref="canvas" width="500" height="400"></canvas>
+          <canvas ref="faceCanvas" hidden></canvas>
+          <div class="button-box">
+            <WhiteButton value="재촬영" @click="reCapture"/>
+            <WhiteButton value="촬영 완료" @click="finishCapture"/>
+          </div>
+        </div>
+
+        <div v-if="faceStep === 3" class="icon-box complete">
+          <img class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceIdIcon">
+          <div class="complete">얼굴 촬영 완료</div>
         </div>
       </div>
 
-      <div v-if="faceStep === 3" class="icon-box complete">
-        <img class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceIdIcon">
-        <div class="complete">얼굴 촬영 완료</div>
-      </div>
+        <div class="space"></div>
 
-      <div class="space"></div>
-
-      <div class="message fs-2">
-        {{ voiceMessage }}
-      </div>
-      <div v-if="voiceStep !== 4" class="icon-box">
-        <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voiceIcon">
-        <WhiteButton v-if="voiceStep === 1" value="음성 녹음 시작" @click="recordVoice"/>
-        <WhiteButton v-if="voiceStep === 2" value="정지" @click="stopRecord"/>
-        <template v-if="voiceStep === 3">
-          <audio controls preload="auto">
-            <source :src="audioSource" type="audio/wav">
-          </audio>
-          <div class="button-box">
-            <WhiteButton value="재녹음" @click="reRecord"/>
-            <WhiteButton value="녹음 완료" @click="finishRecord"/>
-          </div>
-        </template>
-      </div>
-      <div v-if="voiceStep === 4" class="icon-box complete">
-        <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voiceIcon">
-        <div class="complete">음성 녹음 완료</div>
+      <div class="container">
+        <div class="message fs-2">
+          {{ voiceMessage }}
+        </div>
+        <div v-if="voiceStep !== 4" class="icon-box">
+          <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voiceIcon">
+          <WhiteButton v-if="voiceStep === 1" value="음성 녹음 시작" @click="recordVoice"/>
+          <WhiteButton v-if="voiceStep === 2" value="정지" @click="stopRecord"/>
+          <template v-if="voiceStep === 3">
+            <audio controls preload="auto">
+              <source :src="audioSource" type="audio/wav">
+            </audio>
+            <div class="button-box">
+              <WhiteButton value="재녹음" @click="reRecord"/>
+              <WhiteButton value="녹음 완료" @click="finishRecord"/>
+            </div>
+          </template>
+        </div>
+        <div v-if="voiceStep === 4" class="icon-box complete">
+          <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voiceIcon">
+          <div class="complete">음성 녹음 완료</div>
+        </div>
       </div>
     </template>
     <template v-if="step === 2">
-      <div class="message fs-2">
-        블록체인에 저장된 얼굴, 음성과 비교하고 있습니다. 잠시만 기다려주세요.
-      </div>
-      <div class="space"></div>
-      <div class="loading-box">
-        <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      <div class="container">
+        <div class="message fs-2">
+          블록체인에 저장된 얼굴, 음성과 비교하고 있습니다. 잠시만 기다려주세요.
+        </div>
+        <div class="space"></div>
+        <div class="loading-box">
+          <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
       </div>
     </template>
     <template v-if="step === 3">
-      <div class="message fs-2">
-        신분 인증이 완료되었습니다.<br/>{{ timer }}초 뒤에 결제화면으로 이동합니다.
+      <div class="container">
+        <div class="message fs-2">
+          신분 인증이 완료되었습니다.<br/>{{ timer }}초 뒤에 결제화면으로 이동합니다.
+        </div>
+        <WhiteButton value="결제하기" @click="passCertification"/>
       </div>
-      <WhiteButton value="결제하기" @click="passCertification"/>
     </template>
     <template v-if="step === 4">
-      <div class="message fs-2">
-        신분 인증에 실패했습니다.<br/>{{ timer }}초 뒤에 창이 닫힙니다.
+      <div class="container">
+        <div class="message fs-2">
+          신분 인증에 실패했습니다.<br/>{{ timer }}초 뒤에 창이 닫힙니다.
+        </div>
+        <WhiteButton value="즉시 닫기" @click="closeModal"/>
       </div>
-      <WhiteButton value="즉시 닫기" @click="closeModal"/>
     </template>
   </div>
 </template>
@@ -339,19 +349,32 @@
 
 <style lang="scss" scoped>
   @import "@/assets/style/color.scss";
+  @import "@/assets/style/common.scss";
 
 
   .certification {
     background: rgb(109,143,201);
     background: linear-gradient(180deg, rgba(109,143,201,1) 0%, rgba(113,121,200,1) 40%, rgba(114,117,200,1) 60%, rgba(176,162,208,1) 100%);
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4rem;
+    gap: 2rem;
     border-radius: inherit;
     padding-bottom: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+
+    @include kiosk {
+      flex-direction: column;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 4rem;
+    }
 
     .progressbar {
       margin-top: 8vh;
@@ -366,8 +389,8 @@
       border: 2px solid;
       color: $white;
       border-radius: 2rem;
-      width: 35vh;
-      height: 30vh;
+      width: 550px;
+      height: 550px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -376,7 +399,7 @@
 
       .icon {
         width: auto;
-        height: 20vh;
+        height: 300px;
       }
 
       .complete {

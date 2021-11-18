@@ -11,7 +11,7 @@
 $kiosk: 1080px;
 
 @mixin kiosk {
-  @media (min-width: #{$kiosk}) {
+  @media (max-width: #{$kiosk}) {
     @content;
   }
 }

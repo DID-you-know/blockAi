@@ -5,7 +5,6 @@ import Signup from '@/views/Signup'
 import Login from '@/views/Login'
 import Status from '@/views/Status'
 import Issue from '@/views/Issue'
-import ImageTest from '@/views/ImageTest'
 import KioskHome from '@/views/KioskHome'
 import CertificationLog from '@/views/CertificationLog'
 
@@ -52,11 +51,6 @@ const routes = [
     path: '/kiosk',
     name: 'kioskHome',
     component: KioskHome
-  },
-  {
-    path: '/image',
-    name: 'Image',
-    component: ImageTest
   }
 ]
 
