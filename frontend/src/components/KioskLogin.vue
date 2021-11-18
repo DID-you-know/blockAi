@@ -30,13 +30,14 @@
 </template>
 
 <script>
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import { useStore } from 'vuex'
 
   export default {
     name: 'KioskLogin',
     setup(props, { emit }) {
       const store = useStore()
+      const userId = computed(() => store.state.certification.userId)
       const phoneNumber = ref(' ')
 
       const convertPhoneNumber = (phoneNumber) => {
@@ -59,7 +60,16 @@
 
       const submit = async () => {
         await store.dispatch('certification/getUserId', phoneNumber.value)
-        emit('pass')
+        if (userId.value != -1) {
+          console.log(userId)
+          emit('pass')
+        } else {
+          store.dispatch('alert/popAlert', {
+            type: 'danger',
+            message: '핸드폰 번호를 다시 입력해 주세요.'
+          })
+          phoneNumber.value = ''
+        }
       }
 
       return {

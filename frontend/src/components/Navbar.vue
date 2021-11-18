@@ -40,6 +40,10 @@
 
       const logout = () => {
         store.commit('users/LOGOUT')
+        store.dispatch('alert/popAlert', {
+          type: 'success',
+          message: '로그아웃 되었습니다.'
+        })
       }
 
       return {
