@@ -33,7 +33,7 @@
           <div class="card-content">
             <div class="box">
               <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voice">
-              <audio hidden ref="audio">
+              <audio autoplay hidden ref="audio">
                 <source :src="voice" type="audio/wav">
               </audio>
             </div>
@@ -71,7 +71,6 @@
   import WhiteButton from '@/components/WhiteButton'
   import Spinner from '@/components/Spinner'
   import users from '@/api/users'
-
 
 
   export default {
@@ -130,7 +129,7 @@
             console.log(error)
           }
         }
-        audio.value.play()
+        audio.value.load()
       }
 
       return {
