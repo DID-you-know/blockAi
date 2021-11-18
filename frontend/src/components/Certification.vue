@@ -259,6 +259,7 @@
       const reRecord = async () => {
         mediaRecorder.value.start()
         voiceStep.value = 2
+        voiceMessage.value = '"본인인증합니다."라고 말해주세요.'
       }
       const stopMIC = () => {
         const tracks = audioStream.value.getTracks()
