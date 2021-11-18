@@ -23,7 +23,6 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.musicg.fingerprint.FingerprintSimilarity;
 import com.musicg.wave.Wave;
@@ -31,6 +30,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.java_websocket.util.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
@@ -62,6 +62,7 @@ public class AiService {
     private final AwsProperties awsProperties;
     private final AmazonS3Client amazonS3Client;
     private final UserRepository userRepository;
+    @Autowired
     private AmazonRekognition rekognitionClient;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -90,10 +91,8 @@ public class AiService {
                 .build();
     }
 
-
     /* voice detection */
     public float identifyVoice(VoiceBiometricRequest voiceBiometricsRequest) throws IOException {
-
         String encodedUserVoice = voiceBiometricsRequest.getEncodedUserVoice(); //프론트에서 base64로 변환되어 넘어온 녹음된 파일
         String savedS3UserVoiceUrl = voiceBiometricsRequest.getSavedS3UserVoiceUrl(); //DID발급 시 블록체인에 등록한 음성파일(S3 저장위치)
 
@@ -139,16 +138,14 @@ public class AiService {
             e.printStackTrace();
         }
 
-
         Wave w1 = new Wave(recordFile.getPath());
         Wave w2 = new Wave(savedFile.getPath());
 
         FingerprintSimilarity fps = w1.getFingerprintSimilarity(w2);
         float fileScore = fps.getScore(); //유사위치 수
         float score = fps.getSimilarity(); //유사도
-        System.out.println("유사도점수"+score+" "+fileScore);
-//
-//        //파일 삭제
+
+        // 파일 삭제
         recordFile.delete();
         savedFile.delete();
 
@@ -156,7 +153,6 @@ public class AiService {
     }
 
     /* face detection */
-
     public File decodeImage(String encodedString) throws IOException {
         byte[] decodedBytes = Base64.decode(encodedString);
         String decodedString = new String(decodedBytes);
@@ -186,7 +182,6 @@ public class AiService {
 
 
     public float identifyFace(FaceBiometricRequest faceBiometricsRequest) throws Exception {
-
         Float similarityThreshold = 70F;
 
         // 프론트에서 넘어온 [촬영된 현재 사용자 이미지]를 file 형태로 변경
@@ -245,7 +240,6 @@ public class AiService {
 
         //파일 삭제
         inputImage.delete();
-
         return result;
     }
 
@@ -258,7 +252,6 @@ public class AiService {
         String fileName = userId; // 이렇게 저장해도 되겠지?
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputImage).withCannedAcl(CannedAccessControlList.PublicRead));
         String uploadImageUrl = amazonS3Client.getUrl(bucket, fileName).toString();
-
         return uploadImageUrl;
     }
 
@@ -337,28 +330,10 @@ public class AiService {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-        System.out.println("파일있는지"+savedFile.exists());
         byte[] fileBytes = FileUtils.readFileToByteArray(savedFile);
         String encodedBytes = Base64.encodeBytes(fileBytes);
-        File file = new File(rootPath+movePath+"saved.wav");
-        System.out.println("파일있는지"+file.exists());
-//        S3ObjectInputStream s3is = savedUserVoice.getObjectContent();
-//        FileOutputStream fos = new FileOutputStream(rootPath+movePath+"userVoice.wav");
-//
-//        byte[] read_buf = new byte[1024];
-//        int read_len;
-//        while ((read_len = s3is.read(read_buf)) > 0) {
-//            fos.write(read_buf, 0, read_len);
-//        }
-//        s3is.close();
-//        fos.close();
-//        File savedFile = new File(rootPath+movePath+"userVoice.wav");
-//
-//        byte[] fileBytes = FileUtils.readFileToByteArray(savedFile);
-//        String encodedBytes = Base64.encodeBytes(fileBytes);
-//
-//        savedFile.delete();
+
+        savedFile.delete();
         return VoiceBiometricResponse.from(encodedBytes);
     }
 
