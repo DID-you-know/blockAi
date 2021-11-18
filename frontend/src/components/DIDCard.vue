@@ -25,7 +25,8 @@
           <div class="card-content">
             <div class="box">
               <img v-if="!isFaceOn" class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceId">
-              <img v-else class="image" :src="face" alt="face">
+              <Spinner v-if="isFaceOn && loading"/>
+              <img v-if="isFaceOn && !loading" class="image" :src="face" alt="face">
             </div>
             <WhiteButton class="tag" @click.stop="faceOn" value="얼굴 조회"/>
           </div>
@@ -68,6 +69,7 @@
   import { useStore } from 'vuex'
   import { useRouter } from 'vue-router'
   import WhiteButton from '@/components/WhiteButton'
+  import Spinner from '@/components/Spinner'
   import users from '@/api/users'
 
 
@@ -75,7 +77,8 @@
   export default {
     name: 'DIDCard',
     components: {
-      WhiteButton
+      WhiteButton,
+      Spinner
     },
     props: {
       name: String,
@@ -95,18 +98,21 @@
 
       const face = ref(null)
       const isFaceOn = ref(false)
+      const loading = ref(false)
       const faceOn = async () => {
+        loading.value = true
         isFaceOn.value = !isFaceOn.value
         if (face.value === null) {
           console.log('axios')
           try {
             const response = await users.getFace(store.state.users.userId)
             console.log(response.data)
-            face.value = 'data:image/jpeg;base64,' + response.data.encodeFaceFile
+            face.value = response.data.encodeFaceFile
           } catch (error) {
             console.log(error)
           }
         }
+        loading.value = false
       }
 
       const voice = ref(null)
@@ -119,7 +125,7 @@
           try {
             const response = await users.getVoice(store.state.users.userId)
             console.log(response.data)
-            voice.value = 'data:audio/wav;base64,' + response.data.encodeVoiceFile
+            voice.value = response.data.encodeVoiceFile
           } catch (error) {
             console.log(error)
           }
@@ -133,6 +139,7 @@
         issuedDate,
         pushIssue,
         isFaceOn,
+        loading,
         faceOn,
         isVoiceOn,
         voiceOn,
@@ -210,7 +217,10 @@
             border: 1px solid;
             color: $white;
             border-radius: 3vh;
-            text-align: center;
+            height: 29vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             .icon {
               width: 20vh;
@@ -219,7 +229,6 @@
 
             .image {
               max-width: 20vh;
-              max-height: 20vh;
               height: auto;
             }
           }
