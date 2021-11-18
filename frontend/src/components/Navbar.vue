@@ -21,6 +21,7 @@
   import Logo from '@/components/Logo'
   import { useStore } from 'vuex'
   import { computed } from 'vue'
+  import { useRouter } from 'vue-router'
 
 
   export default {
@@ -35,6 +36,7 @@
       }
     },
     setup() {
+      const router = useRouter()
       const store = useStore()
       const isLogin = computed(() => store.state.users.isLogin)
 
@@ -44,6 +46,7 @@
           type: 'success',
           message: '로그아웃 되었습니다.'
         })
+        router.push({ name: 'home' })
       }
 
       return {

@@ -97,12 +97,16 @@
 </script>
 
 <style lang="scss" scoped>
+  @import "@/assets/style/color.scss";
+
+
   .login {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 5rem;
     gap: 1rem;
+    background-color: $light;
 
     h1 {
       cursor: default;
@@ -120,7 +124,7 @@
       .form {
         height: 100%;
         width: 650px;
-        background-color: white;
+        background-color: $white;
         padding: 3rem;
         border-radius: 2rem;
         box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.1);;
@@ -128,11 +132,12 @@
         flex-direction: column;
         justify-content: space-between;
         gap: 3rem;
+        z-index: 2;
       }
 
       .bg {
         position: absolute;
-        z-index: -1;
+        z-index: 1;
 
         img {
           position: absolute;

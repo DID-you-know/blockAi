@@ -1,12 +1,12 @@
 <template>
   <div class="card">
     <div class="card-image">
-      <img src="@/assets/image/GS25.png" alt="">
+      <img src="@/assets/image/onlyLogo.png" alt="">
     </div>
     <div class="card-body">
       <div class="title fw-bold fs-3">GS25</div>
       <div class="datetime">
-          2010-10-10 월요일 14:30
+        2010-10-10 월요일 14:30
       </div>
     </div>
   </div>

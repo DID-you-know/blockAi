@@ -27,4 +27,8 @@ public class LoginResponse {
     @ApiModelProperty(name = "DID 발급 현황", example = "DID가 있으면 '2021-11-15 11:25:01', 없으면 null")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime issuedAt;
+
+    @ApiModelProperty(name = "DID 재발급 현황", example = "DID가 있으면 '2021-11-15 11:25:01', 없으면 null")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt;
 }
