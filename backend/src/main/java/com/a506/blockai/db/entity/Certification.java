@@ -26,6 +26,7 @@ public class Certification {
 
     public Certification(String certifiedBy) {
         this.certifiedBy = certifiedBy;
+        this.certifiedAt = LocalDateTime.now();
     }
 
     public void to(User user) {
