@@ -299,6 +299,7 @@
             step.value += 1
             store.commit('certification/RESET')
           } else {
+            step.value += 2
             console.log('인증 실패')
           }
         } else if (step.value === 3 || step.value === 4) {

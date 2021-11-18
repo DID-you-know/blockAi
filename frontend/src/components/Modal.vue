@@ -29,6 +29,7 @@
 
 <style lang="scss" scoped>
   @import "@/assets/style/color.scss";
+  @import "@/assets/style/common.scss";
 
 
   .modal-backdrop {
@@ -53,10 +54,15 @@
 
       .close {
         position: absolute;
-        top: 5rem;
-        right: 5rem;
+        top: 4rem;
+        right: 4rem;
         width: 2rem;
         height: 2rem;
+
+        @include kiosk {
+          top: 6rem;
+          right: 6rem;
+        }
 
         img {
           width: 100%;
