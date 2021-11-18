@@ -338,6 +338,7 @@ public class AiService {
             e.printStackTrace();
         }
 
+        System.out.println("파일있는지"+savedFile.exists());
         byte[] fileBytes = FileUtils.readFileToByteArray(savedFile);
         String encodedBytes = Base64.encodeBytes(fileBytes);
         File file = new File(rootPath+movePath+"saved.wav");
