@@ -67,7 +67,7 @@ public class AiService {
     private String bucket;
 
     //파일 경로
-    private final String rootPath = System.getProperty("user.dir");;
+    private final String rootPath = System.getProperty("user.dir");
     private final String movePath = "/src/main/java/com/a506/blockai/common/file/";
 
     @Bean
@@ -302,7 +302,7 @@ public class AiService {
     /* 조회 */
     public FaceBiometricResponse getFaceData(int userId) throws Exception {
         S3Object savedUserImage = getS3Object(userId);
-        S3ObjectInputStream s3is = savedUserImage.getObjectContent();
+        InputStream s3is = savedUserImage.getObjectContent();
         FileOutputStream fos = new FileOutputStream(rootPath+movePath+"userImage.jpg");
 
         byte[] read_buf = new byte[1024];
@@ -323,22 +323,39 @@ public class AiService {
 
     public VoiceBiometricResponse getVoiceData(int userId) throws Exception {
         S3Object savedUserVoice = getS3Object(userId);
-        S3ObjectInputStream s3is = savedUserVoice.getObjectContent();
-        FileOutputStream fos = new FileOutputStream(rootPath+movePath+"userVoice.wav");
-
-        byte[] read_buf = new byte[1024];
-        int read_len;
-        while ((read_len = s3is.read(read_buf)) > 0) {
-            fos.write(read_buf, 0, read_len);
+        InputStream s3is = savedUserVoice.getObjectContent();
+        byte[] decoded2 = IOUtils.toByteArray(s3is);
+        File savedFile = null;
+        InputStream saveIn = new ByteArrayInputStream(decoded2);
+        try {
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream(rootPath+movePath+"saved.wav"));
+            dos.write(decoded2);
+            AudioFormat format = new AudioFormat(8000f, 16, 1, true, false);
+            AudioInputStream stream = new AudioInputStream(saveIn, format, decoded2.length);
+            savedFile = new File(rootPath+movePath+"saved.wav");
+            AudioSystem.write(stream, AudioFileFormat.Type.WAVE, savedFile);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        s3is.close();
-        fos.close();
-        File savedFile = new File(rootPath+movePath+"userVoice.wav");
 
         byte[] fileBytes = FileUtils.readFileToByteArray(savedFile);
         String encodedBytes = Base64.encodeBytes(fileBytes);
-
-        savedFile.delete();
+//        S3ObjectInputStream s3is = savedUserVoice.getObjectContent();
+//        FileOutputStream fos = new FileOutputStream(rootPath+movePath+"userVoice.wav");
+//
+//        byte[] read_buf = new byte[1024];
+//        int read_len;
+//        while ((read_len = s3is.read(read_buf)) > 0) {
+//            fos.write(read_buf, 0, read_len);
+//        }
+//        s3is.close();
+//        fos.close();
+//        File savedFile = new File(rootPath+movePath+"userVoice.wav");
+//
+//        byte[] fileBytes = FileUtils.readFileToByteArray(savedFile);
+//        String encodedBytes = Base64.encodeBytes(fileBytes);
+//
+//        savedFile.delete();
         return VoiceBiometricResponse.from(encodedBytes);
     }
 
