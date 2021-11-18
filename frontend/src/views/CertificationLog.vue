@@ -47,7 +47,7 @@
         try {
           const response = await users.getLog(userId.value)
           console.log(response.data)
-          logList.value = response.data
+          logList.value = response.data.reverse()
         } catch (error) {
           console.log(error.data)
         }
