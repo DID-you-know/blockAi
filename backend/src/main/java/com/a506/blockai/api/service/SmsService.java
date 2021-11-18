@@ -47,7 +47,6 @@ public class SmsService {
     }
 
     public SendSmsResponse sendSms(String recipientPhoneNumber, String certNum) throws JsonProcessingException, UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, URISyntaxException {
-
         Date currentDate = new Date();
         Long time = currentDate.getTime();
         List<MessagesRequest> messages = new ArrayList<>();
@@ -72,17 +71,14 @@ public class SmsService {
 
         // 제일 중요한 signature 서명하기.
         String sig = makeSignature(time);
-        System.out.println("sig -> " + sig);
         headers.set("x-ncp-apigw-signature-v2", sig);
 
         // 위에서 조립한 jsonBody와 헤더를 조립한다.
         HttpEntity<String> body = new HttpEntity<>(jsonBody, headers);
-        System.out.println(body.getBody());
 
         // restTemplate로 post 요청을 보낸다. 별 일 없으면 202 코드 반환된다.
         RestTemplate restTemplate = new RestTemplate();
         SendSmsResponse sendSmsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+serviceAPIKey+"/messages"), body, SendSmsResponse.class);
-        System.out.println(sendSmsResponseDto.getStatusCode());
         return sendSmsResponseDto;
     }
 
