@@ -62,7 +62,7 @@ const router = createRouter({
 // 로그인 리다이렉트
 router.beforeEach((to, from, next) => {
   if (!store.state.users.isLogin) {
-    if (to.name === 'home' || to.name === 'signup' || to.name === 'login' || to.name === 'kioskHome' || to.name==='certificationLog') {
+    if (to.name === 'home' || to.name === 'signup' || to.name === 'login' || to.name === 'kioskHome') {
       next()
     } else {
       next({

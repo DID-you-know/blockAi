@@ -30,7 +30,7 @@ export default {
   },
   getLog(userId) {
     return _axios({
-      url: `/users/${userId}/log`,
+      url: `/certification/users/${userId}`,
       method: 'get'
     })
   },

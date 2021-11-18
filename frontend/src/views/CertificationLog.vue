@@ -21,7 +21,7 @@
   import Navbar from '@/components/Navbar'
   import LogCard from '@/components/LogCard'
   import users from '@/api/users'
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import { useStore } from 'vuex'
 
 
@@ -31,16 +31,27 @@
       Navbar,
       LogCard
     },
-    async setup() {
+    setup() {
       const store = useStore()
       const logList = ref([])
       const userId = computed(() => store.state.users.userId)
-      try {
-        const response = await users.getLog(userId.value)
-        console.log(response.data)
-        logList.value = response.data
-      } catch (error) {
-        console.log(error.data)
+
+      const getLog = async () => {
+        try {
+          const response = await users.getLog(userId.value)
+          console.log(response.data)
+          logList.value = response.data
+        } catch (error) {
+          console.log(error.data)
+        }
+      }
+
+      onMounted(() => {
+        getLog()
+      })
+
+      return {
+        logList
       }
     }
   }
