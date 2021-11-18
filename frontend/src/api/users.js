@@ -35,7 +35,6 @@ export default {
     })
   },
   didIssue(userId, didData) {
-    console.log(didData)
     return didAxios({
       url: `/users/${userId}/did/issue`,
       method: 'post',

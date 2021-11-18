@@ -167,7 +167,10 @@
           cameraOn.value = true
           faceMessage.value = '얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.'
         } catch(err) {
-          console.log(err)
+          store.dispatch('alert/popAlert', {
+            type: 'danger',
+            message: '카메라 연결에 실패했습니다.'
+          })
         }
       }
       const reCapture = () => {
@@ -202,7 +205,10 @@
         try {
           audioStream.value = await navigator.mediaDevices.getUserMedia(constraints)
         } catch(err) {
-          console.log(err)
+          store.dispatch('alert/popAlert', {
+            type: 'danger',
+            message: '마이크 연결에 실패했습니다.'
+          })
         }
       }
       const recordVoice = async () => {
@@ -230,6 +236,7 @@
       const reRecord = async () => {
         mediaRecorder.value.start()
         voiceStep.value = 2
+        voiceMessage.value = '"본인인증합니다."라고 말해주세요.'
       }
       const stopMIC = () => {
         const tracks = audioStream.value.getTracks()
@@ -255,17 +262,12 @@
             IdentityPoolId: process.env.VUE_APP_IDENTITYPOOLID
           })
         })
-        const s3 = new AWS.S3({
-          apiVersion: "2006-03-01",
-          params: { Bucket: process.env.VUE_APP_ALBUMBUCKETNAME }
-        })
 
         // canvas to blob
         const base64 = faceCanvas.value.toDataURL('image/jpeg', 1.0)
         const base64Response = await fetch(base64)
         const faceBlob = await base64Response.blob()
 
-        console.log(s3)
         // 이미지 업로드
         const faceUpload = new AWS.S3.ManagedUpload({
           params: {
@@ -276,10 +278,13 @@
         })
         try {
           const facePromise = await faceUpload.promise()
-          console.log(facePromise)
           facePath.value = facePromise.Location
         } catch (error) {
-          console.log('error', error)
+          store.dispatch('alert/popAlert', {
+            type: 'danger',
+            message: '얼굴등록에 실패했습니다.'
+          })
+          step.value = 5
         }
 
         // 음성 업로드
@@ -292,10 +297,13 @@
         })
         try {
           const voicePromise = await voiceUpload.promise()
-          console.log(voicePromise)
           voicePath.value = voicePromise.Location
         } catch (error) {
-          console.log('error', error)
+          store.dispatch('alert/popAlert', {
+            type: 'danger',
+            message: '음성등록에 실패했습니다.'
+          })
+          step.value = 5
         }
 
         // axios

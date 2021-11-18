@@ -14,7 +14,6 @@ const actions = {
   async getAccessToken({ commit }, credentials) {
     try {
       const response = await users.login(credentials)
-      console.log(response.data)
       const accessToken = response.data.token
       commit('SET_ACCESS_TOKEN', accessToken)
       const payload = {
@@ -24,18 +23,15 @@ const actions = {
       }
       commit('SET_USERINFO', payload)
     } catch (error) {
-      console.log(error)
+      commit('LOGOUT')
     }
   },
   async didIssue({ commit }, { userId, didData }) {
     try {
-      const response = await users.didIssue(userId, didData)
-      console.log(response.data)
+      await users.didIssue(userId, didData)
       commit('SET_ISISSUED', true)
     } catch (error) {
-      console.log(error)
       commit('SET_ISISSUED', false)
-      console.log('didIssue')
     }
   }
 }

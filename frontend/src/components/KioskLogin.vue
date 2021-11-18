@@ -61,7 +61,6 @@
       const submit = async () => {
         await store.dispatch('certification/getUserId', phoneNumber.value)
         if (userId.value != -1) {
-          console.log(userId)
           emit('pass')
         } else {
           store.dispatch('alert/popAlert', {

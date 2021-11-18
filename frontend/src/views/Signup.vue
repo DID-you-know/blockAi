@@ -212,10 +212,16 @@
         codeActive.value = true
         console.log(randomCode.value)
         try {
-          const response = await users.sendSMS(phoneNumber.value, randomCode.value)
-          console.log(response.data)
+          await users.sendSMS(phoneNumber.value, randomCode.value)
+          store.dispatch('alert/popAlert', {
+            type: 'success',
+            message: '문자가 발송되었습니다.'
+          })
         } catch (error) {
-          console.log(error)
+          store.dispatch('alert/popAlert', {
+            type: 'danger',
+            message: '문자발송에 실패했습니다.'
+          })
         }
       }
 
@@ -244,7 +250,6 @@
       
       // 회원가입 form 제출
       const submit = async () => {
-        console.log('click')
         emailValidator()
         passwordValidator()
         nameValidator()
@@ -253,7 +258,6 @@
         codeValidator()
 
         if (!emailError.value && !passwordError.value && !nameError.value && !birthError.value && !phoneNumberError.value && smsAuth.value) {
-          console.log('submit')
           const birthDate = new Date(birth.value.replace(/\./g, '-'))
           const userInfo = {
             email: email.value,
@@ -262,17 +266,14 @@
             phone: phoneNumber.value,
             birth: birthDate
           }
-          console.log(userInfo)
           try {
-            const response = await users.signup(userInfo)
-            console.log(response.data)
+            await users.signup(userInfo)
             router.push({ name: 'home' })
             store.dispatch('alert/popAlert', {
               type: 'success',
               message: '회원가입에 성공했습니다.'
             })
           } catch (error) {
-            console.log(error)
             store.dispatch('alert/popAlert', {
               type: 'danger',
               message: '회원가입에 실패했습니다.'

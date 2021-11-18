@@ -10,11 +10,10 @@ const actions = {
   async getUserId({ commit }, phoneNumber) {
     try {
       const response = await certification.getUserId(phoneNumber)
-      console.log(response.data)
       const userId = response.data.userId
       commit('SET_USER_ID', userId)
     } catch (error) {
-      console.log(error)
+      commit('SET_USER_ID', null)
     }
   },
   async certification({ commit, state }, { face, voice, certifiedBy }) {
@@ -31,7 +30,6 @@ const actions = {
 
 const mutations = {
   SET_USER_ID(state, userId) {
-    console.log('SET_USER_ID', userId)
     state.userId = userId
   },
   SET_ISCERTIFICATED(state, isCertificated) {
