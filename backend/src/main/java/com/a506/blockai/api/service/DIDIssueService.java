@@ -33,6 +33,8 @@ public class DIDIssueService {
         userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
+        System.out.println("face: " + didIssueRequest.getFacePath());
+        System.out.println("voice: " + didIssueRequest.getVoiceId());
         // 인증 데이터가 존재하는지 확인
         if (isBadBiometricsRequest(didIssueRequest)) throw new BadRequestException();
 
@@ -73,6 +75,5 @@ public class DIDIssueService {
     private boolean isIssuedDid(User user) {
         return user.getDid() != null;
     }
-
 
 }
