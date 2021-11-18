@@ -7,11 +7,18 @@
     <div class="container">
       <h1 class="fs-3 fw-bold">인증 내역</h1>
       <div class="log-card-list">
-        <div class="log-field">
-          <span class="field-1">발급처</span>
-          <span class="field-2">발급날짜</span>
-        </div>
-        <LogCard/>
+        <template v-if="logList.length > 0">
+          <div class="log-field">
+            <span class="field-1">발급처</span>
+            <span class="field-2">발급날짜</span>
+          </div>
+          <LogCard v-for="log in logList" :key="log.id" :company="log.certifiedBy" :datetime="log.certifiedAt"/>
+        </template>
+        <template v-else>
+          <div class="log-empty">
+            인증 내역이 없습니다.
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -58,12 +65,16 @@
 </script>
 
 <style lang="scss" scoped>
+  @import "@/assets/style/color.scss";
+
+
   .certification-log {
     padding: 2rem 3rem 0;
     display: flex;
     gap: 1rem;
     justify-content: center;
     align-items: center;
+    background-color: $light;
 
     .image {
       flex: 2;
@@ -81,28 +92,45 @@
       align-items: center;
       gap: 4rem;
       border-radius: 2rem;
-      box-shadow: 2px 2px 10px 2px rgba($color: #000000, $alpha: 0.2);
+      box-shadow: 2px 2px 15px 2px rgba($color: #000000, $alpha: 0.2);
       padding: 2rem 4rem;
       height: 80vh;
+      background-color: $white;
 
       .log-card-list {
+        width: 100%;
         height: 100%;
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        position: relative;
 
-        .field-1 {
-          position: absolute;
-          top: -1rem;
-          left: 35%;
-          transform: translateX(-50%)
+        .log-field {
+          position: relative;
+          width: 100%;
+
+          .field-1 {
+            position: absolute;
+            top: -1rem;
+            left: 35%;
+            transform: translateX(-50%)
+          }
+          .field-2 {
+            position: absolute;
+            top: -1rem;
+            left: 75%;
+            transform: translateX(-50%)
+          }
         }
-        .field-2 {
-          position: absolute;
-          top: -1rem;
-          left: 75%;
-          transform: translateX(-50%)
+
+        .log-empty {
+          background-color: $light-hover;
+          height: 5rem;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 2rem;
+          font-size: 20px;
         }
       }
     }

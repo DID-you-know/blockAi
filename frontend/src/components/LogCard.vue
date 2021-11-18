@@ -4,9 +4,9 @@
       <img src="@/assets/image/onlyLogo.png" alt="">
     </div>
     <div class="card-body">
-      <div class="title fw-bold fs-3">GS25</div>
+      <div class="title fw-bold fs-2">{{ company }}</div>
       <div class="datetime">
-        2010-10-10 월요일 14:30
+        {{ datetime }}
       </div>
     </div>
   </div>
@@ -14,7 +14,11 @@
 
 <script>
   export default {
-    name: 'LogCard'
+    name: 'LogCard',
+    props: {
+      company: String,
+      datetime: String
+    }
   }
 </script>
 
@@ -38,6 +42,7 @@
 
       img {
         max-width: 80%;
+        max-height: 80%;
       }
     }
 
