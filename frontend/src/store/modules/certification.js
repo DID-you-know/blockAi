@@ -18,12 +18,11 @@ const actions = {
   },
   async certification({ commit, state }, { face, voice, certifiedBy }) {
     try {
-      const response = await certification.certification(state.userId, face, voice, certifiedBy)
-      console.log('response', response)
+      await certification.certification(state.userId, face, voice, certifiedBy)
       const isCertificated = true
       commit('SET_ISCERTIFICATED', isCertificated)
     } catch (error) {
-      console.log(error)
+      commit('SET_ISCERTIFICATED', false)
     }
   }
 }

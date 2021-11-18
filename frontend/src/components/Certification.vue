@@ -143,7 +143,10 @@
           faceMessage.value = '얼굴이 인식될 수 있게 카메라를 응시한 상태로 얼굴 촬영 버튼을 눌러주세요.'
           cameraOn.value = true
         } catch(err) {
-          console.log(err)
+          store.dispatch('alert/popAlert', {
+            type: 'danger',
+            message: '카메라 연결에 실패했습니다.'
+          })
         }
       }
 
@@ -224,7 +227,10 @@
         try {
           audioStream.value = await navigator.mediaDevices.getUserMedia(constraints)
         } catch(err) {
-          console.log(err)
+          store.dispatch('alert/popAlert', {
+            type: 'danger',
+            message: '마이크 연결에 실패했습니다.'
+          })
         }
       }
       const recordVoice = async () => {
@@ -289,8 +295,6 @@
           recordComplete.value = false
           step.value += 1
         } else if (step.value === 2) {
-          console.log(faceBase64.value)
-          console.log(audioBlob.value)
           const payload = {
             face: faceBase64.value.split(',')[1],
             voice: audioBlob.value.split(',')[1],
@@ -302,7 +306,6 @@
             store.commit('certification/RESET')
           } else {
             step.value += 2
-            console.log('인증 실패')
           }
         } else if (step.value === 3 || step.value === 4) {
           if (timer.value !== 0) {

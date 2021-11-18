@@ -102,13 +102,14 @@
         loading.value = true
         isFaceOn.value = !isFaceOn.value
         if (face.value === null) {
-          console.log('axios')
           try {
             const response = await users.getFace(store.state.users.userId)
-            console.log(response.data)
             face.value = response.data.encodeFaceFile
           } catch (error) {
-            console.log(error)
+            store.dispatch('alert/popAlert', {
+              type: 'danger',
+              message: '얼굴조회에 실패했습니다.'
+            })
           }
         }
         loading.value = false
@@ -120,13 +121,14 @@
       const voiceOn = async () => {
         isVoiceOn.value = !isVoiceOn.value
         if (voice.value === null) {
-          console.log('axios')
           try {
             const response = await users.getVoice(store.state.users.userId)
-            console.log(response.data)
             voice.value = response.data.encodeVoiceFile
           } catch (error) {
-            console.log(error)
+            store.dispatch('alert/popAlert', {
+              type: 'danger',
+              message: '음성조회에 실패했습니다.'
+            })
           }
         }
         audio.value.load()

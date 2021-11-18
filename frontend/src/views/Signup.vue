@@ -210,7 +210,6 @@
       const sendSMS = async () => {
         randomCode.value = getRandomCode()
         codeActive.value = true
-        console.log(randomCode.value)
         try {
           await users.sendSMS(phoneNumber.value, randomCode.value)
           store.dispatch('alert/popAlert', {
