@@ -16,9 +16,9 @@
         결제하기
       </div>
     </div>
-    <Modal v-show="isModalVisible" :isModalVisible="isModalVisible">
+    <Modal v-show="modalBackgroundOn" :isModalVisible="isModalVisible" @close="closeModal">
       <KioskLogin v-if="step===1" @pass="nextStep"/>
-      <Certification v-if="step===2" @pass="nextStep"/>
+      <Certification v-if="step===2" @pass="nextStep" @close="closeModal"/>
       <KioskPayment v-if="step===3"/>
     </Modal>
   </div>
@@ -85,14 +85,24 @@
         return itemList.value.reduce((prev, cur) => prev + cur.count, 0)
       })
 
+      const modalBackgroundOn = ref(false)
       const isModalVisible = ref(false)
       const showModal = () => {
+        modalBackgroundOn.value = true
         isModalVisible.value = true
       }
 
       const step = ref(1)
       const nextStep = () => {
-        step.value = 2
+        step.value += 1
+      }
+
+      const closeModal = () => {
+        step.value = 1
+        isModalVisible.value = false
+        setTimeout(() => {
+          modalBackgroundOn.value = false
+        }, 800)
       }
 
       return {
@@ -100,10 +110,12 @@
         itemList,
         totalPrice,
         totalCount,
+        modalBackgroundOn,
         isModalVisible,
         showModal,
         step,
-        nextStep
+        nextStep,
+        closeModal
       }
     }
   }

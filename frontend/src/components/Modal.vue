@@ -3,6 +3,7 @@
     <transition name="modal-float">
       <div v-if="isModalVisible" class="modal">
         <slot></slot>
+        <button class="close" @click="closeModal"><img src="@/assets/image/icon/close.png" alt="close button"></button>
       </div>
     </transition>
   </div>
@@ -13,6 +14,15 @@
     name: 'Modal',
     props: {
       isModalVisible: Boolean
+    },
+    setup(props, { emit }) {
+      const closeModal = () => {
+        emit('close')
+      }
+    
+      return {
+        closeModal
+      }
     }
   }
 </script>
@@ -40,6 +50,20 @@
       position: relative;
       top: 10vh;
       left: 0;
+
+      .close {
+        position: absolute;
+        top: 4rem;
+        right: 4rem;
+        width: 2rem;
+        height: 2rem;
+
+        img {
+          width: 100%;
+          height: 100%;
+          opacity: 0.5;
+        }
+      }
     }
   }
 

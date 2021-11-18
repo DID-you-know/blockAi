@@ -63,9 +63,15 @@
     </template>
     <template v-if="step === 3">
       <div class="message fs-2">
-        신분 인증이 완료되었습니다.
+        신분 인증이 완료되었습니다.<br/>{{ timer }}초 뒤에 결제화면으로 이동합니다.
       </div>
-      <WhiteButton value="결제하기" @click="router.push({ name: 'home' })"/>
+      <WhiteButton value="결제하기" @click="passCertification"/>
+    </template>
+    <template v-if="step === 4">
+      <div class="message fs-2">
+        신분 인증에 실패했습니다.<br/>{{ timer }}초 뒤에 창이 닫힙니다.
+      </div>
+      <WhiteButton value="즉시 닫기" @click="closeModal"/>
     </template>
   </div>
 </template>
@@ -259,6 +265,13 @@
         getMIC()
       })
 
+      const timer = ref(5)
+      const passCertification = () => {
+        emit('pass')
+      }
+      const closeModal = () => {
+        emit('close')
+      }
       onUpdated(async () => {
         if (captureComplete.value && recordComplete.value) {
           captureComplete.value = false
@@ -274,9 +287,24 @@
           if (isCertificated.value) {
             step.value += 1
             store.commit('certification/RESET')
-            emit('pass')
           } else {
             console.log('인증 실패')
+          }
+        } else if (step.value === 3 || step.value === 4) {
+          if (timer.value !== 0) {
+            setTimeout(() => {
+              timer.value -= 1
+            }, 1000)
+          } else {
+            if (step.value === 3){
+              setTimeout(() => {
+                passCertification()
+              }, 500)
+            } else {
+              setTimeout(() => {
+                closeModal()
+              }, 500)
+            }
           }
         }
       })
@@ -300,7 +328,10 @@
         recordVoice,
         stopRecord,
         reRecord,
-        finishRecord
+        finishRecord,
+        timer,
+        passCertification,
+        closeModal
       }
     }
   }

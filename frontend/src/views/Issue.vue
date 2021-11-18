@@ -51,6 +51,12 @@
       </div>
       <WhiteButton value="신분증명 조회하기" @click="router.push({ name: 'status' })"/>
     </template>
+    <template v-if="step === 5">
+      <div class="message fs-2">
+        신분증명발급에 실패했습니다. 다시 시도해 주세요.<br/>{{ timer }}초 뒤에 신분증명조회 페이지로 돌아갑니다.
+      </div>
+      <WhiteButton value="신분증명 조회하기" @click="router.push({ name: 'status' })"/>
+    </template>
     <canvas ref="faceCanvas" hidden></canvas>
   </div>
 </template>
@@ -174,10 +180,10 @@
         reCapture()
       }
 
-      onMounted(() => {
+      onMounted(async () => {
         if (step.value === 1 && cameraOn.value === false) {
-          getModel()
-          getCamera()
+          await getModel()
+          await getCamera()
         }
       })
 
@@ -297,8 +303,7 @@
         if (isIssued.value) {
           step.value += 1
         } else {
-          console.log('발급에 실패했습니다.')
-          router.push({ name: 'status' })
+          step.value += 2
         }
       }
 
@@ -308,7 +313,7 @@
           getMIC()
         } else if (step.value === 3) {
           await s3Upload()
-        } else if (step.value === 4) {
+        } else if (step.value === 4 || step.value === 5) {
           if (timer.value !== 0) {
             setTimeout(() => {
               timer.value -= 1
@@ -316,7 +321,7 @@
           } else {
             setTimeout(() => {
               router.push({ name: 'status' })
-            }, 1000)
+            }, 500)
           }
         }
       })
