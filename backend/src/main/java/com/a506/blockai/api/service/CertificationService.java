@@ -59,12 +59,10 @@ public class CertificationService {
         // 얼굴 유사도
         FaceBiometricRequest faceBiometricsRequest = new FaceBiometricRequest(biometricsCertificateRequest.getFace(), faceCertificateFromBlockchain);
         float faceScore = aiService.identifyFace(faceBiometricsRequest);
-        System.out.println(faceScore);
 
         // 목소리 유사도
         VoiceBiometricRequest voiceBiometricsRequest = new VoiceBiometricRequest(biometricsCertificateRequest.getVoice(), voiceCertificateFromBlockchain);
         float voiceScore = aiService.identifyVoice(voiceBiometricsRequest);
-        System.out.println(voiceScore);
 
         if (!isSamePerson(faceScore, voiceScore)) {
             throw new UnauthorizedAccessException();
@@ -109,14 +107,17 @@ public class CertificationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         DID did = user.getDid();
-        if (isIssuedDid(did)) throw new DidNotYetIssuedException();
+        if (!isIssuedDid(did)) throw new DidNotYetIssuedException();
         return did.getDidAddress();
     }
 
     public List<CertificationResponse> searchAllCertification(int userId) {
-        return certificationRepository.findAllById(userId)
+        System.out.println("인증 횟수 : " + userRepository.findById(userId).get().getCertifications().size());
+        return userRepository.findById(userId).get()
+                .getCertifications()
                 .stream()
                 .map(CertificationResponse::from)
                 .collect(Collectors.toList());
     }
+
 }
