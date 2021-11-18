@@ -67,6 +67,12 @@
       </div>
       <WhiteButton value="결제하기" @click="passCertification"/>
     </template>
+    <template v-if="step === 4">
+      <div class="message fs-2">
+        신분 인증에 실패했습니다.<br/>{{ timer }}초 뒤에 창이 닫힙니다.
+      </div>
+      <WhiteButton value="즉시 닫기" @click="closeModal"/>
+    </template>
   </div>
 </template>
 
@@ -263,6 +269,9 @@
       const passCertification = () => {
         emit('pass')
       }
+      const closeModal = () => {
+        emit('close')
+      }
       onUpdated(async () => {
         if (captureComplete.value && recordComplete.value) {
           captureComplete.value = false
@@ -281,15 +290,21 @@
           } else {
             console.log('인증 실패')
           }
-        } else if (step.value === 3) {
+        } else if (step.value === 3 || step.value === 4) {
           if (timer.value !== 0) {
             setTimeout(() => {
               timer.value -= 1
             }, 1000)
           } else {
-            setTimeout(() => {
-              passCertification()
-            }, 1000)
+            if (step.value === 3){
+              setTimeout(() => {
+                passCertification()
+              }, 500)
+            } else {
+              setTimeout(() => {
+                closeModal()
+              }, 500)
+            }
           }
         }
       })
@@ -315,7 +330,8 @@
         reRecord,
         finishRecord,
         timer,
-        passCertification
+        passCertification,
+        closeModal
       }
     }
   }
