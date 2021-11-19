@@ -145,6 +145,7 @@
             justify-content: center;
             align-items: center;
             padding: 1vh;
+            user-select: none;
 
             &:hover {
               background-color: $tertiary-hover;

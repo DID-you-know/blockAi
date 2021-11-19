@@ -12,7 +12,7 @@ const actions = {
   async closeAlertTimer({ commit }) {
     setTimeout(() => {
       commit('CLOSE_ALERT')
-    }, 2000)
+    }, 1500)
   }
 }
 

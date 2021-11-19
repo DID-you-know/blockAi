@@ -6,11 +6,11 @@
     <div class="card-body">
       <div class="title">
         <span class="fw-bold fs-2">{{ company }}</span>
-        <span v-if="idx===0" class="title-label">발급처</span>
+        <span v-if="idx===0" class="title-label">인증처</span>
       </div>
       <div class="datetime">
         <span>{{ datetime }}</span>
-        <span v-if="idx===0" class="datetime-label">발급날짜</span>
+        <span v-if="idx===0" class="datetime-label">인증날짜</span>
       </div>
     </div>
   </div>
