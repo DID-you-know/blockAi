@@ -2,7 +2,7 @@
   <div class="body certification">
     <template v-if="step === 1">
       <div class="container">
-        <div class="message fs-2">
+        <div class="message fs-3">
           {{ faceMessage }}
         </div>
 
@@ -33,7 +33,7 @@
         <div class="space"></div>
 
       <div class="container">
-        <div class="message fs-2">
+        <div class="message fs-3">
           {{ voiceMessage }}
         </div>
         <div v-if="voiceStep !== 4" class="icon-box">
