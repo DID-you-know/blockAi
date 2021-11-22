@@ -58,8 +58,8 @@
     </template>
     <template v-if="step === 2">
       <div class="container">
-        <div class="message fs-2">
-          블록체인에 저장된 얼굴, 음성과 비교하고 있습니다. 잠시만 기다려주세요.
+        <div class="message fs-4">
+          블록체인에 저장된 얼굴, 음성과 비교하고 있습니다.<br/> 잠시만 기다려주세요.
         </div>
         <div class="space"></div>
         <div class="loading-box">
@@ -69,7 +69,7 @@
     </template>
     <template v-if="step === 3">
       <div class="container">
-        <div class="message fs-2">
+        <div class="message fs-4">
           신분 인증이 완료되었습니다.<br/>{{ timer }}초 뒤에 결제화면으로 이동합니다.
         </div>
         <WhiteButton value="결제하기" @click="passCertification"/>
@@ -77,7 +77,7 @@
     </template>
     <template v-if="step === 4">
       <div class="container">
-        <div class="message fs-2">
+        <div class="message fs-4">
           신분 인증에 실패했습니다.<br/>{{ timer }}초 뒤에 창이 닫힙니다.
         </div>
         <WhiteButton value="즉시 닫기" @click="closeModal"/>
