@@ -307,22 +307,22 @@
           } else {
             step.value += 2
           }
-        // } else if (step.value === 3 || step.value === 4) {
-        //   if (timer.value !== 0) {
-        //     setTimeout(() => {
-        //       timer.value -= 1
-        //     }, 1000)
-          // } else {
-          //   if (step.value === 3){
-          //     setTimeout(() => {
-          //       passCertification()
-          //     }, 500)
-          //   } else {
-          //     setTimeout(() => {
-          //       closeModal()
-          //     }, 500)
-          //   }
-          // }
+        } else if (step.value === 3 || step.value === 4) {
+          if (timer.value !== 0) {
+            setTimeout(() => {
+              timer.value -= 1
+            }, 1000)
+          } else {
+            if (step.value === 3){
+              setTimeout(() => {
+                passCertification()
+              }, 500)
+            } else {
+              setTimeout(() => {
+                closeModal()
+              }, 500)
+            }
+          }
         }
       })
 
