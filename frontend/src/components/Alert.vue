@@ -76,8 +76,8 @@
     }
 
     .icon {
-      width: auto;
-      height: 50%;
+      width: 2.5rem;
+      height: 2.5rem;
       position: absolute;
       left: 20px;
 
