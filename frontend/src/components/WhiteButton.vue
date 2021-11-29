@@ -41,4 +41,9 @@
     border-radius: 1.3rem;
     padding: 1.3rem 2rem;
   }
+
+  .size-4 {
+    border-radius: 1.5rem;
+    padding: 1.5rem 3rem;
+  }
 </style>

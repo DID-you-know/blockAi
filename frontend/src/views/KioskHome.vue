@@ -1,6 +1,6 @@
 <template>
   <div class="body kiosk">
-    <img class="company-logo" src="@/assets/image/GS25.png" alt="">
+    <img class="company-logo" src="@/assets/image/SSAFY25.png" alt="">
     <div class="header">
       <h1 class="nanumGothic title">주문내역</h1>
     </div>
@@ -138,7 +138,7 @@
 
     .company-logo {
       flex: 1;
-      width: 40vh;
+      width: 45vh;
     }
 
     .header {

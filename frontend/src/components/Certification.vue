@@ -59,7 +59,7 @@
     <template v-if="step === 2">
       <div class="container">
         <div class="message fs-4">
-          블록체인에 저장된 얼굴, 음성과 비교하고 있습니다.<br/> 잠시만 기다려주세요.
+          블록체인에 저장된 얼굴, 음성과 비교하고 있습니다.<br/><br/>잠시만 기다려주세요.
         </div>
         <div class="space"></div>
         <div class="loading-box">
@@ -70,17 +70,17 @@
     <template v-if="step === 3">
       <div class="container">
         <div class="message fs-5">
-          신분 인증이 <span class="success fw-bold">완료</span>되었습니다.<br/>{{ timer }}초 뒤에 결제화면으로 이동합니다.
+          신분 인증이 <span class="success fw-bold">완료</span>되었습니다.<br/><br/>{{ timer }}초 뒤에 결제화면으로 이동합니다.
         </div>
-        <WhiteButton size="3" value="결제하기" @click="passCertification"/>
+        <WhiteButton class="mt-3" size="4" value="결제하기" @click="passCertification"/>
       </div>
     </template>
     <template v-if="step === 4">
       <div class="container">
         <div class="message fs-5">
-          신분 인증에 <span class="fail fw-bold">실패</span>했습니다.<br/>{{ timer }}초 뒤에 창이 닫힙니다.
+          신분 인증에 <span class="fail fw-bold">실패</span>했습니다.<br/><br/>{{ timer }}초 뒤에 창이 닫힙니다.
         </div>
-        <WhiteButton size="3" value="즉시 닫기" @click="closeModal"/>
+        <WhiteButton class="mt-3" size="4" value="즉시 닫기" @click="closeModal"/>
       </div>
     </template>
   </div>
@@ -298,7 +298,7 @@
           const payload = {
             face: faceBase64.value.split(',')[1],
             voice: audioBlob.value.split(',')[1],
-            certifiedBy: 'GS25'
+            certifiedBy: 'SSAFY25'
           }
           await store.dispatch('certification/certification', payload)
           if (isCertificated.value) {
@@ -381,6 +381,10 @@
       align-items: center;
       flex-direction: column;
       gap: 4rem;
+
+      .mt-3 {
+        margin-top: 3vh;
+      }
     }
 
     .progressbar {
