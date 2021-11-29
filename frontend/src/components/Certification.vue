@@ -8,19 +8,19 @@
 
         <div v-if="faceStep === 1 && !cameraOn" class="icon-box">
           <img class="icon" src="@/assets/image/icon/faceIdIcon.png" alt="faceIdIcon">
-          <WhiteButton value="얼굴 촬영 시작" @click="startCamera"/>
+          <WhiteButton size="2" value="얼굴 촬영 시작" @click="startCamera"/>
         </div>
         <div v-show="faceStep === 1 && cameraOn" class="icon-box">
           <video ref="video" autoplay></video>
-          <WhiteButton value="얼굴 촬영" @click="captureFace"/>
+          <WhiteButton size="2" value="얼굴 촬영" @click="captureFace"/>
         </div>
 
         <div v-show="faceStep === 2" class="icon-box">
           <canvas ref="canvas" width="500" height="400"></canvas>
           <canvas ref="faceCanvas" hidden></canvas>
           <div class="button-box">
-            <WhiteButton value="재촬영" @click="reCapture"/>
-            <WhiteButton value="촬영 완료" @click="finishCapture"/>
+            <WhiteButton size="2" value="재촬영" @click="reCapture"/>
+            <WhiteButton size="2" value="촬영 완료" @click="finishCapture"/>
           </div>
         </div>
 
@@ -38,15 +38,15 @@
         </div>
         <div v-if="voiceStep !== 4" class="icon-box">
           <img class="icon" src="@/assets/image/icon/voiceIcon.png" alt="voiceIcon">
-          <WhiteButton v-if="voiceStep === 1" value="음성 녹음 시작" @click="recordVoice"/>
-          <WhiteButton v-if="voiceStep === 2" value="정지" @click="stopRecord"/>
+          <WhiteButton size="2" v-if="voiceStep === 1" value="음성 녹음 시작" @click="recordVoice"/>
+          <WhiteButton size="2" v-if="voiceStep === 2" value="정지" @click="stopRecord"/>
           <template v-if="voiceStep === 3">
             <audio controls preload="auto">
               <source :src="audioSource" type="audio/wav">
             </audio>
             <div class="button-box">
-              <WhiteButton value="재녹음" @click="reRecord"/>
-              <WhiteButton value="녹음 완료" @click="finishRecord"/>
+              <WhiteButton size="2" value="재녹음" @click="reRecord"/>
+              <WhiteButton size="2" value="녹음 완료" @click="finishRecord"/>
             </div>
           </template>
         </div>
@@ -69,18 +69,18 @@
     </template>
     <template v-if="step === 3">
       <div class="container">
-        <div class="message fs-4">
-          신분 인증이 완료되었습니다.<br/>{{ timer }}초 뒤에 결제화면으로 이동합니다.
+        <div class="message fs-5">
+          신분 인증이 <span class="success fw-bold">완료</span>되었습니다.<br/>{{ timer }}초 뒤에 결제화면으로 이동합니다.
         </div>
-        <WhiteButton value="결제하기" @click="passCertification"/>
+        <WhiteButton size="3" value="결제하기" @click="passCertification"/>
       </div>
     </template>
     <template v-if="step === 4">
       <div class="container">
-        <div class="message fs-4">
-          신분 인증에 실패했습니다.<br/>{{ timer }}초 뒤에 창이 닫힙니다.
+        <div class="message fs-5">
+          신분 인증에 <span class="fail fw-bold">실패</span>했습니다.<br/>{{ timer }}초 뒤에 창이 닫힙니다.
         </div>
-        <WhiteButton value="즉시 닫기" @click="closeModal"/>
+        <WhiteButton size="3" value="즉시 닫기" @click="closeModal"/>
       </div>
     </template>
   </div>
@@ -307,22 +307,22 @@
           } else {
             step.value += 2
           }
-        } else if (step.value === 3 || step.value === 4) {
-          if (timer.value !== 0) {
-            setTimeout(() => {
-              timer.value -= 1
-            }, 1000)
-          } else {
-            if (step.value === 3){
-              setTimeout(() => {
-                passCertification()
-              }, 500)
-            } else {
-              setTimeout(() => {
-                closeModal()
-              }, 500)
-            }
-          }
+        // } else if (step.value === 3 || step.value === 4) {
+        //   if (timer.value !== 0) {
+        //     setTimeout(() => {
+        //       timer.value -= 1
+        //     }, 1000)
+          // } else {
+          //   if (step.value === 3){
+          //     setTimeout(() => {
+          //       passCertification()
+          //     }, 500)
+          //   } else {
+          //     setTimeout(() => {
+          //       closeModal()
+          //     }, 500)
+          //   }
+          // }
         }
       })
 
@@ -390,6 +390,14 @@
     .message {
       color: white;
       text-align: center;
+
+      .success {
+        color: $success;
+      }
+
+      .fail {
+        color: $danger;
+      }
     }
 
     .icon-box {
